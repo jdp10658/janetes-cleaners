@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Load Real Clients — Janete's Cleaners</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+  .box { background: #16213e; border-radius: 16px; padding: 40px; max-width: 540px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  h1 { color: #f5a623; font-size: 1.4rem; margin-bottom: 8px; }
+  p { color: rgba(255,255,255,0.6); margin-bottom: 24px; font-size: 0.88rem; line-height: 1.6; }
+  button { background: #e94560; color: white; border: none; border-radius: 10px; padding: 16px 32px; font-size: 1rem; font-weight: 700; cursor: pointer; width: 100%; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .log { margin-top: 20px; text-align: left; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 16px; max-height: 320px; overflow-y: auto; font-size: 0.78rem; font-family: monospace; display: none; }
+  .log-item { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #aaa; }
+  .log-item.ok { color: #27ae60; }
+  .log-item.skip { color: #f5a623; }
+  .log-item.err { color: #e74c3c; }
+  .done-msg { margin-top: 20px; background: #27ae60; border-radius: 10px; padding: 16px; font-weight: 700; display: none; font-size: 0.9rem; line-height: 1.6; }
+  .warning { background: rgba(245,166,35,0.15); border: 1px solid #f5a623; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.82rem; color: #f5a623; text-align: left; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>🧹 Load Your Real Clients</h1>
+  <div class="warning">⚠️ These are your real clients from QuickBooks. Missing phone/rate info can be added later in the manager app.</div>
+  <p>23 real cleaning clients extracted from your QuickBooks records. Click to load them all into Firebase now.</p>
+  <button id="load-btn" onclick="loadClients()">Load My Real Clients</button>
+  <div class="log" id="log"></div>
+  <div class="done-msg" id="done-msg">✅ All your real clients are loaded!<br><br>Go back to your manager app and you'll see them all in the Clients tab. You can delete any old test clients from there, and add missing phone numbers and rates by clicking on each client.</div>
+</div>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBFBm8_E8BW2yPOLSmTCuD93Yiy3I5_XcY",
+  authDomain: "janete-s-cleaners.firebaseapp.com",
+  projectId: "janete-s-cleaners",
+  storageBucket: "janete-s-cleaners.firebasestorage.app",
+  messagingSenderId: "1050742171260",
+  appId: "1:1050742171260:web:2aab521d37166d2b614bf9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const clients = [
+  { name: "Corman Bags Co.", address: "36 Arlington Street, Chelsea, MA 02150", service: "Commercial", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Crest Pizzaria", address: "35 Crest Ave, Winthrop, MA 02152", service: "Commercial", frequency: "Regular", phone: "", email: "", rate: "", notes: "Contact: Peter" },
+  { name: "Dan Deven", address: "Marblehead, MA", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Fay Ginsberg", address: "65 East India Row #20G, Boston, MA 02110", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Jim Lavelle", address: "211 Mason Terrace, Brookline, MA 02446", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Jode Livingston", address: "28 Myrtle St. Unit 1, Boston, MA 02114", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Lee Oestreicher", address: "45 Longwood Ave. #103, Brookline, MA 02446", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Lion River Properties", address: "45 Longwood Ave. #103, Brookline, MA 02446", service: "Commercial", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Lisa Dyacme", address: "Goodwins Court, Marblehead", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "", notes: "Dyacme Property Management" },
+  { name: "Nicholas Erpelding", address: "", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "", notes: "Attn: Lisa Gallager" },
+  { name: "Pauline Donnely", address: "12 Darling St. #3, Marblehead, MA 01945", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Peter Calakoutis", address: "Lynnfells Pkwy, Saugus, MA 01907", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Phil Fuller", address: "17 S Parrish Drive, Londonderry, NH 03053", service: "Residential - Standard", frequency: "Seasonal", phone: "", email: "", rate: "" },
+  { name: "Phil Fuller FL", address: "1325 Gaston Loop, The Villages, FL 32162", service: "Residential - Standard", frequency: "Seasonal", phone: "", email: "", rate: "" },
+  { name: "Scott Stilianos", address: "1 Bengal Lane, Salem, MA 01906", service: "Residential - Standard", frequency: "Regular", phone: "", email: "sstili@icloud.com", rate: "" },
+  { name: "Socs Ice Cream", address: "67 Lynnfells Parkway, Saugus, MA 01906", service: "Commercial", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Trevor Parsons", address: "106 Galloupes Road, Swampscott, MA 01907", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Victoria Fitzgerald", address: "", service: "Residential - Standard", frequency: "Regular", phone: "", email: "ilsognoinchianti@gmail.com", rate: "" },
+  { name: "Carlos Farias", address: "", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Elena Vargas", address: "", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Josiane Chimilovski", address: "", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Nadir Vieira", address: "58 Atkins Ave. Basement, Lynn, MA 01904", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" },
+  { name: "Zilmara Henrique", address: "", service: "Residential - Standard", frequency: "Regular", phone: "", email: "", rate: "" }
+];
+
+window.loadClients = async function() {
+  const btn = document.getElementById('load-btn');
+  const log = document.getElementById('log');
+  btn.disabled = true;
+  btn.textContent = 'Loading…';
+  log.style.display = 'block';
+  log.innerHTML = '';
+
+  const existing = await getDocs(collection(db, 'clients'));
+  const existingNames = existing.docs.map(d => (d.data().name || '').toLowerCase());
+
+  let loaded = 0, skipped = 0;
+  for (const c of clients) {
+    if (existingNames.includes(c.name.toLowerCase())) {
+      log.innerHTML += `<div class="log-item skip">⏭ Already exists: ${c.name}</div>`;
+      skipped++;
+    } else {
+      try {
+        await addDoc(collection(db, 'clients'), { ...c, createdAt: new Date().toISOString() });
+        log.innerHTML += `<div class="log-item ok">✅ ${c.name}${c.address ? ' — ' + c.address : ''}</div>`;
+        loaded++;
+      } catch(e) {
+        log.innerHTML += `<div class="log-item err">❌ Error: ${c.name} — ${e.message}</div>`;
+      }
+    }
+    log.scrollTop = log.scrollHeight;
+    await new Promise(r => setTimeout(r, 120));
+  }
+
+  log.innerHTML += `<div class="log-item ok" style="margin-top:10px;font-weight:700">Done! Loaded: ${loaded} | Skipped: ${skipped}</div>`;
+  document.getElementById('done-msg').style.display = 'block';
+  btn.textContent = '✅ Clients Loaded!';
+};
+</script>
+</body>
+</html>
