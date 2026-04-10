@@ -3,109 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Janete's Cleaners — Master Suite</title>
+<title>Janete's Cleaners — Management Suite</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1C1C1E;min-height:100vh;font-size:14px}
-    .topbar{background:#C41A1A;color:#fff;display:flex;align-items:stretch;border-radius:0 0 10px 10px;overflow:hidden}
-    .topbar-brand{background:#1C1C1E;padding:14px 22px;display:flex;flex-direction:column;justify-content:center;min-width:190px}
-    .topbar-brand .bname{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#FAF7F2;line-height:1}
-    .nav{display:flex;padding:0 16px;background:#fff;border-bottom:1px solid #E5E5E5;overflow-x:auto}
-    .nav-tab{padding:12px 16px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:#666;white-space:nowrap}
-    .nav-tab.active{color:#C41A1A;border-bottom-color:#C41A1A}
-    .page{display:none;padding:16px}
-    .page.active{display:block}
-    .grid-2{display:grid;grid-template-columns:1fr 320px;gap:16px}
-    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
-    .card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden;margin-bottom:16px}
-    .card-head{padding:11px 16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between;background:#FCFBFA}
-    .ctitle{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px}
-    table{width:100%;border-collapse:collapse;font-size:12px}
-    thead th{padding:10px;text-align:left;font-size:10px;text-transform:uppercase;color:#888;background:#F9F9F7;border-bottom:1px solid #E5E5E5}
-    tbody td{padding:12px 10px;border-bottom:1px solid #F0F0F0}
-    .status-pill{padding:3px 8px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase}
-    .status-paid{background:#D1E7DD;color:#0A3622}
-    .status-pending{background:#F8D7DA;color:#842029}
-    .btn-xs{padding:6px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;margin-right:4px;text-decoration:none;display:inline-block;font-family:inherit}
-    .btn-rem{background:#FFF3CD;color:#7A5200}
-    .btn-bill{background:#1C1C1E;color:#fff}
-    .btn-skip{background:#FCEBEB;color:#A32D2D}
-    .finput{width:100%;border:1px solid #DDD;border-radius:6px;padding:10px;font-size:13px;background:#F9F9F7;margin-bottom:12px;outline:none;font-family:inherit}
-    .btn-main{width:100%;padding:12px;background:#C41A1A;color:#fff;border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer}
-    .chat-bubble{display:inline-flex;align-items:center;background:#25D366;color:white;padding:12px 25px;border-radius:30px;text-decoration:none;font-weight:600;gap:10px;margin-top:15px;font-size:16px}
-    #login-screen { position: fixed; inset: 0; background: #1C1C1E; color: white; display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
-    .login-card { background: white; padding: 40px; border-radius: 16px; width: 90%; max-width: 380px; color: #1C1C1E; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
-    .hidden { display: none !important; }
+    body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1C1C1E;min-height:100vh;}
+    .topbar{background:#C41A1A;color:#fff;display:flex;padding:12px 20px;justify-content:space-between;align-items:center;}
+    .policy-alert{font-size:12px;font-weight:700;letter-spacing:0.5px;}
+    .nav{display:flex;background:#fff;border-bottom:1px solid #DDD;overflow-x:auto;}
+    .nav-tab{padding:14px 20px;cursor:pointer;font-weight:600;font-size:13px;color:#666;border-bottom:3px solid transparent;}
+    .nav-tab.active{color:#C41A1A;border-bottom-color:#C41A1A;}
+    .page{display:none;padding:20px;}
+    .page.active{display:block;}
+    .grid{display:grid;grid-template-columns:1fr 350px;gap:20px;}
+    @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+    .card{background:#fff;border-radius:12px;border:1px solid #E5E5E5;overflow:hidden;margin-bottom:20px;}
+    .card-head{padding:15px;background:#F9F9F7;border-bottom:1px solid #EEE;font-family:'Bebas Neue';font-size:18px;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    th{text-align:left;padding:12px;background:#F1F1EF;color:#888;font-size:10px;text-transform:uppercase;}
+    td{padding:12px;border-bottom:1px solid #F0F0F0;}
+    .btn-xs{padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;margin-right:4px;text-decoration:none;display:inline-block;}
+    .btn-rem{background:#FFF3CD;color:#7A5200;} .btn-bill{background:#1C1C1E;color:#FFF;} .btn-skip{background:#FCEBEB;color:#A32D2D;}
+    .finput{width:100%;border:1px solid #DDD;border-radius:8px;padding:10px;margin-bottom:10px;font-family:inherit;}
+    .btn-main{width:100%;padding:14px;background:#C41A1A;color:#fff;border:none;border-radius:8px;font-family:'Bebas Neue';font-size:18px;cursor:pointer;}
+    #login-screen{position:fixed;inset:0;background:#1C1C1E;z-index:1000;display:flex;align-items:center;justify-content:center;}
+    .hidden{display:none !important;}
 </style>
 </head>
 <body>
 
 <div id="login-screen">
-  <div class="login-card">
-    <h2 style="font-family:'Bebas Neue'; font-size: 32px; margin-bottom: 20px;">Staff Login</h2>
-    <input type="email" id="login-email" placeholder="Email Address" class="finput">
-    <input type="password" id="login-pass" placeholder="Password" class="finput">
-    <button class="btn-main" onclick="handleLogin()">Unlock System</button>
-    <p id="login-error" style="color:red; font-size:11px; margin-top:10px;"></p>
-  </div>
+    <div style="background:white;padding:40px;border-radius:15px;width:350px;text-align:center;">
+        <h2 style="font-family:'Bebas Neue';font-size:32px;">Janete's Login</h2>
+        <input type="email" id="login-email" placeholder="Email" class="finput" style="margin-top:20px;">
+        <input type="password" id="login-pass" placeholder="Password" class="finput">
+        <button class="btn-main" onclick="handleLogin()">Unlock Suite</button>
+    </div>
 </div>
 
 <div id="main-app" class="hidden">
     <div class="topbar">
-      <div class="topbar-brand"><div class="bname">Janete's Cleaners</div></div>
+        <div style="font-family:'Bebas Neue';font-size:22px;">JANETE'S CLEANERS</div>
+        <div class="policy-alert">⚠️ SKIP POLICY: $50 FEE FOR CANCELLATIONS UNDER 24H</div>
     </div>
 
     <div class="nav">
-      <div class="nav-tab active" onclick="switchPage('dashboard')">Office Dashboard</div>
-      <div class="nav-tab" onclick="switchPage('portal')">Client Portal View</div>
+        <div class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</div>
+        <div class="nav-tab" onclick="switchTab('schedule')">Schedule</div>
+        <div class="nav-tab" onclick="switchTab('skips')">Skip Tracker</div>
+        <div class="nav-tab" onclick="switchTab('pricing')">Services & Pricing</div>
     </div>
 
     <main id="dashboard" class="page active">
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-head"><span class="ctitle">Master Client List</span><span id="client-count" style="font-size:11px; font-weight:600"></span></div>
-          <div style="padding:10px 16px; border-bottom:1px solid #eee"><input type="text" id="searchInput" placeholder="Search name or address..." oninput="renderTable()" style="width:100%; border:none; outline:none; font-size:13px"></div>
-          <div style="overflow-x:auto">
-            <table>
-              <thead><tr><th>Client Name</th><th>Status</th><th>Contact</th><th>Actions</th></tr></thead>
-              <tbody id="tableBody"></tbody>
-            </table>
-          </div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-head">Client Management</div>
+                <table>
+                    <thead><tr><th>Name</th><th>Contact Pref</th><th>Actions</th></tr></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <div class="card">
+                <div class="card-head">Add / Edit Client</div>
+                <div style="padding:20px;">
+                    <input type="hidden" id="editKey">
+                    <input class="finput" id="f-name" placeholder="Name">
+                    <input class="finput" id="f-phone" placeholder="Phone">
+                    <select class="finput" id="f-pref">
+                        <option value="SMS">Prefers: SMS</option>
+                        <option value="Call">Prefers: Phone Call</option>
+                        <option value="Email">Prefers: Email</option>
+                    </select>
+                    <textarea class="finput" id="f-address" placeholder="Address"></textarea>
+                    <button class="btn-main" onclick="saveClient()">Save to Cloud</button>
+                </div>
+            </div>
         </div>
-        
-        <div class="card">
-          <div class="card-head"><span class="ctitle">Add / Edit Client</span></div>
-          <div class="card-body" style="padding:16px">
-            <input type="hidden" id="editKey">
-            <input class="finput" id="f-name" placeholder="Full Name">
-            <input class="finput" id="f-phone" placeholder="Phone (e.g. 7815551234)">
-            <input class="finput" id="f-email" placeholder="Email Address">
-            <textarea class="finput" id="f-address" placeholder="Service Address" style="height:70px"></textarea>
-            <button class="btn-main" onclick="submitForm()">Update Database</button>
-            <button class="btn-main" onclick="auth.signOut()" style="background:#888; margin-top:10px; font-size:12px">Log Out</button>
-          </div>
-        </div>
-      </div>
     </main>
 
-    <main id="portal" class="page">
-      <div style="max-width:500px; margin:0 auto; text-align:center; background:white; padding:40px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05)">
-        <h1 style="font-family:'Bebas Neue'; font-size:40px; color:#C41A1A">Hello!</h1>
-        <p style="color:#666; margin-bottom:30px">Welcome to your private cleaning portal.</p>
-        <div style="background:#F9F9F7; padding:20px; border-radius:15px; margin-bottom:20px">
-          <p style="font-weight:700; color:#888; font-size:12px; margin-bottom:5px">UPCOMING SERVICE</p>
-          <p style="font-size:24px; color:#1C1C1E">Confirmed for this Week</p>
-        </div>
-        <p style="font-size:13px; color:#888; margin-bottom:10px">Need to reschedule or ask a question?</p>
-        <a href="https://wa.me/17819645682?text=Hi%20Janete!%20I'm%20writing%20from%20the%20Client%20Portal..." class="chat-bubble">
-           <span>💬 Chat with Janete</span>
-        </a>
-      </div>
-    </main>
+    <main id="schedule" class="page"><div class="card"><div class="card-head">Calendar</div><div style="padding:40px;text-align:center;">Calendar Integration Loading...</div></div></main>
+    <main id="skips" class="page"><div class="card"><div class="card-head">Skip Tracker</div><div style="padding:20px;">No recent skips recorded.</div></div></main>
+    <main id="pricing" class="page"><div class="card"><div class="card-head">Services</div><div style="padding:20px;">Standard: $150+ | Deep Clean: $250+</div></div></main>
 </div>
 
 <script>
@@ -119,109 +100,85 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
-
 let clients = {};
 
 auth.onAuthStateChanged(user => {
-  if (user) {
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('main-app').classList.remove('hidden');
-    db.ref("clients").on('value', snap => {
-      clients = snap.val() || {};
-      renderTable();
-    });
-  } else {
-    document.getElementById('login-screen').classList.remove('hidden');
-    document.getElementById('main-app').classList.add('hidden');
-  }
+    if (user) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('main-app').classList.remove('hidden');
+        db.ref("clients").on('value', snap => { clients = snap.val() || {}; renderTable(); });
+    }
 });
 
 function handleLogin() {
-  auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value)
-    .catch(e => document.getElementById('login-error').textContent = "Invalid Credentials");
+    auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value)
+    .catch(e => alert(e.message));
 }
 
-function switchPage(pageId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
-  event.currentTarget.classList.add('active');
+function switchTab(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
 }
 
 function renderTable() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const tb = document.getElementById('tableBody');
-  const keys = Object.keys(clients).filter(k => clients[k].name.toLowerCase().includes(q));
-  document.getElementById('client-count').textContent = keys.length + " TOTAL";
-
-  tb.innerHTML = keys.map(k => {
-    const c = clients[k];
-    const statusClass = c.status === 'Paid' ? 'status-paid' : 'status-pending';
-    const smsLink = c.phone ? `sms:+1${c.phone.replace(/\D/g,'')}?body=Hi%20${c.name},%20this%20is%20Janete's%20Cleaners%20confirming%20your%20next%20visit.` : '#';
-    return `
-      <tr>
-        <td><strong>${c.name}</strong><br><span style="font-size:10px; color:#888">${c.address || ''}</span></td>
-        <td><span class="status-pill ${statusClass}" onclick="toggleStatus('${k}')">${c.status || 'Pending'}</span></td>
-        <td style="font-size:11px; color:#666">${c.phone || '---'}<br>${c.email || ''}</td>
-        <td class="act-cell">
-          <button class="btn-xs btn-rem" onclick="editClient('${k}')">✏️ Edit</button>
-          <a href="${smsLink}" class="btn-xs btn-rem" style="background:#E0F1FF; color:#004085">📱 SMS</a>
-          <button class="btn-xs btn-bill" onclick="billClient('${k}')">💵 Bill</button>
-          <button class="btn-xs btn-skip" onclick="deleteClient('${k}')">🗑</button>
-        </td>
-      </tr>
-    `}).join('');
+    const tb = document.getElementById('tableBody');
+    tb.innerHTML = Object.keys(clients).map(k => {
+        const c = clients[k];
+        const smsMsg = encodeURIComponent(`Hi ${c.name}, confirming your cleaning for tomorrow!`);
+        return `<tr>
+            <td><strong>${c.name}</strong><br><small>${c.address || ''}</small></td>
+            <td><span style="font-size:10px;background:#EEE;padding:2px 6px;border-radius:4px;">${c.pref || 'SMS'}</span></td>
+            <td>
+                <button class="btn-xs btn-rem" onclick="editClient('${k}')">Edit</button>
+                <a href="sms:+1${(c.phone||'').replace(/\D/g,'')}?body=${smsMsg}" class="btn-xs btn-rem" style="background:#E0F1FF;color:#004085;">Remind</a>
+                <button class="btn-xs btn-bill" onclick="billClient('${k}')">Bill</button>
+                <button class="btn-xs btn-skip" onclick="deleteClient('${k}')">🗑</button>
+            </td>
+        </tr>`;
+    }).join('');
 }
 
-function toggleStatus(k) {
-  const newStatus = clients[k].status === 'Paid' ? 'Pending' : 'Paid';
-  db.ref('clients/'+k).update({ status: newStatus });
-}
-
-function submitForm() {
-  const key = document.getElementById('editKey').value;
-  const data = {
-    name: document.getElementById('f-name').value,
-    phone: document.getElementById('f-phone').value,
-    email: document.getElementById('f-email').value,
-    address: document.getElementById('f-address').value,
-    status: key ? (clients[key].status || 'Pending') : 'Pending'
-  };
-  if(key) db.ref('clients/'+key).update(data); else db.ref('clients').push(data);
-  ['editKey','f-name','f-phone','f-email','f-address'].forEach(id => document.getElementById(id).value="");
+function saveClient() {
+    const key = document.getElementById('editKey').value;
+    const data = {
+        name: document.getElementById('f-name').value,
+        phone: document.getElementById('f-phone').value,
+        address: document.getElementById('f-address').value,
+        pref: document.getElementById('f-pref').value
+    };
+    if(key) db.ref('clients/'+key).update(data); else db.ref('clients').push(data);
+    ['editKey','f-name','f-phone','f-address'].forEach(id => document.getElementById(id).value="");
 }
 
 function editClient(k) {
-  document.getElementById('editKey').value = k;
-  document.getElementById('f-name').value = clients[k].name;
-  document.getElementById('f-phone').value = clients[k].phone || '';
-  document.getElementById('f-email').value = clients[k].email || '';
-  document.getElementById('f-address').value = clients[k].address || '';
+    const c = clients[k];
+    document.getElementById('editKey').value = k;
+    document.getElementById('f-name').value = c.name;
+    document.getElementById('f-phone').value = c.phone || '';
+    document.getElementById('f-address').value = c.address || '';
+    document.getElementById('f-pref').value = c.pref || 'SMS';
 }
 
-function deleteClient(k) { if(confirm("Permanently delete?")) db.ref('clients/'+k).remove(); }
+function deleteClient(k) { if(confirm("Delete?")) db.ref('clients/'+k).remove(); }
 
 function billClient(k) {
-  const c = clients[k];
-  const html = `<html><body style="font-family:sans-serif; padding:40px; text-align:center;">
-    <h1 style="color:#C41A1A; margin-bottom:10px;">JANETE'S CLEANERS</h1>
-    <h2 style="font-weight:300; border-bottom:1px solid #eee; padding-bottom:10px;">SERVICE INVOICE</h2>
-    <div style="text-align:left; margin:20px 0;">
-        <p><strong>Bill To:</strong> ${c.name}</p>
-        <p><strong>Service Address:</strong> ${c.address}</p>
-    </div>
-    <table style="width:100%; border-collapse:collapse; margin-top:30px;">
-        <tr style="background:#f9f9f9;"><th style="padding:10px; border:1px solid #eee;">Service Description</th><th style="padding:10px; border:1px solid #eee;">Amount</th></tr>
-        <tr><td style="padding:15px; border:1px solid #eee;">Professional House Cleaning</td><td style="padding:15px; border:1px solid #eee;">$________</td></tr>
-    </table>
-    <p style="margin-top:40px; font-size:14px;">Thank you for your business!</p>
-    <button onclick="window.print()" style="margin-top:30px; padding:10px 25px; background:#1C1C1E; color:white; border:none; border-radius:5px; cursor:pointer;">Print or Save as PDF</button>
-  </body></html>`;
-  const win = window.open('','_blank');
-  win.document.write(html);
+    const c = clients[k];
+    const price = prompt("Enter Price for " + c.name, "150.00");
+    const desc = prompt("Service Description", "Standard Professional Cleaning");
+    if(!price) return;
+
+    const html = `<html><body style="font-family:sans-serif;padding:40px;">
+        <h1 style="color:#C41A1A;">JANETE'S CLEANERS INVOICE</h1>
+        <p><strong>Customer:</strong> ${c.name}</p>
+        <p><strong>Service:</strong> ${desc}</p>
+        <h2 style="border-top:2px solid #000;padding-top:10px;">TOTAL DUE: $${price}</h2>
+        <button onclick="window.print()">Print / Save PDF</button>
+    </body></html>`;
+    const win = window.open('','_blank');
+    win.document.write(html);
 }
 </script>
-</body>
-</html>
 </body>
 </html>
