@@ -1,113 +1,93 @@
 <!DOCTYPE html>
-<html lang="en"><!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Janete's Cleaners — Secure Suite</title>
+<title>Janete's Cleaners — Management Suite</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* CSS remains consistent with your previous version */
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1C1C1E;min-height:100vh;font-size:14px}
-.topbar{background:#C41A1A;color:#fff;display:flex;align-items:stretch;border-radius:0 0 10px 10px;overflow:hidden}
-.topbar-brand{background:#1C1C1E;padding:14px 22px;display:flex;flex-direction:column;justify-content:center;min-width:190px}
-.topbar-brand .bname{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#FAF7F2;line-height:1}
-.topbar-brand .bsub{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
-.topbar-alert{flex:1;display:flex;align-items:center;padding:12px 20px;gap:10px}
-.topbar-alert .atitle{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;line-height:1}
-.topbar-alert .asub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px}
-.nav{display:flex;padding:0 16px;background:#fff;border-bottom:1px solid #E5E5E5}
-.nav-tab{padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:#666;transition:all 0.15s;white-space:nowrap}
-.nav-tab.active{color:#C41A1A;border-bottom-color:#C41A1A}
-.page{display:none;padding:16px}
-.page.active{display:block}
-.grid-2{display:grid;grid-template-columns:1fr 300px;gap:16px}
-.card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden}
-.card-head{padding:11px 16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
-.ctitle{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.2px;color:#1C1C1E}
-.card-body{padding:16px}
-.search-row{padding:10px 16px;border-bottom:1px solid #E5E5E5;display:flex;gap:8px}
-.search-row input{flex:1;border:1px solid #DDD;border-radius:6px;padding:7px 11px;font-family:'DM Sans',sans-serif;font-size:13px;background:#F9F9F7;color:#1C1C1E;outline:none}
-.search-row input:focus{border-color:#C41A1A}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-thead th{padding:7px 10px;text-align:left;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;color:#888;font-weight:600;border-bottom:1px solid #E5E5E5;background:#F9F9F7}
-tbody tr{border-bottom:1px solid #F0F0F0;cursor:pointer;transition:background 0.12s}
-tbody tr:hover{background:#F9F9F7}
-tbody td{padding:8px 10px;color:#555}
-tbody td:first-child{color:#1C1C1E;font-weight:500}
-.act-cell{display:flex;gap:4px;flex-wrap:wrap}
-.btn-xs{padding:4px 8px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:opacity 0.13s;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
-.btn-xs:hover{opacity:0.8}
-.btn-rem{background:#FFF3CD;color:#7A5200}
-.btn-bill{background:#D1E7DD;color:#0A3622}
-.btn-skip{background:#FCEBEB;color:#A32D2D}
-.finput{width:100%;border:1px solid #DDD;border-radius:6px;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:13px;color:#1C1C1E;background:#F9F9F7;outline:none;transition:border-color 0.15s}
-.finput:focus{border-color:#C41A1A}
-.fg{margin-bottom:11px}
-.btn-main{width:100%;padding:10px;background:#1C1C1E;color:#FAF7F2;border:none;border-radius:7px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer;transition:background 0.15s}
-.btn-main:hover{background:#C41A1A}
-.toast{position:fixed;bottom:16px;right:16px;background:#1C1C1E;color:#FAF7F2;padding:10px 16px;border-radius:8px;font-size:13px;opacity:0;transform:translateY(8px);transition:all 0.25s;pointer-events:none;z-index:300;max-width:280px}
-.toast.show{opacity:1;transform:translateY(0)}
-#login-screen { position: fixed; inset: 0; background: #1C1C1E; color: white; display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
-.login-card { background: white; padding: 30px; border-radius: 12px; width: 350px; color: #1C1C1E; text-align: center;}
-.hidden { display: none !important; }
+    /* STYLES FROM ORIGINAL VERSION */
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1C1C1E;min-height:100vh;font-size:14px}
+    .topbar{background:#C41A1A;color:#fff;display:flex;align-items:stretch;border-radius:0 0 10px 10px;overflow:hidden}
+    .topbar-brand{background:#1C1C1E;padding:14px 22px;display:flex;flex-direction:column;justify-content:center;min-width:190px}
+    .topbar-brand .bname{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#FAF7F2;line-height:1}
+    .topbar-alert{flex:1;display:flex;align-items:center;padding:12px 20px;gap:10px}
+    .topbar-alert .atitle{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;line-height:1}
+    .nav{display:flex;padding:0 16px;background:#fff;border-bottom:1px solid #E5E5E5}
+    .nav-tab{padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:#666;transition:all 0.15s}
+    .nav-tab.active{color:#C41A1A;border-bottom-color:#C41A1A}
+    .page{display:none;padding:16px}
+    .page.active{display:block}
+    .grid-2{display:grid;grid-template-columns:1fr 300px;gap:16px}
+    .card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden}
+    .card-head{padding:11px 16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between}
+    .ctitle{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.2px}
+    .search-row{padding:10px 16px;border-bottom:1px solid #E5E5E5}
+    .search-row input{width:100%;border:1px solid #DDD;border-radius:6px;padding:7px 11px;font-size:13px;background:#F9F9F7;outline:none}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    thead th{padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#888;background:#F9F9F7;border-bottom:1px solid #E5E5E5}
+    tbody td{padding:10px;border-bottom:1px solid #F0F0F0;vertical-align:middle}
+    .act-cell{display:flex;gap:4px}
+    .btn-xs{padding:4px 8px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+    .btn-rem{background:#FFF3CD;color:#7A5200}
+    .btn-bill{background:#D1E7DD;color:#0A3622}
+    .btn-skip{background:#FCEBEB;color:#A32D2D}
+    .finput{width:100%;border:1px solid #DDD;border-radius:6px;padding:8px 11px;font-size:13px;background:#F9F9F7;margin-bottom:10px;outline:none}
+    .btn-main{width:100%;padding:10px;background:#1C1C1E;color:#FAF7F2;border:none;border-radius:7px;font-family:'Bebas Neue',sans-serif;font-size:15px;cursor:pointer}
+    .btn-main:hover{background:#C41A1A}
+    
+    /* LOGIN OVERLAY */
+    #login-screen { position: fixed; inset: 0; background: #1C1C1E; color: white; display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
+    .login-card { background: white; padding: 30px; border-radius: 12px; width: 350px; color: #1C1C1E; text-align: center;}
+    .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
 <div id="login-screen">
   <div class="login-card">
-    <h2 style="font-family:'Bebas Neue'; font-size: 28px; margin-bottom: 20px;">Staff Access Only</h2>
-    <input type="email" id="login-email" placeholder="Email" class="finput" style="margin-bottom:10px; width:100%;">
-    <input type="password" id="login-pass" placeholder="Password" class="finput" style="margin-bottom:20px; width:100%;">
-    <button class="btn-main" onclick="handleLogin()">Log In</button>
-    <p id="login-error" style="color:red; font-size:12px; margin-top:10px;"></p>
+    <h2 style="font-family:'Bebas Neue'; font-size: 28px; margin-bottom: 20px;">Staff Login</h2>
+    <input type="email" id="login-email" placeholder="Email" class="finput">
+    <input type="password" id="login-pass" placeholder="Password" class="finput">
+    <button class="btn-main" onclick="handleLogin()">Unlock Suite</button>
+    <p id="login-error" style="color:red; font-size:11px; margin-top:10px;"></p>
   </div>
 </div>
 
 <div id="main-app" class="hidden">
     <div class="topbar">
-      <div class="topbar-brand"><div class="bname">Janete's Cleaners</div><div class="bsub">Secure Cloud Suite</div></div>
-      <div class="topbar-alert">
-        <div><div class="atitle">Connected to Firebase</div><div class="asub">Data is synced in real-time.</div></div>
-      </div>
+      <div class="topbar-brand"><div class="bname">Janete's Cleaners</div></div>
+      <div class="topbar-alert"><div class="atitle">Skip Policy Active</div></div>
     </div>
 
     <div class="nav">
       <div class="nav-tab active">Dashboard</div>
-      <div class="nav-tab" onclick="migrateData()" style="color:#C41A1A; border-bottom: none;">Run Migration</div>
     </div>
 
     <main class="page active">
       <div class="grid-2">
         <div class="card">
-          <div class="card-head">
-            <span class="ctitle">Client Directory</span>
-            <span class="badge" id="client-count">Loading...</span>
-          </div>
-          <div class="search-row">
-            <input type="text" id="searchInput" placeholder="Search name..." oninput="renderTable()">
-          </div>
-          <div style="overflow-x:auto">
-            <table>
-              <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead>
-              <tbody id="tableBody"></tbody>
-            </table>
-          </div>
+          <div class="card-head"><span class="ctitle">Client Directory</span><span id="client-count"></span></div>
+          <div class="search-row"><input type="text" id="searchInput" placeholder="Search..." oninput="renderTable()"></div>
+          <table>
+            <thead><tr><th>Name</th><th>Contact</th><th>Actions</th></tr></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
         </div>
+        
         <div class="card">
-          <div class="card-head"><span class="ctitle" id="form-title">Add / Edit Client</span></div>
-          <div class="card-body">
-            <input type="hidden" id="editKey" value="">
-            <div class="fg"><label class="flabel">Name</label><input class="finput" id="f-name"></div>
-            <div class="fg"><label class="flabel">Phone</label><input class="finput" id="f-phone"></div>
-            <div class="fg"><label class="flabel">Email</label><input class="finput" id="f-email"></div>
-            <div class="fg"><label class="flabel">Address</label><input class="finput" id="f-address"></div>
-            <button class="btn-main" onclick="submitForm()">Save Client</button>
+          <div class="card-head"><span class="ctitle">Add / Edit</span></div>
+          <div class="card-body" style="padding:16px">
+            <input type="hidden" id="editKey">
+            <input class="finput" id="f-name" placeholder="Full Name">
+            <input class="finput" id="f-phone" placeholder="Phone Number">
+            <input class="finput" id="f-email" placeholder="Email Address">
+            <textarea class="finput" id="f-address" placeholder="Service Address" style="height:60px"></textarea>
+            <button class="btn-main" onclick="submitForm()">Save to Cloud</button>
             <button class="btn-main" onclick="auth.signOut()" style="background:#888; margin-top:10px;">Log Out</button>
           </div>
         </div>
@@ -115,10 +95,7 @@ tbody td:first-child{color:#1C1C1E;font-weight:500}
     </main>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-// Your specific Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBFBm8_E8BW2yPOLSmTCuD93Yiy3I5_XcY",
   authDomain: "janete-s-cleaners.firebaseapp.com",
@@ -132,13 +109,12 @@ const db = firebase.database();
 
 let clients = {};
 
-// Handle Authentication State
 auth.onAuthStateChanged(user => {
   if (user) {
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('main-app').classList.remove('hidden');
-    db.ref("clients").on('value', (snapshot) => {
-      clients = snapshot.val() || {};
+    db.ref("clients").on('value', snap => {
+      clients = snap.val() || {};
       renderTable();
     });
   } else {
@@ -148,310 +124,65 @@ auth.onAuthStateChanged(user => {
 });
 
 function handleLogin() {
-  const email = document.getElementById('login-email').value;
-  const pass = document.getElementById('login-pass').value;
-  auth.signInWithEmailAndPassword(email, pass).catch(err => {
-    document.getElementById('login-error').textContent = err.message;
-  });
+  auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value)
+    .catch(e => document.getElementById('login-error').textContent = e.message);
 }
 
 function renderTable() {
   const q = document.getElementById('searchInput').value.toLowerCase();
   const tb = document.getElementById('tableBody');
   const keys = Object.keys(clients).filter(k => clients[k].name.toLowerCase().includes(q));
-  document.getElementById('client-count').textContent = Object.keys(clients).length + ' clients';
   
-  tb.innerHTML = keys.map(k => `
-    <tr>
-      <td>${clients[k].name}</td>
-      <td>${clients[k].phone || '---'}</td>
-      <td>${clients[k].email || '---'}</td>
-      <td class="act-cell">
-        <button class="btn-xs btn-rem" onclick="editClient('${k}')">Edit</button>
-        <button class="btn-xs btn-skip" onclick="deleteClient('${k}')">Delete</button>
-      </td>
-    </tr>
-  `).join('');
+  tb.innerHTML = keys.map(k => {
+    const c = clients[k];
+    const contactMethod = c.phone ? `📞 ${c.phone}` : (c.email ? `✉️ ${c.email}` : 'No contact info');
+    return `
+      <tr>
+        <td><strong>${c.name}</strong></td>
+        <td style="font-size:11px; color:#666">${contactMethod}</td>
+        <td class="act-cell">
+          <button class="btn-xs btn-rem" onclick="editClient('${k}')">✏️ Edit</button>
+          <button class="btn-xs btn-bill" onclick="billClient('${k}')">💵 Bill</button>
+          <button class="btn-xs btn-skip" onclick="deleteClient('${k}')">🗑</button>
+        </td>
+      </tr>
+    `}).join('');
 }
 
 function submitForm() {
-  const name = document.getElementById('f-name').value;
   const key = document.getElementById('editKey').value;
   const data = {
-    name,
+    name: document.getElementById('f-name').value,
     phone: document.getElementById('f-phone').value,
     email: document.getElementById('f-email').value,
     address: document.getElementById('f-address').value
   };
-  if (key) db.ref('clients/' + key).update(data);
-  else db.ref('clients').push(data);
-  clearForm();
-  showToast("Saved " + name);
+  if(key) db.ref('clients/'+key).update(data); else db.ref('clients').push(data);
+  ['editKey','f-name','f-phone','f-email','f-address'].forEach(id => document.getElementById(id).value="");
 }
 
 function editClient(k) {
   document.getElementById('editKey').value = k;
   document.getElementById('f-name').value = clients[k].name;
-  document.getElementById('f-phone').value = clients[k].phone;
-  document.getElementById('f-email').value = clients[k].email;
-  document.getElementById('f-address').value = clients[k].address;
+  document.getElementById('f-phone').value = clients[k].phone || '';
+  document.getElementById('f-email').value = clients[k].email || '';
+  document.getElementById('f-address').value = clients[k].address || '';
 }
 
-function deleteClient(k) {
-  if(confirm("Delete this client?")) db.ref('clients/' + k).remove();
-}
+function deleteClient(k) { if(confirm("Delete client?")) db.ref('clients/'+k).remove(); }
 
-function clearForm() {
-  document.getElementById('editKey').value = "";
-  ['f-name','f-phone','f-email','f-address'].forEach(id => document.getElementById(id).value = "");
-}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-// THE MIGRATION DATA - Contains all 35 clients from your local file
-const localData = [
-  {"name":"Karen Webster","phone":"","email":"julie@findsbyjulie.com","address":"95 Pinckney St, Boston, MA 02114"},
-  {"name":"Ann West","phone":"(617) 555-0000","email":"","address":"31 Lee St., Marblehead, MA 01945"},
-  {"name":"Bill Fuller","phone":"","email":"","address":"Marblehead, MA 01906"},
-  {"name":"Bob Hansen","phone":"","email":"","address":"119 Water St. Unit 64, Salem, MA 01906"},
-  {"name":"Corman Bags Co.","phone":"","email":"","address":"36 Arlington Street, Chelsea, MA 02150"},
-  {"name":"Crest Pizzeria","phone":"","email":"","address":"35 Crest Ave, Winthrop, MA 02152"},
-  {"name":"Dan Deven","phone":"","email":"","address":"Marblehead, MA"},
-  {"name":"Deborah Wetmore","phone":"","email":"","address":"886 West Hill Road, Warren, VT 05674"},
-  {"name":"Eric Appel","phone":"","email":"","address":"8 George Street, Cambridge, MA 02140"},
-  {"name":"Erica Pelaccia","phone":"","email":"","address":"81 Prindle Ave, Ansonia, CT 06401"},
-  {"name":"Fay Ginsberg","phone":"","email":"","address":"65 East India Row #20G, Boston, MA 02110"},
-  {"name":"Faye Hinsley","phone":"","email":"","address":"65 East India Row #20G, Boston, MA 02110"},
-  {"name":"Fiory's Variatie","phone":"","email":"","address":""},
-  {"name":"Gordon College","phone":"","email":"","address":"Grapevine Rd., Wenham, MA"},
-  {"name":"Hansen Marine","phone":"(781) 631-3282","email":"","address":"32 Tioga Way, Marblehead, MA 01945"},
-  {"name":"Jacquelyn Hawkson","phone":"","email":"","address":"91 Grant St., Lexington, MA 02420"},
-  {"name":"Jim Lavelle","phone":"","email":"","address":"211 Mason Terrace, Brookline, MA 02446"},
-  {"name":"Joanne Ferris","phone":"","email":"jferris@eliotchs.org","address":"95 Pleasant St., Lynn, MA 01901"},
-  {"name":"Jode Livingston","phone":"","email":"mlivingston0012@gmail.com","address":"28 Myrtle St. Unit 1, Boston, MA 02114"},
-  {"name":"Kenn Mark","phone":"","email":"","address":"26 Washington Sq., Marblehead, MA 01906"},
-  {"name":"Kenneth Martin","phone":"","email":"","address":"24 Harbor Ave., Marblehead, MA 01945"},
-  {"name":"Lee Oestreicher","phone":"","email":"","address":"45 Longwood Ave. #103, Brookline, MA 02446"},
-  {"name":"Lion River Properties","phone":"","email":"","address":"45 Longwood Ave. #103, Brookline, MA 02446"},
-  {"name":"Lisa (Dyacme Prop. Mgmt.)","phone":"","email":"","address":"Goodwins Court, Marblehead, MA"},
-  {"name":"Nicholas Erpelding","phone":"","email":"","address":"Attn: Lisa Gallager"},
-  {"name":"Pauline Donnelly","phone":"","email":"Pauline@donnellyandco.com","address":"12 Darling St. #3, Marblehead, MA 01945"},
-  {"name":"Peter Calakoutis","phone":"","email":"","address":"LynnFells Pkwy, Saugus, MA 01907"},
-  {"name":"Phil Fuller (Londonderry)","phone":"","email":"","address":"17 S Parrish Drive, Londonderry, NH 03053"},
-  {"name":"Phil Fuller (The Villages)","phone":"","email":"","address":"1325 Gaston Loop, The Villages, FL 32162"},
-  {"name":"Robert Mattson","phone":"818-414-7513","email":"valleyspaservices@yahoo.com","address":"13825 Victory Blvd #1, Valley Glen, CA 91401"},
-  {"name":"Scott Stilianos","phone":"","email":"sstili@icloud.com","address":"1 Bengal Lane, Salem, MA 01906"},
-  {"name":"Socs' Ice Cream","phone":"","email":"","address":"67 Lynnfells Pkwy, Saugus, MA 01906"},
-  {"name":"Trevor Parsons","phone":"","email":"","address":"106 Galloupes Road, Swampscott, MA 01907"},
-  {"name":"Victoria Fitzgerald","phone":"","email":"ilsognoinchianti@gmail.com","address":""},
-  {"name":"Nadir Vieira","phone":"","email":"","address":"58 Atkins Ave. Basement, Lynn, MA 01904"}
-];
-
-function migrateData() {
-  if(confirm("This will upload all 35 local clients to Firebase. Continue?")) {
-    localData.forEach(client => db.ref('clients').push(client));
-    showToast("Migration complete!");
-  }
+function billClient(k) {
+  const c = clients[k];
+  const html = `<html><body style="font-family:sans-serif; padding:40px;">
+    <h1>INVOICE</h1><p>Client: ${c.name}</p><p>Address: ${c.address}</p>
+    <hr><p>Service: Cleaning</p><p>Total: $____</p>
+    <button onclick="window.print()">Print Invoice</button>
+  </body></html>`;
+  const win = window.open('','_blank');
+  win.document.write(html);
 }
 </script>
 </body>
 </html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Janete's Cleaners — Firebase Suite</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-/* CSS remains exactly the same as your CoWork version */
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1C1C1E;min-height:100vh;font-size:14px}
-.topbar{background:#C41A1A;color:#fff;display:flex;align-items:stretch;border-radius:0 0 10px 10px;overflow:hidden}
-.topbar-brand{background:#1C1C1E;padding:14px 22px;display:flex;flex-direction:column;justify-content:center;min-width:190px}
-.topbar-brand .bname{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#FAF7F2;line-height:1}
-.topbar-brand .bsub{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
-.topbar-alert{flex:1;display:flex;align-items:center;padding:12px 20px;gap:10px}
-.topbar-alert .atitle{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;line-height:1}
-.topbar-alert .asub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px}
-.nav{display:flex;padding:0 16px;background:#fff;border-bottom:1px solid #E5E5E5}
-.nav-tab{padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:#666;transition:all 0.15s;white-space:nowrap}
-.nav-tab.active{color:#C41A1A;border-bottom-color:#C41A1A}
-.page{display:none;padding:16px}
-.page.active{display:block}
-.grid-2{display:grid;grid-template-columns:1fr 300px;gap:16px}
-.card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden}
-.card-head{padding:11px 16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
-.ctitle{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.2px;color:#1C1C1E}
-.card-body{padding:16px}
-.search-row{padding:10px 16px;border-bottom:1px solid #E5E5E5;display:flex;gap:8px}
-.search-row input{flex:1;border:1px solid #DDD;border-radius:6px;padding:7px 11px;font-family:'DM Sans',sans-serif;font-size:13px;background:#F9F9F7;color:#1C1C1E;outline:none}
-.search-row input:focus{border-color:#C41A1A}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-thead th{padding:7px 10px;text-align:left;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;color:#888;font-weight:600;border-bottom:1px solid #E5E5E5;background:#F9F9F7}
-tbody tr{border-bottom:1px solid #F0F0F0;cursor:pointer;transition:background 0.12s}
-tbody tr:hover{background:#F9F9F7}
-tbody td{padding:8px 10px;color:#555}
-tbody td:first-child{color:#1C1C1E;font-weight:500}
-.act-cell{display:flex;gap:4px;flex-wrap:wrap}
-.btn-xs{padding:4px 8px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:opacity 0.13s;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
-.btn-xs:hover{opacity:0.8}
-.btn-rem{background:#FFF3CD;color:#7A5200}
-.btn-bill{background:#D1E7DD;color:#0A3622}
-.btn-skip{background:#FCEBEB;color:#A32D2D}
-.empty-td{text-align:center;color:#999;padding:24px;font-size:13px}
-label.flabel{display:block;font-size:10px;font-weight:600;letter-spacing:0.9px;text-transform:uppercase;color:#888;margin-bottom:4px}
-.finput{width:100%;border:1px solid #DDD;border-radius:6px;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:13px;color:#1C1C1E;background:#F9F9F7;outline:none;transition:border-color 0.15s}
-.finput:focus{border-color:#C41A1A}
-textarea.finput{resize:vertical;min-height:55px}
-.fg{margin-bottom:11px}
-.btn-main{width:100%;padding:10px;background:#1C1C1E;color:#FAF7F2;border:none;border-radius:7px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer;transition:background 0.15s}
-.btn-main:hover{background:#C41A1A}
-.btn-sec{width:100%;margin-top:6px;padding:7px;background:transparent;color:#888;border:1px solid #DDD;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer}
-.btn-sec:hover{background:#F5F3EE}
-.badge{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:500;background:#F5F3EE;color:#888;border:1px solid #E5E5E5}
-.badge-red{background:#FCEBEB;color:#A32D2D;border-color:#F7C1C1}
-.toast{position:fixed;bottom:16px;right:16px;background:#1C1C1E;color:#FAF7F2;padding:10px 16px;border-radius:8px;font-size:13px;opacity:0;transform:translateY(8px);transition:all 0.25s;pointer-events:none;z-index:300;max-width:280px}
-.toast.show{opacity:1;transform:translateY(0)}
-</style>
-</head>
-<body>
-
-<div class="topbar">
-  <div class="topbar-brand"><div class="bname">Janete's Cleaners</div><div class="bsub">Management Suite</div></div>
-  <div class="topbar-alert">
-    <div><div class="atitle">Skip Policy Active</div><div class="asub">$50 fee for cancellations under 24 hours notice.</div></div>
-  </div>
-</div>
-
-<div class="nav">
-  <div class="nav-tab active" onclick="switchPage('dashboard',this)">Dashboard</div>
-  <div class="nav-tab" onclick="switchPage('skips',this)">Skip Tracker</div>
-</div>
-
-<div class="page active" id="page-dashboard">
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-head">
-        <span class="ctitle">Client Directory</span>
-        <span class="badge" id="client-count">Loading...</span>
-      </div>
-      <div class="search-row">
-        <input type="text" id="searchInput" placeholder="Search name..." oninput="renderTable()">
-      </div>
-      <div style="overflow-x:auto">
-        <table>
-          <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="ctitle" id="form-title">Add / Edit Client</span></div>
-      <div class="card-body">
-        <input type="hidden" id="editKey" value="">
-        <div class="fg"><label class="flabel">Name</label><input class="finput" id="f-name"></div>
-        <div class="fg"><label class="flabel">Phone</label><input class="finput" id="f-phone"></div>
-        <div class="fg"><label class="flabel">Email</label><input class="finput" id="f-email"></div>
-        <div class="fg"><label class="flabel">Address</label><input class="finput" id="f-address"></div>
-        <button class="btn-main" onclick="submitForm()">Save to Firebase</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-// Firebase Config - Using your identified Project ID
-const firebaseConfig = {
-  apiKey: "AIzaSyBFBm8_E8BW2yPOLSmTCuD93Yiy3I5_XcY",
-  authDomain: "janete-s-cleaners.firebaseapp.com",
-  databaseURL: "https://janete-s-cleaners-default-rtdb.firebaseio.com",
-  projectId: "janete-s-cleaners",
-  storageBucket: "janete-s-cleaners.appspot.com",
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const clientsRef = db.ref("clients");
-
-let clients = {};
-
-// Load data from Firebase
-clientsRef.on('value', (snapshot) => {
-  clients = snapshot.val() || {};
-  renderTable();
-});
-
-function renderTable() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const tb = document.getElementById('tableBody');
-  const keys = Object.keys(clients).filter(k => clients[k].name.toLowerCase().includes(q));
-  
-  document.getElementById('client-count').textContent = Object.keys(clients).length + ' clients';
-  
-  tb.innerHTML = keys.map(k => `
-    <tr>
-      <td>${clients[k].name}</td>
-      <td>${clients[k].phone || '---'}</td>
-      <td>${clients[k].email || '---'}</td>
-      <td class="act-cell">
-        <button class="btn-xs btn-rem" onclick="editClient('${k}')">Edit</button>
-        <button class="btn-xs btn-skip" onclick="deleteClient('${k}')">Delete</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function submitForm() {
-  const name = document.getElementById('f-name').value;
-  const key = document.getElementById('editKey').value;
-  const data = {
-    name,
-    phone: document.getElementById('f-phone').value,
-    email: document.getElementById('f-email').value,
-    address: document.getElementById('f-address').value
-  };
-
-  if (key) {
-    db.ref('clients/' + key).update(data);
-    showToast("Updated " + name);
-  } else {
-    db.ref('clients').push(data);
-    showToast("Added " + name);
-  }
-  clearForm();
-}
-
-function editClient(k) {
-  document.getElementById('editKey').value = k;
-  document.getElementById('f-name').value = clients[k].name;
-  document.getElementById('f-phone').value = clients[k].phone;
-  document.getElementById('f-email').value = clients[k].email;
-  document.getElementById('f-address').value = clients[k].address;
-}
-
-function deleteClient(k) {
-  if(confirm("Delete this client?")) db.ref('clients/' + k).remove();
-}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-function clearForm() {
-  document.getElementById('editKey').value = "";
-  ['f-name','f-phone','f-email','f-address'].forEach(id => document.getElementById(id).value = "");
-}
-</script>
 </body>
 </html>
