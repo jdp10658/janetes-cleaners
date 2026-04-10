@@ -1,184 +1,209 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Janete's Cleaners — Management Suite</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Janete's Cleaners — Management Suite</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+    /* CSS FROM COWORK MODEL */
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1C1C1E;min-height:100vh;}
-    .topbar{background:#C41A1A;color:#fff;display:flex;padding:12px 20px;justify-content:space-between;align-items:center;}
-    .policy-alert{font-size:12px;font-weight:700;letter-spacing:0.5px;}
-    .nav{display:flex;background:#fff;border-bottom:1px solid #DDD;overflow-x:auto;}
-    .nav-tab{padding:14px 20px;cursor:pointer;font-weight:600;font-size:13px;color:#666;border-bottom:3px solid transparent;}
-    .nav-tab.active{color:#C41A1A;border-bottom-color:#C41A1A;}
-    .page{display:none;padding:20px;}
-    .page.active{display:block;}
-    .grid{display:grid;grid-template-columns:1fr 350px;gap:20px;}
-    @media(max-width:900px){.grid{grid-template-columns:1fr;}}
-    .card{background:#fff;border-radius:12px;border:1px solid #E5E5E5;overflow:hidden;margin-bottom:20px;}
-    .card-head{padding:15px;background:#F9F9F7;border-bottom:1px solid #EEE;font-family:'Bebas Neue';font-size:18px;}
-    table{width:100%;border-collapse:collapse;font-size:13px;}
-    th{text-align:left;padding:12px;background:#F1F1EF;color:#888;font-size:10px;text-transform:uppercase;}
-    td{padding:12px;border-bottom:1px solid #F0F0F0;}
-    .btn-xs{padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;margin-right:4px;text-decoration:none;display:inline-block;}
-    .btn-rem{background:#FFF3CD;color:#7A5200;} .btn-bill{background:#1C1C1E;color:#FFF;} .btn-skip{background:#FCEBEB;color:#A32D2D;}
-    .finput{width:100%;border:1px solid #DDD;border-radius:8px;padding:10px;margin-bottom:10px;font-family:inherit;}
-    .btn-main{width:100%;padding:14px;background:#C41A1A;color:#fff;border:none;border-radius:8px;font-family:'Bebas Neue';font-size:18px;cursor:pointer;}
+    body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1C1C1E;min-height:100vh;font-size:14px}
+    .topbar{background:#C41A1A;color:#fff;display:flex;align-items:stretch;border-radius:0 0 10px 10px;overflow:hidden}
+    .topbar-brand{background:#1C1C1E;padding:14px 22px;display:flex;flex-direction:column;justify-content:center;min-width:190px}
+    .topbar-brand .bname{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#FAF7F2;line-height:1}
+    .topbar-alert{flex:1;display:flex;align-items:center;padding:12px 20px;gap:10px}
+    .topbar-alert .atitle{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;line-height:1}
+    .topbar-alert .asub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px}
+    .nav{display:flex;padding:0 16px;background:#fff;border-bottom:1px solid #E5E5E5;overflow-x:auto}
+    .nav-tab{padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:#666;transition:all 0.15s;white-space:nowrap}
+    .nav-tab.active{color:#C41A1A;border-bottom-color:#C41A1A}
+    .page{display:none;padding:16px}
+    .page.active{display:block}
+    .grid-2{display:grid;grid-template-columns:1fr 310px;gap:16px}
+    .card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden}
+    .card-head{padding:11px 16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between;gap:6px}
+    .ctitle{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.2px;color:#1C1C1E}
+    .search-row{padding:10px 16px;border-bottom:1px solid #E5E5E5}
+    .search-row input{width:100%;border:1px solid #DDD;border-radius:6px;padding:7px 11px;font-size:13px;background:#F9F9F7;outline:none}
+    table{width:100%;border-collapse:collapse;font-size:12.5px}
+    thead th{padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#888;background:#F9F9F7;border-bottom:1px solid #E5E5E5}
+    tbody tr{border-bottom:1px solid #F0F0F0}
+    tbody td{padding:8px 10px;color:#555}
+    .btn-xs{padding:4px 8px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:3px}
+    .btn-rem{background:#FFF3CD;color:#7A5200}
+    .btn-bill{background:#D1E7DD;color:#0A3622}
+    .btn-skip{background:#FCEBEB;color:#A32D2D}
+    .finput{width:100%;border:1px solid #DDD;border-radius:6px;padding:8px 11px;font-size:13px;background:#F9F9F7;margin-bottom:11px;outline:none}
+    .btn-main{width:100%;padding:10px;background:#1C1C1E;color:#FAF7F2;border:none;border-radius:7px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer}
+    .btn-main:hover{background:#C41A1A}
     #login-screen{position:fixed;inset:0;background:#1C1C1E;z-index:1000;display:flex;align-items:center;justify-content:center;}
     .hidden{display:none !important;}
-</style>
-</head>
-<body>
-
-<div id="login-screen">
-    <div style="background:white;padding:40px;border-radius:15px;width:350px;text-align:center;">
-        <h2 style="font-family:'Bebas Neue';font-size:32px;">Janete's Login</h2>
-        <input type="email" id="login-email" placeholder="Email" class="finput" style="margin-top:20px;">
-        <input type="password" id="login-pass" placeholder="Password" class="finput">
-        <button class="btn-main" onclick="handleLogin()">Unlock Suite</button>
+    /* CALENDAR STYLES */
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+    .cal-day-head{text-align:center;font-size:10px;color:#999;padding:3px 0}
+    .cal-day{min-height:40px;border-radius:5px;border:1px solid #E5E5E5;padding:3px 4px;cursor:pointer;background:#fff}
+    </style>
+    </head>
+    <body>
+    
+    <div id="login-screen">
+        <div style="background:white;padding:40px;border-radius:15px;width:350px;text-align:center;">
+            <h2 style="font-family:'Bebas Neue';font-size:32px;">Staff Login</h2>
+            <input type="email" id="login-email" placeholder="Email" class="finput" style="margin-top:20px;">
+            <input type="password" id="login-pass" placeholder="Password" class="finput">
+            <button class="btn-main" onclick="handleLogin()">Unlock Suite</button>
+            <p id="login-error" style="color:red;font-size:11px;margin-top:10px;"></p>
+        </div>
     </div>
-</div>
-
-<div id="main-app" class="hidden">
-    <div class="topbar">
-        <div style="font-family:'Bebas Neue';font-size:22px;">JANETE'S CLEANERS</div>
-        <div class="policy-alert">⚠️ SKIP POLICY: $50 FEE FOR CANCELLATIONS UNDER 24H</div>
-    </div>
-
-    <div class="nav">
-        <div class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</div>
-        <div class="nav-tab" onclick="switchTab('schedule')">Schedule</div>
-        <div class="nav-tab" onclick="switchTab('skips')">Skip Tracker</div>
-        <div class="nav-tab" onclick="switchTab('pricing')">Services & Pricing</div>
-    </div>
-
-    <main id="dashboard" class="page active">
-        <div class="grid">
-            <div class="card">
-                <div class="card-head">Client Management</div>
-                <table>
-                    <thead><tr><th>Name</th><th>Contact Pref</th><th>Actions</th></tr></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-            <div class="card">
-                <div class="card-head">Add / Edit Client</div>
-                <div style="padding:20px;">
-                    <input type="hidden" id="editKey">
-                    <input class="finput" id="f-name" placeholder="Name">
-                    <input class="finput" id="f-phone" placeholder="Phone">
-                    <select class="finput" id="f-pref">
-                        <option value="SMS">Prefers: SMS</option>
-                        <option value="Call">Prefers: Phone Call</option>
-                        <option value="Email">Prefers: Email</option>
-                    </select>
-                    <textarea class="finput" id="f-address" placeholder="Address"></textarea>
-                    <button class="btn-main" onclick="saveClient()">Save to Cloud</button>
+    
+    <div id="main-app" class="hidden">
+        <div class="topbar">
+          <div class="topbar-brand"><div class="bname">Janete's Cleaners</div></div>
+          <div class="topbar-alert">
+            <div><div class="atitle">Skip Policy Active</div><div class="asub">$50 fee for cancellations under 24 hours.</div></div>
+          </div>
+        </div>
+    
+        <div class="nav">
+          <div class="nav-tab active" onclick="switchPage('dashboard',this)">Dashboard</div>
+          <div class="nav-tab" onclick="switchPage('schedule',this)">Schedule</div>
+          <div class="nav-tab" onclick="switchPage('skips',this)">Skip Tracker</div>
+          <div class="nav-tab" onclick="switchPage('services',this)">Services & Pricing</div>
+        </div>
+    
+        <main id="page-dashboard" class="page active">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-head"><span class="ctitle">Client Directory</span></div>
+                    <div class="search-row"><input type="text" id="searchInput" placeholder="Search..." oninput="renderTable()"></div>
+                    <table>
+                        <thead><tr><th>Name</th><th>Pref</th><th>Actions</th></tr></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="card-head"><span class="ctitle">Add Client</span></div>
+                    <div style="padding:16px;">
+                        <input type="hidden" id="editKey">
+                        <input class="finput" id="f-name" placeholder="Name">
+                        <input class="finput" id="f-phone" placeholder="Phone">
+                        <select class="finput" id="f-comm">
+                            <option value="SMS">SMS</option>
+                            <option value="Email">Email</option>
+                            <option value="Phone Call">Phone Call</option>
+                        </select>
+                        <textarea class="finput" id="f-address" placeholder="Address"></textarea>
+                        <button class="btn-main" onclick="saveClient()">Save to Cloud</button>
+                        <button class="btn-main" onclick="auth.signOut()" style="background:#888; margin-top:10px;">Log Out</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
-
-    <main id="schedule" class="page"><div class="card"><div class="card-head">Calendar</div><div style="padding:40px;text-align:center;">Calendar Integration Loading...</div></div></main>
-    <main id="skips" class="page"><div class="card"><div class="card-head">Skip Tracker</div><div style="padding:20px;">No recent skips recorded.</div></div></main>
-    <main id="pricing" class="page"><div class="card"><div class="card-head">Services</div><div style="padding:20px;">Standard: $150+ | Deep Clean: $250+</div></div></main>
-</div>
-
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBFBm8_E8BW2yPOLSmTCuD93Yiy3I5_XcY",
-  authDomain: "janete-s-cleaners.firebaseapp.com",
-  databaseURL: "https://janete-s-cleaners-default-rtdb.firebaseio.com",
-  projectId: "janete-s-cleaners",
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.database();
-let clients = {};
-
-auth.onAuthStateChanged(user => {
-    if (user) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('main-app').classList.remove('hidden');
-        db.ref("clients").on('value', snap => { clients = snap.val() || {}; renderTable(); });
-    }
-});
-
-function handleLogin() {
-    auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value)
-    .catch(e => alert(e.message));
-}
-
-function switchTab(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    event.currentTarget.classList.add('active');
-}
-
-function renderTable() {
-    const tb = document.getElementById('tableBody');
-    tb.innerHTML = Object.keys(clients).map(k => {
-        const c = clients[k];
-        const smsMsg = encodeURIComponent(`Hi ${c.name}, confirming your cleaning for tomorrow!`);
-        return `<tr>
-            <td><strong>${c.name}</strong><br><small>${c.address || ''}</small></td>
-            <td><span style="font-size:10px;background:#EEE;padding:2px 6px;border-radius:4px;">${c.pref || 'SMS'}</span></td>
-            <td>
-                <button class="btn-xs btn-rem" onclick="editClient('${k}')">Edit</button>
-                <a href="sms:+1${(c.phone||'').replace(/\D/g,'')}?body=${smsMsg}" class="btn-xs btn-rem" style="background:#E0F1FF;color:#004085;">Remind</a>
-                <button class="btn-xs btn-bill" onclick="billClient('${k}')">Bill</button>
-                <button class="btn-xs btn-skip" onclick="deleteClient('${k}')">🗑</button>
-            </td>
-        </tr>`;
-    }).join('');
-}
-
-function saveClient() {
-    const key = document.getElementById('editKey').value;
-    const data = {
-        name: document.getElementById('f-name').value,
-        phone: document.getElementById('f-phone').value,
-        address: document.getElementById('f-address').value,
-        pref: document.getElementById('f-pref').value
+        </main>
+    
+        <main id="page-schedule" class="page">
+            <div class="card"><div class="card-head"><span class="ctitle">Calendar</span></div>
+            <div style="padding:16px;"><div class="cal-grid" id="calGrid"></div></div></div>
+        </main>
+    
+        <main id="page-skips" class="page">
+            <div class="card"><div class="card-head"><span class="ctitle">Skip History</span></div>
+            <div style="padding:16px;" id="skipHistory">No skips logged.</div></div>
+        </main>
+    
+        <main id="page-services" class="page">
+            <div class="card"><div class="card-head"><span class="ctitle">Prices</span></div>
+            <div style="padding:16px;" id="serviceList"></div></div>
+        </main>
+    </div>
+    
+    <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBFBm8_E8BW2yPOLSmTCuD93Yiy3I5_XcY",
+      authDomain: "janete-s-cleaners.firebaseapp.com",
+      databaseURL: "https://janete-s-cleaners-default-rtdb.firebaseio.com",
+      projectId: "janete-s-cleaners",
     };
-    if(key) db.ref('clients/'+key).update(data); else db.ref('clients').push(data);
-    ['editKey','f-name','f-phone','f-address'].forEach(id => document.getElementById(id).value="");
-}
-
-function editClient(k) {
-    const c = clients[k];
-    document.getElementById('editKey').value = k;
-    document.getElementById('f-name').value = c.name;
-    document.getElementById('f-phone').value = c.phone || '';
-    document.getElementById('f-address').value = c.address || '';
-    document.getElementById('f-pref').value = c.pref || 'SMS';
-}
-
-function deleteClient(k) { if(confirm("Delete?")) db.ref('clients/'+k).remove(); }
-
-function billClient(k) {
-    const c = clients[k];
-    const price = prompt("Enter Price for " + c.name, "150.00");
-    const desc = prompt("Service Description", "Standard Professional Cleaning");
-    if(!price) return;
-
-    const html = `<html><body style="font-family:sans-serif;padding:40px;">
-        <h1 style="color:#C41A1A;">JANETE'S CLEANERS INVOICE</h1>
-        <p><strong>Customer:</strong> ${c.name}</p>
-        <p><strong>Service:</strong> ${desc}</p>
-        <h2 style="border-top:2px solid #000;padding-top:10px;">TOTAL DUE: $${price}</h2>
-        <button onclick="window.print()">Print / Save PDF</button>
-    </body></html>`;
-    const win = window.open('','_blank');
-    win.document.write(html);
-}
-</script>
-</body>
-</html>
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    let clients = {};
+    
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            db.ref("clients").on('value', snap => { clients = snap.val() || {}; renderTable(); });
+            buildCalendar();
+        } else {
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('hidden');
+        }
+    });
+    
+    function handleLogin() {
+        auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value)
+        .catch(e => document.getElementById('login-error').textContent = e.message);
+    }
+    
+    function switchPage(id, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('page-' + id).classList.add('active');
+        el.classList.add('active');
+    }
+    
+    function renderTable() {
+        const tb = document.getElementById('tableBody');
+        tb.innerHTML = Object.keys(clients).map(k => {
+            const c = clients[k];
+            const rawPhone = (c.phone||'').replace(/\D/g,'');
+            // FIXED SMS LINK COMPATIBILITY
+            const smsLink = `sms:+1${rawPhone}?&body=${encodeURIComponent("Hi "+c.name+", this is Janete's Cleaners.")}`;
+            return `<tr>
+                <td><strong>${c.name}</strong><br><small>${c.address || ''}</small></td>
+                <td>${c.comm || 'SMS'}</td>
+                <td>
+                    <a href="${smsLink}" class="btn-xs btn-rem">Remind</a>
+                    <button class="btn-xs btn-bill" onclick="billClient('${k}')">Bill</button>
+                    <button class="btn-xs btn-skip" onclick="deleteClient('${k}')">🗑</button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+    
+    function saveClient() {
+        const key = document.getElementById('editKey').value;
+        const data = {
+            name: document.getElementById('f-name').value,
+            phone: document.getElementById('f-phone').value,
+            comm: document.getElementById('f-comm').value,
+            address: document.getElementById('f-address').value
+        };
+        if(key) db.ref('clients/'+key).update(data); else db.ref('clients').push(data);
+    }
+    
+    function billClient(k) {
+        const c = clients[k];
+        const price = prompt("Enter Price", "150.00");
+        const desc = prompt("Description", "Cleaning Service");
+        if(!price) return;
+        const win = window.open('','_blank');
+        win.document.write(`<html><body><h1>Invoice</h1><p>${c.name}</p><p>${desc}: $${price}</p><button onclick="window.print()">Print</button></body></html>`);
+    }
+    
+    function buildCalendar() {
+        const grid = document.getElementById('calGrid');
+        let html = '';
+        for(let i=1; i<=31; i++) html += `<div class="cal-day">${i}</div>`;
+        grid.innerHTML = html;
+    }
+    
+    function deleteClient(k) { if(confirm("Delete?")) db.ref('clients/'+k).remove(); }
+    </script>
+    </body>
+    </html>
