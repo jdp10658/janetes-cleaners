@@ -3,526 +3,195 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Janete's Cleaners</title>
+<title>Janete's Cleaners — Firebase Suite</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--primary:#1a1a2e;--accent:#e94560;--gold:#f5a623;--light:#f8f9fa;--card:#fff;--border:#e0e0e0;--text:#2d2d2d;--muted:#888;--success:#27ae60;--danger:#e74c3c;}
-  *{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Segoe UI',sans-serif;background:var(--light);color:var(--text);}
-  #auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);}
-  .auth-box{background:white;border-radius:16px;padding:48px 40px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,.4);text-align:center;}
-  .auth-box h1{color:var(--primary);font-size:1.8rem;margin-bottom:8px;}.auth-box p{color:var(--muted);margin-bottom:28px;}
-  .auth-box input{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:8px;font-size:1rem;margin-bottom:16px;outline:none;}
-  .auth-box input:focus{border-color:var(--accent);}
-  .auth-box button{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;}
-  .auth-error{color:var(--danger);font-size:.85rem;margin-top:8px;}
-  #manager-app{display:none;}
-  .top-bar{background:var(--primary);color:white;padding:0 20px;display:flex;align-items:center;gap:4px;height:60px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
-  .top-bar .logo{font-size:1rem;font-weight:700;color:var(--gold);flex:1;white-space:nowrap;}
-  .tab-btn{background:none;border:none;color:rgba(255,255,255,.7);font-size:.82rem;padding:7px 10px;border-radius:6px;cursor:pointer;font-weight:500;position:relative;white-space:nowrap;}
-  .tab-btn.active,.tab-btn:hover{background:rgba(255,255,255,.15);color:white;}
-  .notif-badge{position:absolute;top:2px;right:2px;background:var(--accent);color:white;font-size:.62rem;font-weight:700;border-radius:10px;padding:1px 4px;min-width:14px;text-align:center;}
-  .main-content{padding:20px;max-width:1400px;margin:0 auto;}
-  .tab-panel{display:none;}.tab-panel.active{display:block;}
-  .two-col{display:grid;grid-template-columns:1fr 360px;gap:20px;}
-  .cal-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;}
-  .card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-  .card h2{font-size:1rem;font-weight:700;margin-bottom:14px;color:var(--primary);}
-  .form-group{margin-bottom:12px;}
-  .form-group label{display:block;font-size:.76rem;font-weight:600;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
-  .form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:.88rem;outline:none;font-family:inherit;}
-  .form-group input:focus,.form-group select:focus{border-color:var(--accent);}
-  .btn{padding:9px 18px;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;}
-  .btn-primary{background:var(--accent);color:white;}.btn-sm{padding:5px 11px;font-size:.78rem;}.btn-outline{background:none;border:2px solid var(--border);color:var(--text);}
-  table{width:100%;border-collapse:collapse;}
-  th{text-align:left;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:9px 10px;border-bottom:2px solid var(--border);}
-  td{padding:10px;border-bottom:1px solid #f0f0f0;font-size:.88rem;vertical-align:middle;}
-  tr:hover td{background:#fafafa;}
-  .link-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:3px 9px;font-size:.74rem;cursor:pointer;color:var(--primary);}
-  .link-btn:hover{background:var(--primary);color:white;border-color:var(--primary);}
-  .cal-header-row{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;}
-  .cal-day-label{text-align:center;font-size:.72rem;font-weight:700;color:var(--muted);padding:5px 0;}
-  .cal-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-  .cal-month-nav h3{font-size:.95rem;font-weight:700;}
-  .cal-nav-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:3px 10px;cursor:pointer;}
-  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-  .cal-cell{min-height:66px;border:1.5px solid var(--border);border-radius:7px;padding:5px;cursor:pointer;background:white;}
-  .cal-cell:hover{border-color:var(--accent);}
-  .cal-cell.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(233,69,96,.25);background:#fff5f7;}
-  .cal-cell.today{border-color:var(--gold);}
-  .cal-cell.empty{background:#f9f9f9;cursor:default;border-color:transparent;}
-  .cal-date-num{font-size:.72rem;font-weight:700;color:var(--muted);}
-  .cal-cell.today .cal-date-num{color:var(--gold);}
-  .client-chip{display:inline-block;background:var(--primary);color:white;font-size:.65rem;padding:2px 6px;border-radius:9px;margin:1px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
-  .client-chip:hover{background:var(--accent);}
-  .msg-layout{display:grid;grid-template-columns:280px 1fr;min-height:500px;}
-  .msg-thread-item{padding:12px 14px;border-radius:9px;cursor:pointer;margin-bottom:5px;border:1.5px solid transparent;}
-  .msg-thread-item:hover{background:#f8f9fa;border-color:var(--border);}
-  .msg-thread-item.active{background:#fff5f7;border-color:var(--accent);}
-  .msg-client-name{font-weight:700;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;}
-  .msg-preview{font-size:.78rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .msg-time{font-size:.7rem;color:var(--muted);}
-  .unread-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;}
-  .chat-window{display:flex;flex-direction:column;height:500px;width:100%;}
-  .chat-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-  .chat-header h3{font-size:.95rem;font-weight:700;}
-  .chat-messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px;}
-  .chat-bubble{max-width:75%;padding:9px 13px;border-radius:15px;font-size:.88rem;line-height:1.5;}
-  .chat-bubble.client{background:#f0f4f8;color:var(--text);align-self:flex-start;border-bottom-left-radius:3px;}
-  .chat-bubble.manager{background:var(--primary);color:white;align-self:flex-end;border-bottom-right-radius:3px;}
-  .bubble-meta{font-size:.7rem;opacity:.6;margin-top:3px;}
-  .chat-input-area{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:9px;}
-  .chat-input-area textarea{flex:1;border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;font-size:.88rem;resize:none;height:42px;font-family:inherit;outline:none;}
-  .chat-input-area textarea:focus{border-color:var(--accent);}
-  .invoice-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;}
-  .invoice-modal.open{display:flex;}
-  .invoice-box{background:white;border-radius:16px;padding:36px;width:580px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.3);}
-  .invoice-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;}
-  .invoice-biz h2{font-size:1.4rem;font-weight:800;color:var(--primary);}
-  .invoice-biz p{color:var(--muted);font-size:.83rem;}
-  .invoice-num{text-align:right;}.invoice-num .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-  .invoice-num .val{font-size:1.05rem;font-weight:700;color:var(--accent);}
-  .invoice-section{margin-bottom:20px;}
-  .invoice-section h4{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:7px;}
-  .invoice-table{width:100%;border-collapse:collapse;}
-  .invoice-table th{text-align:left;font-size:.78rem;color:var(--muted);padding:7px 0;border-bottom:2px solid var(--border);}
-  .invoice-table td{padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:.88rem;}
-  .invoice-total{text-align:right;margin-top:14px;font-size:1.15rem;font-weight:800;color:var(--primary);}
-  .invoice-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
-  .skip-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center;}
-  .skip-modal.open{display:flex;}
-  .skip-box{background:white;border-radius:16px;padding:30px;width:350px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;}
-  .skip-box h3{font-size:1.15rem;font-weight:700;margin-bottom:7px;}.skip-box p{color:var(--muted);margin-bottom:22px;}
-  .skip-actions{display:flex;gap:10px;justify-content:center;}
-  #client-app{display:none;min-height:100vh;background:#0f0f1a;}
-  .client-header{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white;padding:28px 20px;text-align:center;border-bottom:3px solid var(--accent);}
-  .client-header h1{font-size:1.7rem;font-weight:800;color:var(--gold);}.client-header p{color:rgba(255,255,255,.6);margin-top:5px;}
-  .client-content{max-width:660px;margin:0 auto;padding:20px;}
-  .client-card{background:#1a1a2e;border-radius:13px;padding:20px;margin-bottom:18px;border:1px solid rgba(255,255,255,.08);}
-  .client-card h2{font-size:.95rem;font-weight:700;color:var(--gold);margin-bottom:14px;}
-  .appt-item{padding:13px;border:1px solid rgba(255,255,255,.1);border-radius:9px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.04);}
-  .appt-info{font-weight:600;font-size:.9rem;color:white;}.appt-sub{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:2px;}
-  .badge{padding:3px 9px;border-radius:18px;font-size:.73rem;font-weight:700;}
-  .badge-green{background:#1a4a2e;color:#4caf82;}.badge-red{background:#4a1a1a;color:#e74c3c;}.badge-blue{background:#1a2a4a;color:#5b9bd5;}
-  .policy-box{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);border-radius:9px;padding:14px;}
-  .policy-box p{font-size:.86rem;line-height:1.6;color:rgba(255,255,255,.7);}
-  .client-chat-messages{min-height:180px;max-height:300px;overflow-y:auto;padding:14px;background:rgba(0,0,0,.2);border-radius:9px;margin-bottom:10px;display:flex;flex-direction:column;gap:9px;}
-  .client-bubble{max-width:80%;padding:9px 13px;border-radius:13px;font-size:.86rem;line-height:1.5;}
-  .client-bubble.sent{background:var(--accent);color:white;align-self:flex-end;border-bottom-right-radius:3px;}
-  .client-bubble.received{background:rgba(255,255,255,.12);color:white;align-self:flex-start;border-bottom-left-radius:3px;}
-  .bubble-time{font-size:.68rem;opacity:.6;margin-top:3px;}
-  .client-chat-input{display:flex;gap:9px;}
-  .client-chat-input textarea{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:9px;padding:9px 13px;color:white;font-size:.88rem;resize:none;height:42px;font-family:inherit;outline:none;}
-  .client-chat-input textarea::placeholder{color:rgba(255,255,255,.3);}
-  .client-chat-input textarea:focus{border-color:var(--accent);}
-  .client-send-btn{background:var(--accent);color:white;border:none;border-radius:9px;padding:0 18px;font-weight:700;cursor:pointer;font-size:1.1rem;}
-  .client-topic-sel{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:7px;padding:9px 11px;color:white;font-size:.88rem;margin-bottom:10px;}
-  .empty-state{text-align:center;color:rgba(255,255,255,.3);padding:22px 0;font-size:.86rem;}
-  .loading{text-align:center;padding:36px;color:var(--muted);}
-  .spinner{width:34px;height:34px;border:3px solid #eee;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 11px;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-  .copy-toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--primary);color:white;padding:9px 22px;border-radius:22px;font-size:.83rem;font-weight:600;opacity:0;transition:opacity .3s;z-index:9999;pointer-events:none;}
-  .copy-toast.show{opacity:1;}
-  @media(max-width:768px){.two-col,.cal-layout,.msg-layout{grid-template-columns:1fr;}.main-content{padding:14px;}}
+/* CSS remains exactly the same as your CoWork version */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1C1C1E;min-height:100vh;font-size:14px}
+.topbar{background:#C41A1A;color:#fff;display:flex;align-items:stretch;border-radius:0 0 10px 10px;overflow:hidden}
+.topbar-brand{background:#1C1C1E;padding:14px 22px;display:flex;flex-direction:column;justify-content:center;min-width:190px}
+.topbar-brand .bname{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#FAF7F2;line-height:1}
+.topbar-brand .bsub{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
+.topbar-alert{flex:1;display:flex;align-items:center;padding:12px 20px;gap:10px}
+.topbar-alert .atitle{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;line-height:1}
+.topbar-alert .asub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px}
+.nav{display:flex;padding:0 16px;background:#fff;border-bottom:1px solid #E5E5E5}
+.nav-tab{padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:#666;transition:all 0.15s;white-space:nowrap}
+.nav-tab.active{color:#C41A1A;border-bottom-color:#C41A1A}
+.page{display:none;padding:16px}
+.page.active{display:block}
+.grid-2{display:grid;grid-template-columns:1fr 300px;gap:16px}
+.card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden}
+.card-head{padding:11px 16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.ctitle{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.2px;color:#1C1C1E}
+.card-body{padding:16px}
+.search-row{padding:10px 16px;border-bottom:1px solid #E5E5E5;display:flex;gap:8px}
+.search-row input{flex:1;border:1px solid #DDD;border-radius:6px;padding:7px 11px;font-family:'DM Sans',sans-serif;font-size:13px;background:#F9F9F7;color:#1C1C1E;outline:none}
+.search-row input:focus{border-color:#C41A1A}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead th{padding:7px 10px;text-align:left;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;color:#888;font-weight:600;border-bottom:1px solid #E5E5E5;background:#F9F9F7}
+tbody tr{border-bottom:1px solid #F0F0F0;cursor:pointer;transition:background 0.12s}
+tbody tr:hover{background:#F9F9F7}
+tbody td{padding:8px 10px;color:#555}
+tbody td:first-child{color:#1C1C1E;font-weight:500}
+.act-cell{display:flex;gap:4px;flex-wrap:wrap}
+.btn-xs{padding:4px 8px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:opacity 0.13s;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+.btn-xs:hover{opacity:0.8}
+.btn-rem{background:#FFF3CD;color:#7A5200}
+.btn-bill{background:#D1E7DD;color:#0A3622}
+.btn-skip{background:#FCEBEB;color:#A32D2D}
+.empty-td{text-align:center;color:#999;padding:24px;font-size:13px}
+label.flabel{display:block;font-size:10px;font-weight:600;letter-spacing:0.9px;text-transform:uppercase;color:#888;margin-bottom:4px}
+.finput{width:100%;border:1px solid #DDD;border-radius:6px;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:13px;color:#1C1C1E;background:#F9F9F7;outline:none;transition:border-color 0.15s}
+.finput:focus{border-color:#C41A1A}
+textarea.finput{resize:vertical;min-height:55px}
+.fg{margin-bottom:11px}
+.btn-main{width:100%;padding:10px;background:#1C1C1E;color:#FAF7F2;border:none;border-radius:7px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer;transition:background 0.15s}
+.btn-main:hover{background:#C41A1A}
+.btn-sec{width:100%;margin-top:6px;padding:7px;background:transparent;color:#888;border:1px solid #DDD;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer}
+.btn-sec:hover{background:#F5F3EE}
+.badge{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:500;background:#F5F3EE;color:#888;border:1px solid #E5E5E5}
+.badge-red{background:#FCEBEB;color:#A32D2D;border-color:#F7C1C1}
+.toast{position:fixed;bottom:16px;right:16px;background:#1C1C1E;color:#FAF7F2;padding:10px 16px;border-radius:8px;font-size:13px;opacity:0;transform:translateY(8px);transition:all 0.25s;pointer-events:none;z-index:300;max-width:280px}
+.toast.show{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
 
-<div id="loading-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#1a1a2e;">
-  <div style="text-align:center;color:white;">
-    <div class="spinner" style="border-top-color:#f5a623;margin:0 auto 14px;"></div>
-    <div style="color:#f5a623;font-weight:700;font-size:1.05rem;">Janete's Cleaners</div>
-    <div style="color:rgba(255,255,255,.5);font-size:.83rem;margin-top:3px;">Loading...</div>
+<div class="topbar">
+  <div class="topbar-brand"><div class="bname">Janete's Cleaners</div><div class="bsub">Management Suite</div></div>
+  <div class="topbar-alert">
+    <div><div class="atitle">Skip Policy Active</div><div class="asub">$50 fee for cancellations under 24 hours notice.</div></div>
   </div>
 </div>
 
-<div id="auth-screen" style="display:none;">
-  <div class="auth-box">
-    <h1>🧹 Janete's Cleaners</h1>
-    <p>Management Suite — Staff Access Only</p>
-    <input type="password" id="pw-input" placeholder="Enter password"/>
-    <button onclick="checkPassword()">Sign In</button>
-    <div class="auth-error" id="auth-error"></div>
-  </div>
+<div class="nav">
+  <div class="nav-tab active" onclick="switchPage('dashboard',this)">Dashboard</div>
+  <div class="nav-tab" onclick="switchPage('skips',this)">Skip Tracker</div>
 </div>
 
-<div id="manager-app">
-  <div class="top-bar">
-    <div class="logo">🧹 Janete's Cleaners</div>
-    <button class="tab-btn active" onclick="switchTab('clients',this)">Clients</button>
-    <button class="tab-btn" onclick="switchTab('schedule',this)">Schedule</button>
-    <button class="tab-btn" onclick="switchTab('billing',this)">Billing</button>
-    <button class="tab-btn" onclick="switchTab('skips',this)">Skips</button>
-    <button class="tab-btn" id="msg-tab-btn" onclick="switchTab('messages',this)">
-      💬 Messages<span class="notif-badge" id="unread-badge" style="display:none">0</span>
-    </button>
-  </div>
-  <div class="main-content">
-
-    <div id="tab-clients" class="tab-panel active">
-      <div class="two-col">
-        <div class="card">
-          <h2>All Clients</h2>
-          <table><thead><tr><th>Name</th><th>Phone</th><th>Service</th><th>Freq</th><th>Actions</th></tr></thead>
-          <tbody id="clients-table-body"><tr><td colspan="5"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody></table>
-        </div>
-        <div class="card">
-          <h2>Add New Client</h2>
-          <div class="form-group"><label>Full Name</label><input id="new-name" placeholder="Karen Webster"/></div>
-          <div class="form-group"><label>Phone</label><input id="new-phone" placeholder="(781) 000-0000"/></div>
-          <div class="form-group"><label>Email</label><input id="new-email" placeholder="client@email.com"/></div>
-          <div class="form-group"><label>Address</label><input id="new-address" placeholder="123 Main St"/></div>
-          <div class="form-group"><label>Service</label>
-            <select id="new-service" onchange="toggleCustomService(this)">
-              <option>Residential - Standard</option><option>Residential - Deep Clean</option><option>Commercial</option><option>Custom…</option>
-            </select>
-          </div>
-          <div class="form-group" id="custom-service-group" style="display:none"><label>Custom Service</label><input id="new-service-custom" placeholder="e.g. Window Washing"/></div>
-          <div class="form-group"><label>Rate</label><input id="new-rate" placeholder="$150"/></div>
-          <div class="form-group"><label>Frequency</label>
-            <select id="new-frequency"><option>Weekly</option><option>Bi-weekly</option><option>Monthly</option><option>One-time</option></select>
-          </div>
-          <button class="btn btn-primary" style="width:100%" onclick="saveClient()">Save Client</button>
-        </div>
+<div class="page active" id="page-dashboard">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <span class="ctitle">Client Directory</span>
+        <span class="badge" id="client-count">Loading...</span>
+      </div>
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="Search name..." oninput="renderTable()">
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
       </div>
     </div>
-
-    <div id="tab-schedule" class="tab-panel">
-      <div class="cal-layout">
-        <div class="card">
-          <div class="cal-month-nav">
-            <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
-            <h3 id="cal-month-label"></h3>
-            <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
-          </div>
-          <div class="cal-header-row">
-            <div class="cal-day-label">Sun</div><div class="cal-day-label">Mon</div><div class="cal-day-label">Tue</div>
-            <div class="cal-day-label">Wed</div><div class="cal-day-label">Thu</div><div class="cal-day-label">Fri</div><div class="cal-day-label">Sat</div>
-          </div>
-          <div class="cal-grid" id="cal-grid"></div>
-          <div style="margin-top:18px" id="day-slot-list"></div>
-        </div>
-        <div class="card">
-          <h2>Book a Slot</h2>
-          <div class="form-group"><label>Client</label><select id="book-client"><option value="">Select client…</option></select></div>
-          <div class="form-group"><label>Date</label><input type="date" id="book-date"/></div>
-          <div class="form-group"><label>Time</label>
-            <select id="book-time"><option>8:00 AM</option><option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option><option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option></select>
-          </div>
-          <div class="form-group"><label>Service</label>
-            <select id="book-service" onchange="toggleBookCustom(this)">
-              <option>Residential - Standard</option><option>Residential - Deep Clean</option><option>Commercial</option><option>Custom…</option>
-            </select>
-          </div>
-          <div class="form-group" id="book-custom-group" style="display:none"><label>Custom Service</label><input id="book-service-custom" placeholder="e.g. Window Washing"/></div>
-          <div class="form-group"><label>Notes</label><input id="book-notes" placeholder="Optional notes…"/></div>
-          <button class="btn btn-primary" style="width:100%" onclick="bookSlot()">Book Slot</button>
-        </div>
+    <div class="card">
+      <div class="card-head"><span class="ctitle" id="form-title">Add / Edit Client</span></div>
+      <div class="card-body">
+        <input type="hidden" id="editKey" value="">
+        <div class="fg"><label class="flabel">Name</label><input class="finput" id="f-name"></div>
+        <div class="fg"><label class="flabel">Phone</label><input class="finput" id="f-phone"></div>
+        <div class="fg"><label class="flabel">Email</label><input class="finput" id="f-email"></div>
+        <div class="fg"><label class="flabel">Address</label><input class="finput" id="f-address"></div>
+        <button class="btn-main" onclick="submitForm()">Save to Firebase</button>
       </div>
-    </div>
-
-    <div id="tab-billing" class="tab-panel">
-      <div class="card"><h2>Billing & Invoices</h2>
-        <table><thead><tr><th>Client</th><th>Service</th><th>Rate</th><th>Last Visit</th><th>Skip Fees</th><th>Invoice</th></tr></thead>
-        <tbody id="billing-table-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody></table>
-      </div>
-    </div>
-
-    <div id="tab-skips" class="tab-panel">
-      <div class="card"><h2>Skip Tracker</h2>
-        <table><thead><tr><th>Client</th><th>Date</th><th>Fee Status</th><th>Notes</th></tr></thead>
-        <tbody id="skips-table-body"><tr><td colspan="4"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody></table>
-      </div>
-    </div>
-
-    <div id="tab-messages" class="tab-panel">
-      <div class="card" style="padding:0;overflow:hidden;">
-        <div class="msg-layout">
-          <div style="padding:18px;border-right:1px solid var(--border);overflow-y:auto;max-height:540px;">
-            <h2 style="margin-bottom:14px">Conversations</h2>
-            <div id="msg-thread-list"><div class="loading"><div class="spinner"></div>Loading...</div></div>
-          </div>
-          <div id="chat-window-area" style="display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.88rem;">
-            Select a conversation →
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div id="client-app">
-  <div class="client-header">
-    <h1>🧹 Janete's Cleaners</h1>
-    <p id="client-welcome">Your personal cleaning portal</p>
-  </div>
-  <div class="client-content" id="client-content">
-    <div style="text-align:center;padding:56px 0;">
-      <div class="spinner" style="border-color:#333;border-top-color:var(--accent);margin:0 auto 14px;"></div>
-      <div style="color:rgba(255,255,255,.4);">Loading your info…</div>
     </div>
   </div>
 </div>
 
-<div class="invoice-modal" id="invoice-modal">
-  <div class="invoice-box">
-    <div class="invoice-header">
-      <div class="invoice-biz"><h2>Janete's Cleaners</h2><p>Professional Cleaning Services</p><p>📞 (781) 964-5682</p></div>
-      <div class="invoice-num"><div class="label">INVOICE</div><div class="val" id="inv-number">#001</div><div style="font-size:.78rem;color:var(--muted);margin-top:3px" id="inv-date"></div></div>
-    </div>
-    <div class="invoice-section"><h4>Bill To</h4><div id="inv-client-info" style="font-size:.9rem;line-height:1.6;"></div></div>
-    <div class="invoice-section"><h4>Services</h4>
-      <table class="invoice-table"><thead><tr><th>Description</th><th style="text-align:right">Amount</th></tr></thead><tbody id="inv-services"></tbody></table>
-    </div>
-    <div class="invoice-total" id="inv-total"></div>
-    <div class="invoice-actions">
-      <button class="btn btn-outline" onclick="closeInvoice()">Close</button>
-      <button class="btn btn-primary" onclick="printInvoice()">🖨 Confirm & Print</button>
-    </div>
-  </div>
-</div>
+<div class="toast" id="toast"></div>
 
-<div class="skip-modal" id="skip-modal">
-  <div class="skip-box">
-    <h3>⚠️ Skip Fee</h3><p>Charge a $50 skip fee for this cancellation?</p>
-    <div class="skip-actions">
-      <button class="btn btn-outline" onclick="resolveSkip(false)">No Fee – Just Remove</button>
-      <button class="btn btn-primary" onclick="resolveSkip(true)">Yes – Charge $50</button>
-    </div>
-  </div>
-</div>
-
-<div class="copy-toast" id="toast"></div>
-
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import{getFirestore,collection,doc,getDocs,deleteDoc,addDoc,query,where,orderBy,onSnapshot,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-const db=getFirestore(initializeApp({apiKey:"AIzaSyBFBm8_E8BW2yPOLSmTCuD93Yiy3I5_XcY",authDomain:"janete-s-cleaners.firebaseapp.com",projectId:"janete-s-cleaners",storageBucket:"janete-s-cleaners.firebasestorage.app",messagingSenderId:"1050742171260",appId:"1:1050742171260:web:2aab521d37166d2b614bf9"}));
-const clientParam=new URLSearchParams(window.location.search).get('client');
-document.getElementById('loading-screen').style.display='none';
-if(clientParam){document.getElementById('client-app').style.display='block';loadClientPortal(clientParam);}
-else{document.getElementById('auth-screen').style.display='flex';}
-window.checkPassword=function(){
-  if(document.getElementById('pw-input').value==='janete2024'){
-    document.getElementById('auth-screen').style.display='none';document.getElementById('manager-app').style.display='block';initManager();
-  }else{document.getElementById('auth-error').textContent='Incorrect password.';}
+<script>
+// Firebase Config - Using your identified Project ID
+const firebaseConfig = {
+  apiKey: "AIzaSyBFBm8_E8BW2yPOLSmTCuD93Yiy3I5_XcY",
+  authDomain: "janete-s-cleaners.firebaseapp.com",
+  databaseURL: "https://janete-s-cleaners-default-rtdb.firebaseio.com",
+  projectId: "janete-s-cleaners",
+  storageBucket: "janete-s-cleaners.appspot.com",
 };
-document.getElementById('pw-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')window.checkPassword();});
-let allClients=[],allBookings=[],allSkips=[],allThreads=[];
-let currentYear=new Date().getFullYear(),currentMonth=new Date().getMonth();
-let selectedDate=null,pendingSkipBookingId=null,currentInvoiceClient=null,activeThreadId=null,msgUnsub=null;
-function initManager(){listenClients();listenBookings();listenSkips();listenThreads();renderCalendar();}
-function listenClients(){onSnapshot(collection(db,'clients'),snap=>{allClients=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.name||'').localeCompare(b.name||''));renderClientsTable();renderBookClientDropdown();renderBillingTable();});}
-function listenBookings(){onSnapshot(collection(db,'bookings'),snap=>{allBookings=snap.docs.map(d=>({id:d.id,...d.data()}));renderCalendar();renderBillingTable();});}
-function listenSkips(){onSnapshot(collection(db,'skips'),snap=>{allSkips=snap.docs.map(d=>({id:d.id,...d.data()}));renderSkipsTable();renderBillingTable();});}
-function listenThreads(){
-  onSnapshot(collection(db,'threads'),snap=>{
-    allThreads=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.lastAt?.seconds||0)-(a.lastAt?.seconds||0));
-    renderThreadList();
-    const unread=allThreads.filter(t=>t.unreadManager).length;
-    const badge=document.getElementById('unread-badge');
-    if(unread>0){badge.style.display='inline';badge.textContent=unread;}else{badge.style.display='none';}
-  });
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const clientsRef = db.ref("clients");
+
+let clients = {};
+
+// Load data from Firebase
+clientsRef.on('value', (snapshot) => {
+  clients = snapshot.val() || {};
+  renderTable();
+});
+
+function renderTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const tb = document.getElementById('tableBody');
+  const keys = Object.keys(clients).filter(k => clients[k].name.toLowerCase().includes(q));
+  
+  document.getElementById('client-count').textContent = Object.keys(clients).length + ' clients';
+  
+  tb.innerHTML = keys.map(k => `
+    <tr>
+      <td>${clients[k].name}</td>
+      <td>${clients[k].phone || '---'}</td>
+      <td>${clients[k].email || '---'}</td>
+      <td class="act-cell">
+        <button class="btn-xs btn-rem" onclick="editClient('${k}')">Edit</button>
+        <button class="btn-xs btn-skip" onclick="deleteClient('${k}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
 }
-function renderClientsTable(){
-  const tb=document.getElementById('clients-table-body');
-  if(!allClients.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No clients yet.</td></tr>';return;}
-  tb.innerHTML=allClients.map(c=>`<tr><td><strong>${c.name}</strong></td><td>${c.phone||'—'}</td><td>${c.service||'—'}</td><td>${c.frequency||'—'}</td>
-    <td><button class="link-btn" onclick="copyClientLink('${encodeURIComponent(c.name)}')">🔗 Link</button>
-    <button class="link-btn" style="margin-left:3px;color:var(--danger)" onclick="deleteClient('${c.id}')">✕</button></td></tr>`).join('');
-}
-window.copyClientLink=function(enc){navigator.clipboard.writeText(`${location.origin}${location.pathname}?client=${enc}`).catch(()=>{});showToast('Link copied! 📋');};
-window.deleteClient=async function(id){if(confirm('Remove this client?'))await deleteDoc(doc(db,'clients',id));};
-window.toggleCustomService=function(s){document.getElementById('custom-service-group').style.display=s.value==='Custom…'?'block':'none';};
-window.toggleBookCustom=function(s){document.getElementById('book-custom-group').style.display=s.value==='Custom…'?'block':'none';};
-window.saveClient=async function(){
-  const name=document.getElementById('new-name').value.trim();if(!name)return alert('Please enter a name.');
-  const sv=document.getElementById('new-service').value;const service=sv==='Custom…'?(document.getElementById('new-service-custom').value.trim()||'Custom'):sv;
-  await addDoc(collection(db,'clients'),{name,phone:document.getElementById('new-phone').value.trim(),email:document.getElementById('new-email').value.trim(),address:document.getElementById('new-address').value.trim(),service,rate:document.getElementById('new-rate').value.trim(),frequency:document.getElementById('new-frequency').value,createdAt:new Date().toISOString()});
-  ['new-name','new-phone','new-email','new-address','new-rate'].forEach(id=>document.getElementById(id).value='');showToast('Client saved! ✅');
-};
-window.changeMonth=function(d){currentMonth+=d;if(currentMonth>11){currentMonth=0;currentYear++;}if(currentMonth<0){currentMonth=11;currentYear--;}renderCalendar();};
-function renderCalendar(){
-  const label=document.getElementById('cal-month-label');if(!label)return;
-  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  label.textContent=`${months[currentMonth]} ${currentYear}`;
-  const grid=document.getElementById('cal-grid');const firstDay=new Date(currentYear,currentMonth,1).getDay();
-  const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();const today=new Date();
-  let html='';for(let i=0;i<firstDay;i++)html+='<div class="cal-cell empty"></div>';
-  for(let d=1;d<=daysInMonth;d++){
-    const ds=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday=today.getFullYear()===currentYear&&today.getMonth()===currentMonth&&today.getDate()===d;
-    const isSel=selectedDate===ds;
-    const chips=allBookings.filter(b=>b.date===ds).map(b=>`<span class="client-chip" onclick="event.stopPropagation();goToPortal('${encodeURIComponent(b.clientName)}')">${b.clientName.split(' ')[0]}</span>`).join('');
-    html+=`<div class="cal-cell${isToday?' today':''}${isSel?' selected':''}" onclick="selectDate('${ds}')"><div class="cal-date-num">${d}</div>${chips}</div>`;
+
+function submitForm() {
+  const name = document.getElementById('f-name').value;
+  const key = document.getElementById('editKey').value;
+  const data = {
+    name,
+    phone: document.getElementById('f-phone').value,
+    email: document.getElementById('f-email').value,
+    address: document.getElementById('f-address').value
+  };
+
+  if (key) {
+    db.ref('clients/' + key).update(data);
+    showToast("Updated " + name);
+  } else {
+    db.ref('clients').push(data);
+    showToast("Added " + name);
   }
-  grid.innerHTML=html;renderDaySlotList();
+  clearForm();
 }
-window.selectDate=function(ds){selectedDate=ds;document.getElementById('book-date').value=ds;renderCalendar();};
-window.goToPortal=function(enc){window.open(`${location.origin}${location.pathname}?client=${enc}`,'_blank');};
-function renderDaySlotList(){
-  const c=document.getElementById('day-slot-list');if(!selectedDate){c.innerHTML='';return;}
-  const day=allBookings.filter(b=>b.date===selectedDate);
-  if(!day.length){c.innerHTML=`<p style="color:var(--muted);font-size:.83rem">No bookings on ${selectedDate}</p>`;return;}
-  c.innerHTML=`<h4 style="font-size:.83rem;font-weight:700;margin-bottom:9px">Bookings on ${selectedDate}</h4>`+
-    day.map(b=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#f8f9fa;border-radius:7px;margin-bottom:7px">
-      <div><div style="font-weight:600;font-size:.88rem">${b.clientName}</div><div style="font-size:.78rem;color:var(--muted)">${b.time} · ${b.service}</div></div>
-      <button style="background:none;border:none;font-size:1rem;cursor:pointer;color:var(--danger)" onclick="requestSkip('${b.id}','${b.clientName}','${b.date}')">✕</button></div>`).join('');
+
+function editClient(k) {
+  document.getElementById('editKey').value = k;
+  document.getElementById('f-name').value = clients[k].name;
+  document.getElementById('f-phone').value = clients[k].phone;
+  document.getElementById('f-email').value = clients[k].email;
+  document.getElementById('f-address').value = clients[k].address;
 }
-function renderBookClientDropdown(){const s=document.getElementById('book-client');s.innerHTML='<option value="">Select client…</option>'+allClients.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');}
-window.bookSlot=async function(){
-  const clientName=document.getElementById('book-client').value,date=document.getElementById('book-date').value;
-  if(!clientName||!date)return alert('Please select a client and date.');
-  const sv=document.getElementById('book-service').value;const service=sv==='Custom…'?(document.getElementById('book-service-custom').value.trim()||'Custom'):sv;
-  await addDoc(collection(db,'bookings'),{clientName,date,time:document.getElementById('book-time').value,service,notes:document.getElementById('book-notes').value.trim(),status:'confirmed',createdAt:new Date().toISOString()});
-  document.getElementById('book-notes').value='';showToast('Booking saved! ✅');
-};
-window.requestSkip=function(id,name,date){pendingSkipBookingId={id,clientName:name,date};document.getElementById('skip-modal').classList.add('open');};
-window.resolveSkip=async function(charge){
-  document.getElementById('skip-modal').classList.remove('open');if(!pendingSkipBookingId)return;
-  const{id,clientName,date}=pendingSkipBookingId;
-  if(charge){await addDoc(collection(db,'skips'),{clientName,date,fee:50,feePaid:false,notes:'Skip fee charged',createdAt:new Date().toISOString()});showToast('$50 skip fee logged ⚠️');}
-  await deleteDoc(doc(db,'bookings',id));pendingSkipBookingId=null;
-};
-function renderBillingTable(){
-  const tb=document.getElementById('billing-table-body');if(!tb)return;
-  if(!allClients.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">No clients.</td></tr>';return;}
-  tb.innerHTML=allClients.map(c=>{
-    const last=allBookings.filter(b=>b.clientName===c.name).sort((a,b)=>b.date.localeCompare(a.date))[0];
-    const fees=allSkips.filter(s=>s.clientName===c.name&&!s.feePaid).reduce((sum,s)=>sum+(s.fee||50),0);
-    return`<tr><td><strong>${c.name}</strong></td><td>${c.service||'—'}</td><td>${c.rate||'—'}</td><td>${last?last.date:'—'}</td>
-      <td>${fees>0?`<span style="color:var(--danger);font-weight:700">$${fees}</span>`:'<span style="color:var(--success)">$0</span>'}</td>
-      <td><button class="btn btn-primary btn-sm" onclick="openInvoice('${c.id}')">Invoice</button></td></tr>`;
-  }).join('');
+
+function deleteClient(k) {
+  if(confirm("Delete this client?")) db.ref('clients/' + k).remove();
 }
-window.openInvoice=function(id){
-  const c=allClients.find(x=>x.id===id);if(!c)return;currentInvoiceClient=c;
-  document.getElementById('inv-number').textContent='#INV-'+String(Math.floor(Math.random()*9000)+1000);
-  document.getElementById('inv-date').textContent='Date: '+new Date().toLocaleDateString();
-  document.getElementById('inv-client-info').innerHTML=`<strong>${c.name}</strong><br>${c.address||''}<br>${c.phone||''}<br>${c.email||''}`;
-  const bookings=allBookings.filter(b=>b.clientName===c.name).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
-  const skips=allSkips.filter(s=>s.clientName===c.name&&!s.feePaid);
-  const rate=parseFloat((c.rate||'$0').replace(/[^0-9.]/g,''))||0;
-  let rows=bookings.map(b=>`<tr><td>${b.service} — ${b.date}</td><td style="text-align:right">$${rate.toFixed(2)}</td></tr>`).join('');
-  skips.forEach(s=>{rows+=`<tr><td>Skip Fee — ${s.date}</td><td style="text-align:right;color:var(--danger)">$50.00</td></tr>`;});
-  if(!rows)rows='<tr><td colspan="2" style="color:var(--muted);text-align:center">No recent services</td></tr>';
-  document.getElementById('inv-services').innerHTML=rows;
-  document.getElementById('inv-total').textContent=`Total Due: $${((bookings.length*rate)+(skips.length*50)).toFixed(2)}`;
-  document.getElementById('invoice-modal').classList.add('open');
-};
-window.closeInvoice=function(){document.getElementById('invoice-modal').classList.remove('open');};
-window.printInvoice=function(){
-  const win=window.open('','_blank','width=700,height=900');
-  win.document.write(`<html><head><title>Invoice - ${currentInvoiceClient?.name}</title><style>body{font-family:Arial,sans-serif;padding:40px}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}.invoice-actions{display:none}</style></head><body>${document.querySelector('.invoice-box').innerHTML}</body></html>`);
-  win.document.close();win.focus();setTimeout(()=>win.print(),500);
-};
-function renderSkipsTable(){
-  const tb=document.getElementById('skips-table-body');if(!tb)return;
-  if(!allSkips.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:18px">No skips recorded.</td></tr>';return;}
-  tb.innerHTML=allSkips.sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(s=>`<tr>
-    <td><strong>${s.clientName}</strong></td><td>${s.date}</td>
-    <td>${s.feePaid?'<span class="badge badge-green">Paid</span>':'<span class="badge badge-red">Owed $'+s.fee+'</span>'}</td>
-    <td>${s.notes||'—'}</td></tr>`).join('');
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
-function renderThreadList(){
-  const list=document.getElementById('msg-thread-list');if(!list)return;
-  if(!allThreads.length){list.innerHTML='<div style="color:var(--muted);font-size:.83rem;padding:7px">No messages yet.</div>';return;}
-  list.innerHTML=allThreads.map(t=>`
-    <div class="msg-thread-item${t.unreadManager?' unread':''}${activeThreadId===t.id?' active':''}" onclick="openThread('${t.id}','${t.clientName}')">
-      <div class="msg-client-name">${t.clientName}${t.unreadManager?'<span class="unread-dot"></span>':''}</div>
-      <div class="msg-preview">${t.lastMessage||'...'}</div>
-      <div class="msg-time">${t.lastAt?formatTs(t.lastAt):''}</div>
-      ${t.topic?`<div style="font-size:.7rem;color:var(--accent);margin-top:2px">${t.topic}</div>`:''}
-    </div>`).join('');
+
+function clearForm() {
+  document.getElementById('editKey').value = "";
+  ['f-name','f-phone','f-email','f-address'].forEach(id => document.getElementById(id).value = "");
 }
-window.openThread=async function(threadId,clientName){
-  activeThreadId=threadId;renderThreadList();
-  await updateDoc(doc(db,'threads',threadId),{unreadManager:false});
-  if(msgUnsub)msgUnsub();
-  document.getElementById('chat-window-area').innerHTML=`
-    <div class="chat-window">
-      <div class="chat-header"><h3>💬 ${clientName}</h3><button class="link-btn" onclick="copyClientLink('${encodeURIComponent(clientName)}')">🔗 Portal</button></div>
-      <div class="chat-messages" id="manager-chat-msgs"></div>
-      <div class="chat-input-area">
-        <textarea id="manager-reply" placeholder="Type a reply…" onkeydown="handleMgrKey(event,'${threadId}','${clientName}')"></textarea>
-        <button class="btn btn-primary" onclick="sendManagerReply('${threadId}','${clientName}')">Send</button>
-      </div>
-    </div>`;
-  msgUnsub=onSnapshot(query(collection(db,'threads',threadId,'messages'),orderBy('createdAt')),snap=>{
-    const msgs=snap.docs.map(d=>({id:d.id,...d.data()}));
-    const c=document.getElementById('manager-chat-msgs');if(!c)return;
-    c.innerHTML=msgs.length?msgs.map(m=>`<div class="chat-bubble ${m.sender==='manager'?'manager':'client'}">${m.text}<div class="bubble-meta">${m.sender==='manager'?'You':'Client'} · ${m.createdAt?formatTs(m.createdAt):''}</div></div>`).join('')
-      :'<div style="text-align:center;color:var(--muted);padding:18px;font-size:.83rem">No messages yet</div>';
-    c.scrollTop=c.scrollHeight;
-  });
-};
-window.handleMgrKey=function(e,tid,cn){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendManagerReply(tid,cn);}};
-window.sendManagerReply=async function(threadId,clientName){
-  const input=document.getElementById('manager-reply');if(!input)return;const text=input.value.trim();if(!text)return;input.value='';
-  const ts=serverTimestamp();
-  await addDoc(collection(db,'threads',threadId,'messages'),{text,sender:'manager',createdAt:ts});
-  await updateDoc(doc(db,'threads',threadId),{lastMessage:text,lastAt:ts,unreadClient:true,unreadManager:false,clientName});
-};
-window.switchTab=function(name,btn){
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');
-};
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-window.showToast=showToast;
-function formatTs(ts){if(!ts)return'';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
-async function loadClientPortal(name){
-  document.getElementById('client-welcome').textContent=`Welcome, ${name} 👋`;
-  const content=document.getElementById('client-content');
-  try{
-    const bSnap=await getDocs(collection(db,'bookings'));
-    const bookings=bSnap.docs.map(d=>({id:d.id,...d.data()})).filter(b=>b.clientName?.toLowerCase()===name.toLowerCase()).sort((a,b)=>a.date.localeCompare(b.date));
-    const sSnap=await getDocs(collection(db,'skips'));
-    const skips=sSnap.docs.map(d=>({id:d.id,...d.data()})).filter(s=>s.clientName?.toLowerCase()===name.toLowerCase()).sort((a,b)=>b.date.localeCompare(a.date));
-    const today=new Date().toISOString().split('T')[0];
-    const upcoming=bookings.filter(b=>b.date>=today);const past=bookings.filter(b=>b.date<today);
-    const tSnap=await getDocs(query(collection(db,'threads'),where('clientName','==',name)));
-    let threadId;
-    if(tSnap.empty){const ref=await addDoc(collection(db,'threads'),{clientName:name,lastMessage:'',lastAt:serverTimestamp(),unreadManager:false,unreadClient:false,topic:''});threadId=ref.id;}
-    else{threadId=tSnap.docs[0].id;}
-    content.innerHTML=`
-      <div class="client-card"><h2>📅 Upcoming Appointments</h2>
-        ${upcoming.length?upcoming.map(b=>`<div class="appt-item"><div><div class="appt-info">${formatDate(b.date)} at ${b.time}</div><div class="appt-sub">${b.service}${b.notes?' · '+b.notes:''}</div></div><span class="badge badge-green">Confirmed</span></div>`).join(''):'<div class="empty-state">No upcoming appointments.</div>'}
-      </div>
-      ${past.length?`<div class="client-card"><h2>📋 Past Appointments</h2>${past.slice(-5).reverse().map(b=>`<div class="appt-item"><div><div class="appt-info">${formatDate(b.date)} at ${b.time}</div><div class="appt-sub">${b.service}</div></div><span class="badge badge-blue">Completed</span></div>`).join('')}</div>`:''}
-      ${skips.length?`<div class="client-card"><h2>⚠️ Skip & Fee History</h2>${skips.map(s=>`<div class="appt-item"><div><div class="appt-info">${formatDate(s.date)}</div><div class="appt-sub">${s.notes||'Appointment skipped'}</div></div><span class="badge ${s.feePaid?'badge-green':'badge-red'}">${s.feePaid?'Fee Paid':'$'+s.fee+' Owed'}</span></div>`).join('')}</div>`:''}
-      <div class="client-card"><h2>⚠️ Cancellation Policy</h2>
-        <div class="policy-box"><p>Please provide at least <strong>24 hours notice</strong> to cancel or reschedule. Late cancellations are subject to a <strong style="color:var(--gold)">$50 skip fee</strong> payable before the next cleaning.</p></div>
-      </div>
-      <div class="client-card"><h2>💬 Message Janete</h2>
-        <select class="client-topic-sel" id="client-topic">
-          <option>Question about my schedule</option><option>Reschedule a cleaning</option>
-          <option>Special request</option><option>Billing question</option><option>Other</option>
-        </select>
-        <div class="client-chat-messages" id="client-chat-msgs"><div class="empty-state">Loading messages…</div></div>
-        <div class="client-chat-input">
-          <textarea id="client-msg-input" placeholder="Type a message…" onkeydown="handleClientKey(event,'${name}','${threadId}')"></textarea>
-          <button class="client-send-btn" onclick="sendClientMessage('${name}','${threadId}')">➤</button>
-        </div>
-      </div>`;
-    onSnapshot(query(collection(db,'threads',threadId,'messages'),orderBy('createdAt')),async snap=>{
-      const msgs=snap.docs.map(d=>({id:d.id,...d.data()}));
-      const c=document.getElementById('client-chat-msgs');if(!c)return;
-      c.innerHTML=msgs.length?msgs.map(m=>`<div class="client-bubble ${m.sender==='manager'?'received':'sent'}">${m.text}<div class="bubble-time">${m.sender==='manager'?'Janete':'You'} · ${m.createdAt?formatTs(m.createdAt):''}</div></div>`).join('')
-        :'<div class="empty-state">No messages yet. Say hi! 👋</div>';
-      c.scrollTop=c.scrollHeight;
-      if(msgs.some(m=>m.sender==='manager'))await updateDoc(doc(db,'threads',threadId),{unreadClient:false});
-    });
-  }catch(e){content.innerHTML=`<div class="client-card"><div class="empty-state">Could not load your info.<br><small>${e.message}</small></div></div>`;}
-}
-window.handleClientKey=function(e,name,threadId){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendClientMessage(name,threadId);}};
-window.sendClientMessage=async function(name,threadId){
-  const input=document.getElementById('client-msg-input');if(!input)return;const text=input.value.trim();if(!text)return;
-  const topic=document.getElementById('client-topic')?.value||'';input.value='';
-  const ts=serverTimestamp();
-  await addDoc(collection(db,'threads',threadId,'messages'),{text,sender:'client',createdAt:ts});
-  await updateDoc(doc(db,'threads',threadId),{lastMessage:text,lastAt:ts,unreadManager:true,unreadClient:false,topic,clientName:name});
-};
-function formatDate(ds){if(!ds)return'';const[y,m,d]=ds.split('-');const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return`${months[parseInt(m)-1]} ${parseInt(d)}, ${y}`;}
 </script>
 </body>
 </html>
