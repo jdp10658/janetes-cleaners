@@ -787,9 +787,9 @@ function openShareModal(key){
 }
 function closeShareModal(){document.getElementById('share-modal').classList.remove('open');}
 
-// Build the real shareable URL using the Appsmith published app + #client=KEY hash
+// Build the real shareable URL using GitHub Pages + #client=KEY hash
 function getShareURL(clientKey){
-  const base = 'https://janetes-cleaners.appsmith.com/app/my-first-application/page1-69d998e44e558177144df9ee';
+  const base = 'https://jdp10658.github.io/janetes-cleaners/';
   return base + '#client=' + encodeURIComponent(clientKey);
 }
 
