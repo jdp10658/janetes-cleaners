@@ -759,18 +759,18 @@ function sendChat(){
   const inp=document.getElementById('chat-input');
   const text=inp.value.trim();
   if(!text||!activeChatKey)return;
-  db.ref(`messages/${activeChatKey}`).push({dir:'out',text,time:nowStr(),ts:Date.now()});
-  inp.value='';
-  const c=clients[activeChatKey];
-  const phone=(c?.phone||'').replace(/\D/g,'');
-  if(phone){
-    const a=document.createElement('a');
-    a.href=`https://wa.me/1${phone}?text=${encodeURIComponent(text)}`;
-    a.target='_blank';a.click();
-    showToast('Message saved + WhatsApp opened.');
-  } else {
-    showToast('Message saved. No phone — add one to also send via WhatsApp.');
-  }
+  const snd=document.getElementById('chat-send-btn');
+  snd.disabled=true;
+  db.ref(`messages/${activeChatKey}`).push({
+    dir:'out', text, time:nowStr(), ts:Date.now()
+  }).then(()=>{
+    inp.value='';
+    snd.disabled=false;
+    showToast('✅ Message sent to client.');
+  }).catch(err=>{
+    snd.disabled=false;
+    showToast('Error sending: '+err.message);
+  });
 }
 
 function shareLinkForChat(){if(activeChatKey)openShareModal(activeChatKey);}
@@ -1196,4 +1196,3 @@ function seedClientsIfEmpty(){
 </script>
 </body>
 </html>
-
