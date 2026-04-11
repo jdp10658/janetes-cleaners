@@ -787,10 +787,9 @@ function openShareModal(key){
 }
 function closeShareModal(){document.getElementById('share-modal').classList.remove('open');}
 
-// Build the real shareable URL using the same page + #client=KEY hash
+// Build the real shareable URL using the Appsmith published app + #client=KEY hash
 function getShareURL(clientKey){
-  // Works on GitHub Pages, Netlify, or any host
-  const base = window.location.href.split('#')[0]; // strip any existing hash
+  const base = 'https://janetes-cleaners.appsmith.com/app/my-first-application/page1-69d998e44e558177144df9ee';
   return base + '#client=' + encodeURIComponent(clientKey);
 }
 
@@ -1197,3 +1196,4 @@ function seedClientsIfEmpty(){
 </script>
 </body>
 </html>
+
