@@ -409,8 +409,9 @@ textarea.finput{resize:vertical;min-height:50px}
     </div>
     <div class="msub" id="share-modal-sub"></div>
     <div class="share-info-box">
-      <div style="font-size:9.5px;color:#666;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">What happens when you share this link</div>
-      <div style="font-size:11px;color:#444;line-height:1.55">Your client sees their <strong>upcoming appointments</strong> and a <strong>Reply box</strong>. When they send a message, it appears instantly in your <strong>Messages panel</strong> — no WhatsApp needed. WhatsApp is still available as a bonus option.</div>
+      <div style="font-size:9.5px;color:#666;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">Shareable Link</div>
+      <div id="share-url-preview" style="font-size:11px;color:#2244AA;word-break:break-all;line-height:1.5;margin-bottom:8px;cursor:pointer" onclick="copyShareLink()" title="Click to copy"></div>
+      <div style="font-size:11px;color:#444;line-height:1.5;margin-top:8px">Your client opens this link → sees their appointments → can <strong>reply directly</strong> from the page. Their message appears in your <strong>Messages panel</strong> — no WhatsApp needed.</div>
     </div>
     <div class="modal-actions" style="margin-bottom:0">
       <button class="btn-modal blue" onclick="openShareLink()">🔗 Open &amp; Preview Page</button>
@@ -439,6 +440,95 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.database();
 
+// ── CLIENT MODE: detect #client=KEY in URL ──
+// If the URL has #client=FIREBASE_KEY, show the client schedule page instead of the staff app.
+(function(){
+  const hash = window.location.hash; // e.g. "#client=-OAbc123xyz"
+  if(hash && hash.startsWith('#client=')){
+    const clientKey = decodeURIComponent(hash.slice(8));
+    // Hide login + app, show a loading div
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('main-app').classList.add('hidden');
+    document.body.style.background = '#F5F3EE';
+    const wrapper = document.createElement('div');
+    wrapper.id = 'client-page';
+    wrapper.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#888;font-size:13px">Loading your schedule…</div>';
+    document.body.appendChild(wrapper);
+
+    // Load data from Firebase (no auth needed for reading public schedule + writing messages)
+    Promise.all([
+      db.ref('clients/'+clientKey).once('value'),
+      db.ref('bookings').once('value'),
+    ]).then(([cSnap, bSnap])=>{
+      const c = cSnap.val();
+      if(!c){ wrapper.innerHTML = '<div style="text-align:center;padding:60px;color:#888">Schedule not found. Please contact Janete\'s Cleaners at (781) 964-5682.</div>'; return; }
+      const allBookings = bSnap.val() || {};
+      const myBook = Object.values(allBookings).filter(b=>b.client===c.name).sort((a,b)=>a.date.localeCompare(b.date));
+      const MONTHS_C=['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const apptRows = myBook.length ? myBook.map(b=>{
+        const dt = new Date(b.date+'T12:00:00');
+        return `<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #eee">
+          <div style="text-align:center;min-width:48px;background:#FCEBEB;border-radius:8px;padding:7px 4px">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1;color:#C41A1A">${dt.getDate()}</div>
+            <div style="font-size:10px;text-transform:uppercase;color:#A32D2D;letter-spacing:0.7px">${MONTHS_C[dt.getMonth()].slice(0,3)}</div>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:14px;color:#1C1C1E">${b.time} — ${b.service}</div>
+            <div style="font-size:12px;color:#888;margin-top:2px">${c.address||''}</div>
+          </div>
+        </div>`;
+      }).join('') : '<div style="color:#888;font-size:13px;padding:20px 0;text-align:center">No upcoming appointments scheduled yet.</div>';
+
+      wrapper.innerHTML = `
+        <div style="background:#C41A1A;color:#fff;padding:20px 20px 16px;text-align:center;border-radius:0 0 10px 10px;margin-bottom:0">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px">Janete's Cleaners Inc.</div>
+          <div style="font-size:13px;opacity:.85;margin-top:3px">Schedule for ${(c.name||'').replace(/</g,'&lt;')}</div>
+        </div>
+        <div style="max-width:480px;margin:0 auto;padding:16px">
+          <div style="background:#FCEBEB;border:1px solid #F7C1C1;border-radius:8px;padding:11px 14px;font-size:12px;color:#A32D2D;margin-bottom:14px">
+            ⚠ <strong>Skip Policy:</strong> A $50 fee applies to cancellations with less than 24 hours notice.
+          </div>
+          <div style="background:#fff;border-radius:10px;border:1px solid #e5e5e5;overflow:hidden;margin-bottom:14px">
+            <div style="padding:11px 16px;border-bottom:1px solid #eee;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.2px">Your Upcoming Appointments</div>
+            <div style="padding:0 16px">${apptRows}</div>
+          </div>
+          <div style="background:#fff;border-radius:10px;border:1px solid #e5e5e5;overflow:hidden">
+            <div style="padding:11px 16px;border-bottom:1px solid #eee;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.2px">Send Us a Message</div>
+            <div style="padding:14px 16px">
+              <p style="font-size:12px;color:#888;margin-bottom:10px">Have a question or need to reschedule? Your message goes straight to our dashboard — no app needed.</p>
+              <div id="reply-form">
+                <textarea id="reply-text" style="width:100%;border:1px solid #DDD;border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:80px;outline:none;background:#F9F9F7;margin-bottom:10px;box-sizing:border-box" placeholder="Type your message here…"></textarea>
+                <button onclick="sendClientReply('${clientKey}','${(c.name||'').replace(/'/g,"\\'")}',this)" style="width:100%;padding:11px;background:#C41A1A;color:#fff;border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer">Send Message</button>
+              </div>
+              <div id="sent-ok" style="display:none;background:#EAF3DE;border:1px solid #a3d5bb;border-radius:8px;padding:12px;font-size:13px;color:#0A3622">✅ Message sent! We'll get back to you shortly.</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:18px;font-size:11px;color:#aaa">Janete's Cleaners · Lynn, MA · (781) 964-5682</div>
+        </div>`;
+    }).catch(err=>{
+      wrapper.innerHTML = `<div style="text-align:center;padding:60px;color:#A32D2D;font-size:13px">Error loading schedule: ${err.message}</div>`;
+    });
+    return; // stop rest of script from running
+  }
+})();
+
+function sendClientReply(clientKey, clientName, btn){
+  const text = document.getElementById('reply-text').value.trim();
+  if(!text){ alert('Please type a message first.'); return; }
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  db.ref('messages/'+clientKey).push({
+    dir:'in', text, from: clientName,
+    time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+    ts: Date.now(), unread: true
+  }).then(()=>{
+    document.getElementById('reply-form').style.display='none';
+    document.getElementById('sent-ok').style.display='block';
+  }).catch(err=>{
+    btn.textContent='Send Message'; btn.disabled=false;
+    alert('Could not send: '+err.message);
+  });
+}
+
 // ── AUTH ──
 function handleLogin(){
   const e=document.getElementById('login-email').value.trim();
@@ -449,6 +539,7 @@ function handleLogin(){
 }
 function handleLogout(){auth.signOut();}
 auth.onAuthStateChanged(user=>{
+  if(window.location.hash.startsWith('#client=')) return; // client mode, skip auth UI
   if(user){
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('main-app').classList.remove('hidden');
@@ -689,144 +780,65 @@ function openShareModal(key){
   shareTargetKey=key;
   const c=clients[key];if(!c)return;
   document.getElementById('share-modal-sub').textContent='For: '+c.name;
+  const url=getShareURL(key);
+  const preview=document.getElementById('share-url-preview');
+  if(preview) preview.textContent=url;
   document.getElementById('share-modal').classList.add('open');
 }
 function closeShareModal(){document.getElementById('share-modal').classList.remove('open');}
 
+// Build the real shareable URL using the same page + #client=KEY hash
+function getShareURL(clientKey){
+  // Works on GitHub Pages, Netlify, or any host
+  const base = window.location.href.split('#')[0]; // strip any existing hash
+  return base + '#client=' + encodeURIComponent(clientKey);
+}
+
 function openShareLink(){
-  const html=buildClientPageHTML(shareTargetKey);
-  const blob=new Blob([html],{type:'text/html'});
-  window.open(URL.createObjectURL(blob),'_blank');
-  showToast('Schedule page opened! Bookmark or print-to-PDF to share with client.');
+  window.open(getShareURL(shareTargetKey), '_blank');
+  showToast('Schedule page opened! Copy the URL from the browser bar to share.');
 }
 
 function copyShareLink(){
-  const html=buildClientPageHTML(shareTargetKey);
-  const blob=new Blob([html],{type:'text/html'});
-  const url=URL.createObjectURL(blob);
+  const url = getShareURL(shareTargetKey);
   navigator.clipboard.writeText(url)
-    .then(()=>showToast('🔗 Link copied! Paste it anywhere to share.'))
-    .catch(()=>{window.open(url,'_blank');showToast('Opened in new tab — bookmark or print to PDF.');});
+    .then(()=>showToast('🔗 Link copied! Send it to your client via WhatsApp, SMS or Email.'))
+    .catch(()=>{
+      prompt('Copy this link and send to your client:', url);
+    });
 }
 
 function sendShareViaWA(){
   const c=clients[shareTargetKey];if(!c)return;
   const phone=(c.phone||'').replace(/\D/g,'');
   if(!phone){showToast('No phone number for '+c.name);return;}
-  const msg=`Hi ${c.name.split(' ')[0]}, here is your upcoming cleaning schedule from Janete's Cleaners. You can also send me a message directly from the page — no need for WhatsApp! I'll follow up with the link.`;
+  const url = getShareURL(shareTargetKey);
+  const msg=`Hi ${c.name.split(' ')[0]}, here is your upcoming cleaning schedule from Janete's Cleaners! You can view your appointments and send us a message directly from the page — no app needed 😊\n\n${url}`;
   window.open(`https://wa.me/1${phone}?text=${encodeURIComponent(msg)}`,'_blank');
-  openShareLink();
+  showToast('WhatsApp opened with the link included in the message!');
 }
 
 function sendShareViaEmail(){
   const c=clients[shareTargetKey];if(!c)return;
   if(!c.email){showToast('No email for '+c.name);return;}
+  const url = getShareURL(shareTargetKey);
   const sub=encodeURIComponent("Your Cleaning Schedule — Janete's Cleaners");
-  const body=encodeURIComponent(`Hi ${c.name.split(' ')[0]},\n\nPlease find your upcoming cleaning schedule below. You can view your appointments and reply to us directly from the page.\n\nThank you!\nJanete's Cleaners · (781) 964-5682`);
+  const body=encodeURIComponent(`Hi ${c.name.split(' ')[0]},\n\nHere is your upcoming cleaning schedule:\n\n${url}\n\nYou can view your appointments and send us a message directly from the page.\n\nThank you!\nJanete's Cleaners · (781) 964-5682`);
   window.open(`mailto:${c.email}?subject=${sub}&body=${body}`,'_blank');
-  openShareLink();
+  showToast('Email draft opened with the link inside!');
 }
 
 function sendShareViaSMS(){
   const c=clients[shareTargetKey];if(!c)return;
   const phone=(c.phone||'').replace(/\D/g,'');
   if(!phone){showToast('No phone for '+c.name);return;}
-  const msg=`Hi ${c.name.split(' ')[0]}, your cleaning schedule from Janete's Cleaners is ready. I'll share the link in a moment!`;
+  const url = getShareURL(shareTargetKey);
+  const msg=`Hi ${c.name.split(' ')[0]}, your cleaning schedule from Janete's Cleaners: ${url}`;
   window.open(`sms:+1${phone}?body=${encodeURIComponent(msg)}`,'_blank');
-  openShareLink();
+  showToast('SMS draft opened with the link!');
 }
 
-// ── Build standalone client schedule page ──
-function buildClientPageHTML(clientKey){
-  const c=clients[clientKey];if(!c)return '';
-  const myBook=bookingsArr().filter(b=>b.client===c.name).sort((a,b)=>a.date.localeCompare(b.date));
-  const apptRows=myBook.length?myBook.map(b=>{
-    const dt=new Date(b.date+'T12:00:00');
-    return `<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #eee">
-      <div style="text-align:center;min-width:48px;background:#FCEBEB;border-radius:8px;padding:7px 4px">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1;color:#C41A1A">${dt.getDate()}</div>
-        <div style="font-size:10px;text-transform:uppercase;color:#A32D2D;letter-spacing:0.7px">${MONTHS[dt.getMonth()].slice(0,3)}</div>
-      </div>
-      <div>
-        <div style="font-weight:600;font-size:14px;color:#1C1C1E">${b.time} — ${b.service}</div>
-        <div style="font-size:12px;color:#888;margin-top:2px">${c.address||''}</div>
-      </div>
-    </div>`;
-  }).join(''):`<div style="color:#888;font-size:13px;padding:20px 0;text-align:center">No upcoming appointments scheduled.</div>`;
-
-  const fbCfgStr=JSON.stringify(firebaseConfig);
-  const safeName=(c.name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-
-  return `<!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Your Schedule — Janete's Cleaners</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"><\/script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"><\/script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#F5F3EE;min-height:100vh;padding-bottom:40px}
-.header{background:#C41A1A;color:#fff;padding:20px 20px 16px;text-align:center}
-.hbrand{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px}
-.hname{font-size:13px;opacity:.85;margin-top:3px}
-.wrap{max-width:480px;margin:0 auto;padding:16px}
-.card{background:#fff;border-radius:10px;border:1px solid #e5e5e5;overflow:hidden;margin-bottom:14px}
-.card-head{padding:11px 16px;border-bottom:1px solid #eee;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.2px;color:#1C1C1E}
-.card-body{padding:14px 16px}
-.reply-area{width:100%;border:1px solid #DDD;border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:80px;outline:none;background:#F9F9F7;margin-bottom:10px}
-.reply-area:focus{border-color:#C41A1A}
-.reply-btn{width:100%;padding:11px;background:#C41A1A;color:#fff;border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer}
-.reply-btn:hover{background:#a01515}
-.sent-box{background:#EAF3DE;border:1px solid #a3d5bb;border-radius:8px;padding:12px;font-size:13px;color:#0A3622;display:none}
-.policy{background:#FCEBEB;border:1px solid #F7C1C1;border-radius:8px;padding:11px 14px;font-size:12px;color:#A32D2D;margin-bottom:14px}
-</style></head>
-<body>
-<div class="header">
-  <div class="hbrand">Janete's Cleaners Inc.</div>
-  <div class="hname">Schedule for ${esc(c.name)}</div>
-</div>
-<div class="wrap">
-  <div class="policy">⚠ <strong>Skip Policy:</strong> A $50 fee applies to cancellations with less than 24 hours notice.</div>
-  <div class="card">
-    <div class="card-head">Your Upcoming Appointments</div>
-    <div class="card-body" id="appts">${apptRows}</div>
-  </div>
-  <div class="card">
-    <div class="card-head">Send Us a Message</div>
-    <div class="card-body">
-      <p style="font-size:12px;color:#888;margin-bottom:10px">Have a question or need to reschedule? Your message goes straight to our dashboard — no app needed.</p>
-      <div id="reply-form">
-        <textarea class="reply-area" id="reply-text" placeholder="Type your message here…"></textarea>
-        <button class="reply-btn" onclick="sendReply()">Send Message</button>
-      </div>
-      <div class="sent-box" id="sent-ok">✅ Message sent! We'll get back to you shortly.</div>
-    </div>
-  </div>
-</div>
-<script>
-firebase.initializeApp(${fbCfgStr});
-const db=firebase.database();
-function sendReply(){
-  const text=document.getElementById('reply-text').value.trim();
-  if(!text){alert('Please type a message first.');return;}
-  const btn=document.querySelector('.reply-btn');
-  btn.textContent='Sending…';btn.disabled=true;
-  db.ref('messages/${clientKey}').push({
-    dir:'in',text,
-    time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-    ts:Date.now(),unread:true,from:'${safeName}'
-  }).then(()=>{
-    document.getElementById('reply-form').style.display='none';
-    document.getElementById('sent-ok').style.display='block';
-  }).catch(err=>{
-    btn.textContent='Send Message';btn.disabled=false;
-    alert('Could not send: '+err.message);
-  });
-}
-<\/script>
-</body></html>`;
-}
+// (Client schedule page is now rendered by the same file when #client=KEY is in the URL)
 
 // ══ PROFILE ══
 function openProfile(key){
