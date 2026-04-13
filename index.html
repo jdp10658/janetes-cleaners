@@ -356,35 +356,7 @@ textarea.finput{resize:vertical;min-height:50px}
   </div>
 </div>
 
-<!-- INVOICE -->
-<div class="modal-overlay" id="bill-modal">
-  <div class="modal">
-    <h2>Generate Invoice</h2>
-    <div class="msub" id="bill-client-name"></div>
-    <div class="fg"><label class="flabel">Send via</label>
-      <select class="finput" id="bill-comm-method" onchange="updateBillTo()">
-        <option value="Email">Email</option><option value="WhatsApp">WhatsApp</option>
-        <option value="SMS">SMS</option><option value="Print">Print / Download</option>
-      </select></div>
-    <div id="bill-to-row" class="fg">
-      <label class="flabel" id="bill-to-label">Email address</label>
-      <input class="finput" id="bill-to-value" placeholder="client@email.com"></div>
-    <div style="font-size:9.5px;font-weight:600;letter-spacing:0.9px;text-transform:uppercase;color:#888;margin-bottom:5px">Line Items</div>
-    <div id="bill-lines"></div>
-    <div style="display:flex;gap:5px;margin-top:7px;align-items:flex-end">
-      <div style="flex:1"><label class="flabel">Add Item</label><input class="finput" id="bill-add-desc" placeholder="Description" style="font-size:11px;padding:5px 8px"></div>
-      <div style="width:72px"><label class="flabel">$</label><input class="finput" type="number" id="bill-add-amt" placeholder="0" min="0" style="font-size:11px;padding:5px 8px;text-align:right"></div>
-      <button onclick="addBillLine()" style="padding:6px 9px;background:#F5F3EE;border:1px solid #DDD;border-radius:6px;font-size:11px;cursor:pointer;margin-bottom:1px">+ Add</button>
-    </div>
-    <div class="bill-total"><span>Total Due</span><span id="bill-total">$0.00</span></div>
-    <div class="modal-actions">
-      <button class="btn-modal" onclick="closeBill()">Cancel</button>
-      <button class="btn-modal green" onclick="copyBillText()">📋 Copy</button>
-      <button class="btn-modal blue" onclick="openInvoiceTab()">🔗 Open</button>
-      <button class="btn-modal primary" onclick="sendBill()">Send ↗</button>
-    </div>
-  </div>
-</div>
+<!-- Invoice is now a full page opened in a new tab via openBill() -->
 
 <!-- REMINDER -->
 <div class="modal-overlay" id="reminder-modal">
@@ -541,7 +513,8 @@ const db   = firebase.database();
 })();
 
 function sendClientReply(clientKey, clientName, btn){
-  const text = document.getElementById('reply-text').value.trim();
+  const textarea = document.getElementById('reply-text');
+  const text = textarea ? textarea.value.trim() : '';
   if(!text){ alert('Please type a message first.'); return; }
   btn.textContent = 'Sending…'; btn.disabled = true;
   db.ref('messages/'+clientKey).push({
@@ -549,8 +522,13 @@ function sendClientReply(clientKey, clientName, btn){
     time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
     ts: Date.now(), unread: true
   }).then(()=>{
-    document.getElementById('reply-form').style.display='none';
-    document.getElementById('sent-ok').style.display='block';
+    // Hide the textarea and button, show success message
+    if(textarea) textarea.style.display='none';
+    btn.style.display='none';
+    const ok = document.createElement('div');
+    ok.style.cssText='background:#EAF3DE;border:1px solid #a3d5bb;border-radius:8px;padding:12px;font-size:13px;color:#0A3622;margin-top:8px';
+    ok.textContent='✅ Message sent! We\'ll get back to you shortly.';
+    btn.parentNode.appendChild(ok);
   }).catch(err=>{
     btn.textContent='Send Message'; btn.disabled=false;
     alert('Could not send: '+err.message);
@@ -1045,96 +1023,6 @@ function copyText(){
   window.open(URL.createObjectURL(blob),'_blank');
 }
 
-function renderBillLines(){
-  document.getElementById('bill-lines').innerHTML=billLines.map((l,i)=>`
-    <div class="bill-row" style="${l.isSkip?'color:#A32D2D':''}">
-      <span class="blabel">${esc(l.desc)}</span>
-      <span class="bill-row-amt">
-        <span>$</span>
-        <input type="number" class="bill-amt-input" value="${l.amt}" min="0" step="0.01"
-          onchange="updateLineAmt(${i},this.value)" oninput="updateLineAmt(${i},this.value)">
-        <button onclick="removeBillLine(${i})" style="background:none;border:none;color:#bbb;cursor:pointer;font-size:12px;padding:0 2px">✕</button>
-      </span>
-    </div>`).join('');
-  updateBillTotal();
-}
-
-function updateLineAmt(i,v){billLines[i].amt=parseFloat(v)||0;updateBillTotal();}
-function removeBillLine(i){billLines.splice(i,1);renderBillLines();}
-function addBillLine(){
-  const d=document.getElementById('bill-add-desc').value.trim();
-  const a=parseFloat(document.getElementById('bill-add-amt').value)||0;
-  if(!d){showToast('Enter a description.');return;}
-  billLines.push({desc:d,amt:a});renderBillLines();
-  document.getElementById('bill-add-desc').value='';document.getElementById('bill-add-amt').value='';
-}
-function updateBillTotal(){
-  document.getElementById('bill-total').textContent=fmtMoney(billLines.reduce((s,l)=>s+(parseFloat(l.amt)||0),0));
-}
-function updateBillTo(){
-  const m=document.getElementById('bill-comm-method').value;
-  const c=billTargetKey?clients[billTargetKey]:null;
-  const row=document.getElementById('bill-to-row');
-  if(m==='Print'){row.style.display='none';return;}
-  row.style.display='block';
-  document.getElementById('bill-to-label').textContent=m==='Email'?'Email address':'Phone number';
-  document.getElementById('bill-to-value').value=c?(m==='Email'?c.email||'':formatPhone(c.phone||'')):'';
-}
-function buildBillText(){
-  const c=billTargetKey?clients[billTargetKey]:null;
-  const total=document.getElementById('bill-total').textContent;
-  let b=`INVOICE — Janete's Cleaners Inc.\n${'─'.repeat(36)}\nClient: ${c?c.name:''}\nDate:   ${new Date().toLocaleDateString()}\n\n`;
-  billLines.forEach(l=>{b+=l.desc.padEnd(28)+fmtMoney(l.amt)+'\n';});
-  return b+`${'─'.repeat(36)}\nTotal Due: ${total}\n\nThank you!\nJanete's Cleaners · (781) 964-5682`;
-}
-function buildInvoiceHTML(){
-  const c=billTargetKey?clients[billTargetKey]:null;
-  const total=document.getElementById('bill-total').textContent;
-  const rows=billLines.map(l=>`<tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#555">${esc(l.desc)}</td><td style="padding:9px 0;border-bottom:1px solid #eee;text-align:right;font-weight:500">${fmtMoney(l.amt)}</td></tr>`).join('');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice — Janete's Cleaners</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:#F5F3EE;display:flex;justify-content:center;padding:40px 16px}
-.inv{background:#fff;border-radius:12px;max-width:520px;width:100%;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
-.ih{background:#C41A1A;color:#fff;padding:24px 28px}
-.ib{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px}
-table{width:100%;border-collapse:collapse;margin-top:14px}
-.tot{display:flex;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:2px solid #ddd;font-weight:600;font-size:17px}
-.ft{padding:14px 28px 18px;font-size:11px;color:#aaa;text-align:center;border-top:1px solid #eee}
-@media print{body{background:#fff;padding:0}.inv{box-shadow:none;border-radius:0}.np{display:none}}</style></head><body>
-<div class="inv">
-  <div class="ih"><div class="ib">Janete's Cleaners Inc.</div><div style="font-size:11px;opacity:.75;letter-spacing:1px;margin-top:2px">INVOICE · ${new Date().toLocaleDateString()}</div></div>
-  <div style="padding:24px 28px">
-    <div style="margin-bottom:14px"><strong style="font-size:15px">${c?esc(c.name):''}</strong><div style="font-size:12px;color:#888;margin-top:2px">${c&&c.address?esc(c.address):''}</div></div>
-    <table><tbody>${rows}</tbody></table>
-    <div class="tot"><span>Total Due</span><span>${esc(total)}</span></div>
-  </div>
-  <div class="ft">Thank you for choosing Janete's Cleaners! · (781) 964-5682</div>
-</div>
-<div class="np" style="text-align:center;margin-top:20px"><button onclick="window.print()" style="padding:10px 28px;background:#1C1C1E;color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer">🖨 Print / Save PDF</button></div>
-</body></html>`;
-}
-function openInvoiceTab(){const blob=new Blob([buildInvoiceHTML()],{type:'text/html'});window.open(URL.createObjectURL(blob),'_blank');showToast('📄 Invoice opened!');}
-function sendBill(){
-  const m=document.getElementById('bill-comm-method').value;
-  const dest=document.getElementById('bill-to-value').value.trim();
-  const c=billTargetKey?clients[billTargetKey]:null;
-  const total=document.getElementById('bill-total').textContent;
-  if(m==='Print'){
-    const blob=new Blob([buildInvoiceHTML()],{type:'text/html'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(c?c.name.replace(/\s+/g,'_'):'Invoice')+'_Invoice.html';a.click();
-    showToast('📥 Downloaded.');closeBill();return;
-  }
-  if(!dest){showToast('Enter a '+(m==='Email'?'email':'phone')+'.');return;}
-  const a=document.createElement('a');
-  const cName=c?c.name.split(' ')[0]:'there';
-  if(m==='Email')a.href=`mailto:${dest}?subject=${encodeURIComponent("Invoice — Janete's Cleaners")}&body=${encodeURIComponent(buildBillText())}`;
-  else if(m==='WhatsApp'){a.href=`https://wa.me/1${(c?.phone||'').replace(/\D/g,'')}?text=${encodeURIComponent(`Hi ${cName}, your invoice from Janete's Cleaners is ${total}. Contact us to arrange payment!`)}`;a.target='_blank';}
-  else a.href=`sms:+1${(c?.phone||'').replace(/\D/g,'')}?body=${encodeURIComponent(`Hi ${cName}, your balance with Janete's Cleaners is ${total}. Please contact us.`)}`;
-  a.click();showToast('Draft opened.');closeBill();
-}
-function copyBillText(){navigator.clipboard.writeText(buildBillText()).then(()=>showToast('📋 Copied!')).catch(()=>showToast('Copy unavailable.'));}
-function closeBill(){document.getElementById('bill-modal').classList.remove('open');}
-
 // ══ SKIP TRACKER ══
 function quickSkip(key){
   const c=clients[key];if(!c)return;
@@ -1342,3 +1230,4 @@ function seedClientsIfEmpty(){
 </script>
 </body>
 </html>
+
