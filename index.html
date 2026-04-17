@@ -412,9 +412,63 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.database();
 
-// ── CLIENT MODE: detect #client=KEY in URL ──
+// ── CLIENT MODE: detect #client=KEY or #invoice=PAYLOAD in URL ──
 (function(){
   const hash = window.location.hash;
+
+  // ── INVOICE LINK MODE ──
+  if(hash && hash.startsWith('#invoice=')){
+    try{
+      const payload=hash.slice(9);
+      const data=JSON.parse(decodeURIComponent(escape(atob(payload))));
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('main-app').classList.add('hidden');
+      document.body.style.background='#F5F3EE';
+      const wrap=document.createElement('div');
+      wrap.style.cssText='max-width:540px;margin:0 auto;padding:20px 16px;font-family:DM Sans,sans-serif';
+      document.body.appendChild(wrap);
+
+      const rows=data.lines.map(l=>`<tr>
+        <td style="padding:10px 0;border-bottom:1px solid #eee;color:#444;font-size:14px">${(l.desc||'').replace(/</g,'&lt;')}</td>
+        <td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;font-weight:500">$${parseFloat(l.amt).toFixed(2)}</td>
+      </tr>`).join('');
+
+      const venmoURL='https://venmo.com/'+data.venmoUser+'?txn=pay&amount='+data.total+'&note='+encodeURIComponent('Janetes Cleaners Invoice #'+data.invNum);
+
+      wrap.innerHTML=`
+        <div style="background:#C41A1A;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:flex-end">
+          <div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px">Janetes Cleaners Inc.</div>
+            <div style="font-size:11px;opacity:.8;margin-top:2px">${data.clientName} &mdash; ${data.date}</div>
+          </div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;opacity:.85">INV #${data.invNum}</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e5e5e5;border-top:none;padding:20px 24px">
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+              <th style="padding:6px 0;text-align:left;font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#888;border-bottom:2px solid #eee">Description</th>
+              <th style="padding:6px 0;text-align:right;font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#888;border-bottom:2px solid #eee">Amount</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:2px solid #ddd;font-weight:600;font-size:18px">
+            <span>Total Due</span><span>$${data.total}</span>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #e5e5e5;border-top:none;border-radius:0 0 12px 12px;padding:14px 24px;font-size:11px;color:#aaa;text-align:center">
+          Thank you for choosing Janetes Cleaners! &middot; (781) 964-5682
+        </div>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+          <a href="${venmoURL}" target="_blank" style="display:block;text-align:center;padding:14px;background:#008CFF;color:#fff;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none">Pay $${data.total} with Venmo</a>
+          <div style="text-align:center;font-size:11px;color:#aaa;margin-top:4px">Questions? Call or text us at (781) 964-5682</div>
+        </div>`;
+      return;
+    } catch(e){
+      document.body.innerHTML='<div style="text-align:center;padding:60px;color:#A32D2D;font-size:13px">Invalid invoice link.</div>';
+      return;
+    }
+  }
+
   if(hash && hash.startsWith('#client=')){
     const clientKey = decodeURIComponent(hash.slice(8));
     document.getElementById('login-screen').classList.add('hidden');
@@ -545,7 +599,7 @@ function handleLogin(){
 }
 function handleLogout(){auth.signOut();}
 auth.onAuthStateChanged(user=>{
-  if(window.location.hash.startsWith('#client=')) return; // client mode, skip auth UI
+  if(window.location.hash.startsWith('#client=')||window.location.hash.startsWith('#invoice=')) return; // client/invoice mode, skip auth UI
   if(user){
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('main-app').classList.remove('hidden');
@@ -650,7 +704,7 @@ function renderTable(){
   if(!arr.length){tb.innerHTML='<tr><td class="empty-td" colspan="5">No clients found.</td></tr>';return;}
   tb.innerHTML=arr.map(c=>{
     const icon=c.comm==='Email'?'✉':c.comm==='SMS'?'💬':'📞';
-    const dot=unreadCounts[c.key]?'<span class="unread-dot"></span>':'';
+    const dot=unreadCounts[c.key]?'<span class="unread-dot" onclick="event.stopPropagation();openChatFor(\''+(c.key)+'\')" title="New message" style="cursor:pointer"></span>':'';
     return `<tr class="${c.key===editingKey?'editing-row':''}" onclick="selectRow('${c.key}')">
       <td>${esc(c.name)}${dot}</td>
       <td>${c.phone?`<a href="tel:${esc(c.phone)}" onclick="event.stopPropagation()" style="color:#555">${esc(formatPhone(c.phone))}</a>`:'<span class="missing-badge">no phone</span>'}</td>
@@ -716,6 +770,15 @@ function confirmDelete(key){
 function deleteFromForm(){const k=document.getElementById('editKey').value;if(k)confirmDelete(k);}
 
 // ══ CHAT ══
+// Open chat panel for a specific client (called from unread dot click)
+function openChatFor(key){
+  const sel=document.getElementById('chat-client-sel');
+  sel.value=key;
+  switchChatClient();
+  // Scroll chat into view
+  document.querySelector('.chat-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
 function switchChatClient(){
   const key=document.getElementById('chat-client-sel').value;
   activeChatKey=key||null;
@@ -984,6 +1047,7 @@ function openInvoicePage(key){
   if((c.phone||'').replace(/\D/g,'')) w.document.write('<a class="abtn" style="background:#E8F5E9;color:#1B5E20" id="wa-btn" href="#" target="_blank">WhatsApp<\/a>');
   if(c.email) w.document.write('<a class="abtn" style="background:#EAF3DE;color:#3B6D11" id="email-btn" href="#">Email<\/a>');
   if((c.phone||'').replace(/\D/g,'')) w.document.write('<a class="abtn" style="background:#E6F1FB;color:#185FA5" id="sms-btn" href="#">SMS<\/a>');
+  w.document.write('<button class="abtn" style="background:#5A2D82;color:#fff" id="share-inv-btn">Share Invoice Link<\/button>');
   w.document.write('<button class="abtn" style="background:#1C1C1E;color:#fff" onclick="window.print()">Print / PDF<\/button>');
   w.document.write('<\/div>');
   w.document.write('<\/div><\/body><\/html>');
@@ -997,16 +1061,12 @@ function openInvoicePage(key){
     function recalc(){
       const t=lines.reduce((s,l)=>s+l.amt,0);
       w.document.getElementById('total-display').textContent='$'+t.toFixed(2);
-      // Update Venmo link with current total
       const vBtn=w.document.getElementById('venmo-btn');
       if(vBtn) vBtn.href='https://venmo.com/'+d.venmoUser+'?txn=pay&amount='+t.toFixed(2)+'&note='+encodeURIComponent('Janetes Cleaners Invoice #'+d.invNum);
-      // Update WA link
       const waBtn=w.document.getElementById('wa-btn');
       if(waBtn) waBtn.href='https://wa.me/1'+d.phone+'?text='+encodeURIComponent('Hi '+d.clientName.split(' ')[0]+', your invoice #'+d.invNum+' from Janetes Cleaners is $'+t.toFixed(2)+'. Pay via Venmo @'+d.venmoUser+'. Thank you!');
-      // Update email link
       const eBtn=w.document.getElementById('email-btn');
       if(eBtn) eBtn.href='mailto:'+d.email+'?subject='+encodeURIComponent('Invoice #'+d.invNum+' - Janetes Cleaners')+'&body='+encodeURIComponent('Hi '+d.clientName.split(' ')[0]+',\n\nYour invoice #'+d.invNum+' total is $'+t.toFixed(2)+'.\n\nPay via Venmo @'+d.venmoUser+'\n\nThank you!\nJanetes Cleaners (781) 964-5682');
-      // Update SMS link
       const sBtn=w.document.getElementById('sms-btn');
       if(sBtn) sBtn.href='sms:+1'+d.phone+'?body='+encodeURIComponent('Hi '+d.clientName.split(' ')[0]+', invoice #'+d.invNum+' is $'+t.toFixed(2)+'. Pay via Venmo @'+d.venmoUser);
     }
@@ -1016,14 +1076,37 @@ function openInvoicePage(key){
       tbody.innerHTML='';
       lines.forEach(function(l,i){
         const tr=w.document.createElement('tr');
-        tr.innerHTML='<td style="padding:10px 0;border-bottom:1px solid #eee;color:#444;font-size:14px">'+l.desc+'<\/td>'+
-          '<td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right"><input type="number" class="edit-inp" value="'+l.amt.toFixed(2)+'" min="0" step="0.01" onchange="updateAmt('+i+',this.value)"><\/td>'+
-          '<td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;width:32px" class="no-print"><button class="del-btn" onclick="delLine('+i+')">x<\/button><\/td>';
+        // Both description AND amount are editable; delete button on each row
+        tr.innerHTML=
+          '<td style="padding:8px 0;border-bottom:1px solid #eee">'+
+            '<input type="text" value="'+l.desc.replace(/"/g,'&quot;')+'" '+
+            'style="width:100%;border:1px solid #DDD;border-radius:5px;padding:5px 8px;font-size:13px;font-family:DM Sans,sans-serif;background:#F9F9F7;outline:none" '+
+            'onchange="updateDesc('+i+',this.value)" oninput="updateDesc('+i+',this.value)"><\/td>'+
+          '<td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;width:100px">'+
+            '<input type="number" class="edit-inp" value="'+l.amt.toFixed(2)+'" min="0" step="0.01" '+
+            'style="width:85px;border:1px solid #DDD;border-radius:5px;padding:5px 7px;font-size:13px;text-align:right;font-family:DM Sans,sans-serif;background:#F9F9F7" '+
+            'onchange="updateAmt('+i+',this.value)"><\/td>'+
+          '<td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;width:32px" class="no-print">'+
+            '<button class="del-btn" onclick="delLine('+i+')">x<\/button><\/td>';
         tbody.appendChild(tr);
       });
       recalc();
     }
 
+    // Share invoice link — encodes lines into the URL hash so client can open it
+    w.document.getElementById('share-inv-btn').onclick=function(){
+      const t=lines.reduce((s,l)=>s+l.amt,0);
+      const payload=btoa(unescape(encodeURIComponent(JSON.stringify({
+        invNum:d.invNum, clientName:d.clientName, total:t.toFixed(2),
+        lines:lines, venmoUser:d.venmoUser, date:d.date
+      }))));
+      const url='https://jdp10658.github.io/janetes-cleaners/#invoice='+payload;
+      navigator.clipboard.writeText(url)
+        .then(function(){w.alert('Invoice link copied! Send it to your client via WhatsApp, SMS or Email.');})
+        .catch(function(){w.prompt('Copy this link:',url);});
+    };
+
+    w.updateDesc=function(i,v){lines[i].desc=v;};
     w.updateAmt=function(i,v){lines[i].amt=parseFloat(v)||0;recalc();};
     w.delLine=function(i){lines.splice(i,1);renderLines();};
     w.addLine=function(){
