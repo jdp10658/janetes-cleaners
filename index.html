@@ -162,6 +162,85 @@ textarea.finput{resize:vertical;min-height:50px}
 .btn-email-c{background:#C41A1A;color:#fff}
 .toast{position:fixed;bottom:14px;right:14px;background:#1C1C1E;color:#FAF7F2;padding:9px 15px;border-radius:8px;font-size:12px;opacity:0;transform:translateY(8px);transition:all 0.25s;pointer-events:none;z-index:400;max-width:280px}
 .toast.show{opacity:1;transform:translateY(0)}
+
+/* ══ MOBILE RESPONSIVE ══ */
+@media(max-width:768px){
+  /* Topbar: stack brand above alert on small screens */
+  .topbar{flex-direction:column;border-radius:0}
+  .topbar-brand{min-width:unset;padding:10px 14px;flex-direction:row;align-items:center;gap:10px}
+  .topbar-brand .bsub{display:none}
+  .topbar-alert{padding:7px 12px;gap:8px}
+  .topbar-alert .asub{display:none}
+  .wa-topbar{font-size:10px;padding:5px 9px}
+  .logout-btn{font-size:10px;padding:4px 9px}
+
+  /* Nav: scrollable tabs */
+  .nav{padding:0 8px}
+  .nav-tab{padding:8px 10px;font-size:11px}
+
+  /* Pages: less padding */
+  .page{padding:9px}
+
+  /* Dashboard: single column stack */
+  .grid-3{grid-template-columns:1fr!important;gap:10px}
+  .grid-3 > div[style*="grid-column:1/2"],
+  .grid-3 > div[style*="grid-column:2/3"],
+  .grid-3 > div[style*="grid-column:3/4"]{grid-column:1!important}
+
+  /* Schedule: single column */
+  .grid-2{grid-template-columns:1fr!important}
+
+  /* Services: single column */
+  .page > div[style*="grid-template-columns:1fr 270px"]{
+    display:block!important
+  }
+  .page > div[style*="grid-template-columns:1fr 270px"] > .card{
+    margin-bottom:10px
+  }
+
+  /* Skip tracker log row: stack */
+  div[style*="grid-template-columns:1fr 1fr 1fr"]{
+    grid-template-columns:1fr 1fr!important
+  }
+
+  /* Table: make action buttons smaller, allow wrap */
+  .act-cell{gap:2px}
+  .btn-xs{padding:3px 5px;font-size:10px}
+
+  /* Table columns: hide email on mobile */
+  thead th:nth-child(3),
+  tbody td:nth-child(3){display:none}
+
+  /* Chat: shorter on mobile */
+  .chat-wrap{height:240px}
+
+  /* Cards */
+  .card-head{padding:8px 11px}
+  .card-body{padding:10px}
+
+  /* Skip stats: 3 cols still fine but smaller */
+  .stat-card .sval{font-size:20px}
+
+  /* Modals: full width */
+  .modal{width:96vw!important;padding:16px;margin:0 auto}
+
+  /* Login card */
+  .login-card{width:92vw;padding:22px}
+
+  /* Portal */
+  .portal-contact{flex-wrap:wrap}
+  .btn-contact{min-width:45%}
+
+  /* Form: full width selects */
+  .finput{font-size:13px}
+
+  /* Chat toolbar: wrap on small screens */
+  .chat-toolbar{flex-wrap:wrap}
+  .chat-toolbar select{min-width:0;font-size:12px}
+
+  /* Smaller search input */
+  .search-row input{font-size:12px}
+}
 /* SHARE MODAL */
 .share-info-box{background:#EEF4FF;border:1px solid #b3c2f5;border-radius:8px;padding:11px;margin-bottom:11px}
 .share-note{background:#F9F9F7;border-radius:7px;padding:10px;border:1px solid #E5E5E5;font-size:11px;color:#666;line-height:1.5}
@@ -852,6 +931,16 @@ function openShareModal(key){
   const url=getShareURL(key);
   const preview=document.getElementById('share-url-preview');
   if(preview) preview.textContent=url;
+  // Show/dim WA and SMS buttons based on whether phone exists
+  const phone=(c.phone||'').replace(/\D/g,'');
+  const hasPhone=phone.length>0;
+  const hasEmail=(c.email||'').length>0;
+  const waBtn=document.querySelector('#share-modal .modal-actions button[onclick="sendShareViaWA()"]');
+  const smsBtn=document.querySelector('#share-modal .modal-actions button[onclick="sendShareViaSMS()"]');
+  const emailBtn=document.querySelector('#share-modal .modal-actions button[onclick="sendShareViaEmail()"]');
+  if(waBtn){waBtn.style.opacity=hasPhone?'1':'0.4';waBtn.title=hasPhone?'':'No phone on file — add one to enable';}
+  if(smsBtn){smsBtn.style.opacity=hasPhone?'1':'0.4';smsBtn.title=hasPhone?'':'No phone on file — add one to enable';}
+  if(emailBtn){emailBtn.style.opacity=hasEmail?'1':'0.4';emailBtn.title=hasEmail?'':'No email on file — add one to enable';}
   document.getElementById('share-modal').classList.add('open');
 }
 function closeShareModal(){document.getElementById('share-modal').classList.remove('open');}
@@ -879,31 +968,43 @@ function copyShareLink(){
 function sendShareViaWA(){
   const c=clients[shareTargetKey];if(!c)return;
   const phone=(c.phone||'').replace(/\D/g,'');
-  if(!phone){showToast('No phone number for '+c.name);return;}
-  const url = getShareURL(shareTargetKey);
-  const msg=`Hi ${c.name.split(' ')[0]}, here is your upcoming cleaning schedule from Janete's Cleaners! You can view your appointments and send us a message directly from the page — no app needed 😊\n\n${url}`;
-  window.open(`https://wa.me/1${phone}?text=${encodeURIComponent(msg)}`,'_blank');
-  showToast('WhatsApp opened with the link included in the message!');
+  if(!phone){
+    showToast('No phone on file for '+c.name+'. Add a phone number first, or use Copy Link instead.');
+    return;
+  }
+  const url=getShareURL(shareTargetKey);
+  const msg='Hi '+c.name.split(' ')[0]+', here is your cleaning schedule from Janetes Cleaners! View your appointments and message us directly from the page:\n\n'+url;
+  window.open('https://wa.me/1'+phone+'?text='+encodeURIComponent(msg),'_blank');
+  closeShareModal();
+  showToast('WhatsApp opened — link is in the message!');
 }
 
 function sendShareViaEmail(){
   const c=clients[shareTargetKey];if(!c)return;
-  if(!c.email){showToast('No email for '+c.name);return;}
-  const url = getShareURL(shareTargetKey);
-  const sub=encodeURIComponent("Your Cleaning Schedule — Janete's Cleaners");
-  const body=encodeURIComponent(`Hi ${c.name.split(' ')[0]},\n\nHere is your upcoming cleaning schedule:\n\n${url}\n\nYou can view your appointments and send us a message directly from the page.\n\nThank you!\nJanete's Cleaners · (781) 964-5682`);
-  window.open(`mailto:${c.email}?subject=${sub}&body=${body}`,'_blank');
-  showToast('Email draft opened with the link inside!');
+  if(!c.email){
+    showToast('No email on file for '+c.name+'. Add an email first, or use Copy Link instead.');
+    return;
+  }
+  const url=getShareURL(shareTargetKey);
+  const sub=encodeURIComponent("Your Cleaning Schedule — Janetes Cleaners");
+  const body=encodeURIComponent('Hi '+c.name.split(' ')[0]+',\n\nHere is your upcoming cleaning schedule:\n\n'+url+'\n\nYou can view appointments and message us directly from the page.\n\nThank you!\nJanetes Cleaners · (781) 964-5682');
+  window.open('mailto:'+c.email+'?subject='+sub+'&body='+body,'_blank');
+  closeShareModal();
+  showToast('Email draft opened — link is in the message!');
 }
 
 function sendShareViaSMS(){
   const c=clients[shareTargetKey];if(!c)return;
   const phone=(c.phone||'').replace(/\D/g,'');
-  if(!phone){showToast('No phone for '+c.name);return;}
-  const url = getShareURL(shareTargetKey);
-  const msg=`Hi ${c.name.split(' ')[0]}, your cleaning schedule from Janete's Cleaners: ${url}`;
-  window.open(`sms:+1${phone}?body=${encodeURIComponent(msg)}`,'_blank');
-  showToast('SMS draft opened with the link!');
+  if(!phone){
+    showToast('No phone on file for '+c.name+'. Add a phone number first, or use Copy Link instead.');
+    return;
+  }
+  const url=getShareURL(shareTargetKey);
+  const msg='Hi '+c.name.split(' ')[0]+', your cleaning schedule from Janetes Cleaners: '+url;
+  window.open('sms:+1'+phone+'?body='+encodeURIComponent(msg),'_blank');
+  closeShareModal();
+  showToast('SMS draft opened — link is in the message!');
 }
 
 // (Client schedule page is now rendered by the same file when #client=KEY is in the URL)
