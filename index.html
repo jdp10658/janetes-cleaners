@@ -281,6 +281,8 @@ textarea.finput{resize:vertical;min-height:50px}
   <div class="nav-tab" onclick="switchPage('skips',this)">Skip Tracker</div>
   <div class="nav-tab" onclick="switchPage('services',this)">Services &amp; Pricing</div>
   <div class="nav-tab" onclick="switchPage('portal',this)">Client Portal</div>
+  <div class="nav-tab" onclick="switchPage('billing',this)">Bill History</div>
+  <div class="nav-tab" onclick="switchPage('venmo',this)">Venmo</div>
 </div>
 
 <!-- DASHBOARD -->
@@ -420,6 +422,79 @@ textarea.finput{resize:vertical;min-height:50px}
   </div>
 </div>
 
+<!-- BILLING HISTORY -->
+<div class="page" id="page-billing">
+  <div class="card" style="max-width:800px">
+    <div class="card-head">
+      <span class="ctitle">Billing History</span>
+      <span class="badge" id="billing-total-badge">loading…</span>
+    </div>
+    <div style="padding:10px 13px;border-bottom:1px solid #E5E5E5;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select class="finput" id="billing-client-filter" style="max-width:220px;font-size:12px" onchange="renderBillingHistory()">
+        <option value="">All Clients</option>
+      </select>
+      <select class="finput" id="billing-status-filter" style="max-width:140px;font-size:12px" onchange="renderBillingHistory()">
+        <option value="">All Statuses</option>
+        <option value="unpaid">Unpaid</option>
+        <option value="paid">Paid</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Invoice #</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="billing-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- VENMO PAGE -->
+<div class="page" id="page-venmo">
+  <div style="max-width:480px;margin:0 auto">
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head"><span class="ctitle">Venmo Payment Page</span></div>
+      <div class="card-body">
+        <div style="text-align:center;padding:10px 0 16px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:#1C1C1E">Janete's Cleaners</div>
+          <div style="font-size:12px;color:#888;margin-top:3px">@janete-pereira-1 on Venmo</div>
+        </div>
+        <div style="background:#EEF4FF;border-radius:10px;padding:14px;margin-bottom:14px;text-align:center">
+          <div style="font-size:11px;color:#666;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.8px">Shareable Payment Link</div>
+          <div id="venmo-page-url" style="font-size:11px;color:#2244AA;word-break:break-all;cursor:pointer;margin-bottom:10px" onclick="copyVenmoPageLink()"></div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <button onclick="copyVenmoPageLink()" style="padding:8px 16px;background:#2244AA;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">Copy Link</button>
+            <button onclick="openVenmoPage()" style="padding:8px 16px;background:#1C1C1E;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">Preview Page</button>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label class="flabel" style="margin-bottom:5px">Custom Amount (optional)</label>
+          <div style="display:flex;gap:8px">
+            <input class="finput" type="number" id="venmo-custom-amount" placeholder="0.00" min="0" step="0.01" style="width:120px;text-align:right" oninput="updateVenmoURL()">
+            <input class="finput" id="venmo-custom-note" placeholder="Note e.g. March cleaning" style="flex:1" oninput="updateVenmoURL()">
+          </div>
+        </div>
+        <a id="venmo-direct-btn" href="https://venmo.com/janete-pereira-1" target="_blank" style="display:block;text-align:center;padding:14px;background:#008CFF;color:#fff;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:8px">Open Venmo — @janete-pereira-1</a>
+        <div style="font-size:11px;color:#aaa;text-align:center">Clients can also search <strong>@janete-pereira-1</strong> in the Venmo app</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="ctitle">Send to Specific Client</span></div>
+      <div class="card-body">
+        <div class="fg"><label class="flabel">Select Client</label>
+          <select class="finput" id="venmo-client-sel" onchange="updateVenmoClientLink()"><option value="">— select client —</option></select>
+        </div>
+        <div class="fg"><label class="flabel">Amount ($)</label>
+          <input class="finput" type="number" id="venmo-client-amt" placeholder="0.00" min="0" step="0.01" oninput="updateVenmoClientLink()">
+        </div>
+        <div class="fg"><label class="flabel">Note</label>
+          <input class="finput" id="venmo-client-note" placeholder="Cleaning service" oninput="updateVenmoClientLink()">
+        </div>
+        <div id="venmo-client-links" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div><!-- /#main-app -->
 
 <!-- ══ MODALS ══ -->
@@ -546,6 +621,58 @@ const db   = firebase.database();
       document.body.innerHTML='<div style="text-align:center;padding:60px;color:#A32D2D;font-size:13px">Invalid invoice link.</div>';
       return;
     }
+  }
+
+  // ── VENMO PAGE MODE ──
+  if(hash && hash.startsWith('#venmo=')){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('main-app').classList.add('hidden');
+    document.body.style.cssText='margin:0;padding:0;background:#F5F3EE;font-family:DM Sans,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center';
+    const wrap=document.createElement('div');
+    wrap.style.cssText='max-width:400px;width:100%;margin:20px auto;overflow:hidden;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.1)';
+    document.body.appendChild(wrap);
+    wrap.innerHTML=`
+      <div style="background:#C41A1A;color:#fff;padding:28px;text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px">Janete's Cleaners Inc.</div>
+        <div style="font-size:12px;opacity:.8;margin-top:4px">Secure Payment via Venmo</div>
+      </div>
+      <div style="background:#fff;padding:28px">
+        <div style="margin-bottom:14px">
+          <label style="display:block;font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#888;margin-bottom:5px">Amount ($)</label>
+          <input type="number" id="vamt" placeholder="0.00" min="0" step="0.01"
+            style="width:100%;border:1px solid #DDD;border-radius:8px;padding:11px 14px;font-size:15px;background:#F9F9F7;outline:none;box-sizing:border-box"
+            oninput="updateVBtn()">
+        </div>
+        <div style="margin-bottom:18px">
+          <label style="display:block;font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#888;margin-bottom:5px">Note (optional)</label>
+          <input type="text" id="vnote" placeholder="e.g. March cleaning"
+            style="width:100%;border:1px solid #DDD;border-radius:8px;padding:11px 14px;font-size:15px;background:#F9F9F7;outline:none;box-sizing:border-box"
+            oninput="updateVBtn()">
+        </div>
+        <a id="vpay" href="https://venmo.com/janete-pereira-1" target="_blank"
+          style="display:block;text-align:center;padding:16px;background:#008CFF;color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;margin-bottom:14px">
+          Pay with Venmo
+        </a>
+        <div style="text-align:center;font-size:12px;color:#aaa;line-height:1.6">
+          Venmo handle: <strong style="color:#555">@janete-pereira-1</strong><br>
+          Or search in the Venmo app<br>
+          Questions? <a href="tel:+17819645682" style="color:#C41A1A">(781) 964-5682</a>
+        </div>
+      </div>`;
+    // Update Venmo button dynamically
+    window.updateVBtn=function(){
+      const a=parseFloat(document.getElementById('vamt').value)||0;
+      const n=document.getElementById('vnote').value||'Cleaning Service';
+      const btn=document.getElementById('vpay');
+      if(a>0){
+        btn.href='https://venmo.com/janete-pereira-1?txn=pay&amount='+a.toFixed(2)+'&note='+encodeURIComponent(n);
+        btn.textContent='Pay $'+a.toFixed(2)+' with Venmo';
+      } else {
+        btn.href='https://venmo.com/janete-pereira-1';
+        btn.textContent='Pay with Venmo';
+      }
+    };
+    return;
   }
 
   if(hash && hash.startsWith('#client=')){
@@ -678,7 +805,7 @@ function handleLogin(){
 }
 function handleLogout(){auth.signOut();}
 auth.onAuthStateChanged(user=>{
-  if(window.location.hash.startsWith('#client=')||window.location.hash.startsWith('#invoice=')) return; // client/invoice mode, skip auth UI
+  if(window.location.hash.startsWith('#client=')||window.location.hash.startsWith('#invoice=')||window.location.hash.startsWith('#venmo=')) return; // client/invoice/venmo mode, skip auth UI
   if(user){
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('main-app').classList.remove('hidden');
@@ -771,6 +898,8 @@ function switchPage(id,el){
   if(id==='portal'){populateDropdown('portal-client');}
   if(id==='skips'){populateDropdown('skip-client');renderSkipTable();}
   if(id==='services'){renderServiceList();}
+  if(id==='billing'){renderBillingHistory();populateDropdown('billing-client-filter');}
+  if(id==='venmo'){initVenmoPage();}
 }
 
 // ══ CLIENT TABLE ══
@@ -1060,17 +1189,26 @@ function openBill(key){
   if(myBook.length)myBook.forEach(b=>billLines.push({desc:b.date+' — '+b.service,amt:servicePrices[b.service]||75}));
   else{const f=Object.keys(servicePrices)[0]||'Standard Clean';billLines.push({desc:f,amt:servicePrices[f]||75});}
   skipsArr().filter(s=>s.client===c.name&&s.feeStatus==='unpaid').forEach(s=>billLines.push({desc:'Skip fee — '+s.date,amt:50,isSkip:true}));
-  // Open the invoice as a full page in a new tab
   openInvoicePage(key);
 }
 
-function openInvoicePage(key){
+function openInvoicePage(key, existingInvNum){
   const c=clients[key||billTargetKey];if(!c)return;
   const venmoUser='janete-pereira-1';
 
-  // Invoice number: stored in localStorage, starts at 4555
-  let invNum=parseInt(localStorage.getItem('jc_inv_num')||'4554')+1;
-  localStorage.setItem('jc_inv_num', invNum);
+  let invNum;
+  if(existingInvNum){
+    invNum=existingInvNum;
+  } else {
+    invNum=parseInt(localStorage.getItem('jc_inv_num')||'4554')+1;
+    localStorage.setItem('jc_inv_num', invNum);
+    const totalAmt=billLines.reduce((s,l)=>s+(parseFloat(l.amt)||0),0);
+    db.ref('invoices').push({
+      invNum, clientKey:key||billTargetKey, clientName:c.name,
+      date:new Date().toLocaleDateString(), ts:Date.now(),
+      total:totalAmt.toFixed(2), lines:billLines.map(l=>({desc:l.desc,amt:l.amt})), status:'unpaid'
+    });
+  }
 
   const w=window.open('','_blank');
   w.document.open();
@@ -1222,6 +1360,118 @@ function openInvoicePage(key){
 
     renderLines();
   });
+}
+
+// ══ BILLING HISTORY ══
+let invoices={};
+db.ref('invoices').on('value',snap=>{
+  invoices=snap.val()||{};
+  if(document.getElementById('page-billing').classList.contains('active'))renderBillingHistory();
+  // populate filter dropdown
+  const sel=document.getElementById('billing-client-filter');
+  if(sel){
+    const cur=sel.value;
+    const names=[...new Set(Object.values(invoices).map(i=>i.clientName))].sort();
+    sel.innerHTML='<option value="">All Clients</option>'+names.map(n=>`<option value="${esc(n)}"${cur===n?' selected':''}>${esc(n)}</option>`).join('');
+  }
+});
+
+function renderBillingHistory(){
+  const clientFilter=document.getElementById('billing-client-filter').value;
+  const statusFilter=document.getElementById('billing-status-filter').value;
+  let arr=Object.entries(invoices).map(([k,v])=>({key:k,...v}))
+    .filter(i=>!clientFilter||i.clientName===clientFilter)
+    .filter(i=>!statusFilter||i.status===statusFilter)
+    .sort((a,b)=>b.ts-a.ts);
+  const totalUnpaid=arr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+parseFloat(i.total||0),0);
+  document.getElementById('billing-total-badge').textContent=arr.length+' invoices · $'+totalUnpaid.toFixed(2)+' unpaid';
+  const tb=document.getElementById('billing-tbody');
+  if(!arr.length){tb.innerHTML='<tr><td class="empty-td" colspan="6">No invoices yet.</td></tr>';return;}
+  tb.innerHTML=arr.map(inv=>`<tr>
+    <td style="font-weight:600;color:#1C1C1E">#${inv.invNum||'—'}</td>
+    <td>${esc(inv.clientName||'')}</td>
+    <td style="color:#888;font-size:11px">${esc(inv.date||'')}</td>
+    <td style="font-weight:600;color:#C41A1A">$${parseFloat(inv.total||0).toFixed(2)}</td>
+    <td><span class="badge${inv.status==='unpaid'?' badge-red':' badge-green'}">${inv.status||'unpaid'}</span></td>
+    <td class="act-cell">
+      ${inv.status==='unpaid'?`<button class="btn-xs btn-bill" onclick="markInvPaid('${inv.key}')">✓ Paid</button>`:''}
+      <button class="btn-xs btn-rem" onclick="reOpenInvoice('${inv.key}')">View</button>
+      <button class="btn-xs btn-del" onclick="deleteInvoice('${inv.key}')">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+
+function markInvPaid(key){
+  db.ref('invoices/'+key).update({status:'paid'});
+  showToast('Invoice marked as paid.');
+}
+function deleteInvoice(key){
+  if(confirm('Delete this invoice record?'))db.ref('invoices/'+key).remove();
+}
+function reOpenInvoice(key){
+  const inv=invoices[key];if(!inv)return;
+  // Reopen the invoice page with saved data
+  billTargetKey=inv.clientKey;
+  billLines=(inv.lines||[]).map(l=>({desc:l.desc,amt:parseFloat(l.amt)||0}));
+  openInvoicePage(inv.clientKey, inv.invNum);
+}
+
+// ══ VENMO ══
+function initVenmoPage(){
+  populateDropdown('venmo-client-sel');
+  const base='https://jdp10658.github.io/janetes-cleaners/#venmo=1';
+  document.getElementById('venmo-page-url').textContent=base;
+  updateVenmoURL();
+}
+
+function updateVenmoURL(){
+  const amt=document.getElementById('venmo-custom-amount').value;
+  const note=document.getElementById('venmo-custom-note').value||"Cleaning Service";
+  let url='https://venmo.com/janete-pereira-1';
+  if(amt) url+='?txn=pay&amount='+parseFloat(amt).toFixed(2)+'&note='+encodeURIComponent(note);
+  document.getElementById('venmo-direct-btn').href=url;
+}
+
+function updateVenmoClientLink(){
+  const key=document.getElementById('venmo-client-sel').value;
+  const amt=document.getElementById('venmo-client-amt').value;
+  const note=document.getElementById('venmo-client-note').value||'Cleaning Service';
+  const linksDiv=document.getElementById('venmo-client-links');
+  if(!key){linksDiv.innerHTML='';return;}
+  const c=clients[key];if(!c)return;
+  const phone=(c.phone||'').replace(/\D/g,'');
+  const venmoURL='https://venmo.com/janete-pereira-1'+(amt?'?txn=pay&amount='+parseFloat(amt).toFixed(2)+'&note='+encodeURIComponent(note):'');
+  let html=`<a href="${venmoURL}" target="_blank" class="btn-link btn-bill" style="text-decoration:none">Open Venmo</a>`;
+  if(phone) html+=`<a href="https://wa.me/1${phone}?text=${encodeURIComponent('Hi '+c.name.split(' ')[0]+', please use this link to pay via Venmo: '+venmoURL)}" target="_blank" class="btn-link btn-wa-link" style="text-decoration:none">Send via WhatsApp</a>`;
+  if(phone) html+=`<a href="sms:+1${phone}?body=${encodeURIComponent('Hi '+c.name.split(' ')[0]+', pay via Venmo: '+venmoURL)}" class="btn-link btn-sms-link" style="text-decoration:none">Send via SMS</a>`;
+  if(c.email) html+=`<a href="mailto:${c.email}?subject=${encodeURIComponent('Payment — Janetes Cleaners')}&body=${encodeURIComponent('Hi '+c.name.split(' ')[0]+',\n\nPlease use this link to pay: '+venmoURL+'\n\nThank you!\nJanetes Cleaners')}" class="btn-link btn-email-link" style="text-decoration:none">Send via Email</a>`;
+  linksDiv.innerHTML=html;
+}
+
+function copyVenmoPageLink(){
+  const url='https://jdp10658.github.io/janetes-cleaners/#venmo=1';
+  navigator.clipboard.writeText(url)
+    .then(()=>showToast('Venmo page link copied!'))
+    .catch(()=>prompt('Copy this link:',url));
+}
+
+function openVenmoPage(){
+  const w=window.open('','_blank');
+  w.document.open();
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">');
+  w.document.write('<title>Pay Janetes Cleaners<\/title>');
+  w.document.write('<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">');
+  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:"DM Sans",sans-serif;background:#F5F3EE;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.card{background:#fff;border-radius:16px;max-width:400px;width:100%;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.1)}.head{background:#C41A1A;color:#fff;padding:28px;text-align:center}.brand{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:2px}.sub{font-size:12px;opacity:.8;margin-top:4px}.body{padding:28px}.venmo-btn{display:block;width:100%;padding:16px;background:#008CFF;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;margin-bottom:12px}.handle{text-align:center;font-size:12px;color:#888;margin-top:16px}input{width:100%;border:1px solid #DDD;border-radius:8px;padding:10px 14px;font-family:"DM Sans",sans-serif;font-size:14px;background:#F9F9F7;outline:none;margin-bottom:10px}input:focus{border-color:#008CFF}label{display:block;font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#888;margin-bottom:4px}<\/style><\/head><body>');
+  w.document.write('<div class="card"><div class="head"><div class="brand">Janetes Cleaners Inc.<\/div><div class="sub">Secure Payment via Venmo<\/div><\/div>');
+  w.document.write('<div class="body">');
+  w.document.write('<label>Amount ($)<\/label><input type="number" id="amt" placeholder="0.00" min="0" step="0.01" oninput="updateBtn()">');
+  w.document.write('<label>Note<\/label><input type="text" id="note" placeholder="e.g. March cleaning" oninput="updateBtn()">');
+  w.document.write('<a class="venmo-btn" id="pay-btn" href="https://venmo.com/janete-pereira-1" target="_blank">Pay with Venmo<\/a>');
+  w.document.write('<div class="handle">Venmo handle: <strong>@janete-pereira-1<\/strong><br>Or search in the Venmo app<\/div>');
+  w.document.write('<\/div><\/div>');
+  w.document.write('<script>function updateBtn(){var a=document.getElementById("amt").value;var n=document.getElementById("note").value||"Cleaning Service";var btn=document.getElementById("pay-btn");if(a&&parseFloat(a)>0){btn.href="https://venmo.com/janete-pereira-1?txn=pay&amount="+parseFloat(a).toFixed(2)+"&note="+encodeURIComponent(n);btn.textContent="Pay $"+parseFloat(a).toFixed(2)+" with Venmo";}else{btn.href="https://venmo.com/janete-pereira-1";btn.textContent="Pay with Venmo";}}<\/scr'+'ipt>');
+  w.document.write('<\/body><\/html>');
+  w.document.close();
 }
 
 // ══ SKIP TRACKER ══
