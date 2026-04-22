@@ -542,23 +542,18 @@ let clients = load('clients', [
   {id:36, first:'Nadir',      last:'Vieira',             phone:'',              email:'',                            address:'58 Atkins Ave. Basement, Lynn, MA 01904',      notes:''},
 ]);
 let bookings = load('bookings', []);
-let skips    = load('skips', [
-  {id:1, clientId:2, date:'2026-04-10', reason:'Cancelled under 24 hours', fee:50, paid:'unpaid'},
-]);
+let skips    = load('skips', []);
 let services = load('services', [
   {id:1, name:'Standard Cleaning', price:120, duration:'2-3 hours', desc:'Vacuuming, mopping, dusting, kitchen & bathroom cleaning'},
   {id:2, name:'Deep Cleaning',     price:180, duration:'4-5 hours', desc:'Everything in standard + baseboards, inside appliances, windows'},
   {id:3, name:'Move In/Out',       price:250, duration:'5-6 hours', desc:'Full deep clean for moving transitions'},
   {id:4, name:'Post-Construction', price:300, duration:'6+ hours',  desc:'Heavy-duty cleaning after renovation or construction'},
 ]);
-let invoices = load('invoices', [
-  {id:4555, clientId:1, date:'2026-04-15', amount:120, desc:'Standard Cleaning — April 15', status:'unpaid'},
-  {id:4556, clientId:2, date:'2026-04-18', amount:50,  desc:'Skip fee — April 10 cancellation', status:'unpaid'},
-]);
+let invoices = load('invoices', []);
 let msgLog   = load('msgLog', []);
 // messages: { clientId: [ {dir:'in'/'out', text, time, unread?} ] }
 let messages = load('messages', {});
-let nextId   = load('nextId', 4560);
+let nextId   = load('nextId', 4554);
 function newId() { nextId++; save('nextId', nextId); return nextId; }
 
 // ══════════════════════════════════════
