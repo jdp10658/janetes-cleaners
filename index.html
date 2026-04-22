@@ -910,7 +910,11 @@ function shareScheduleLink() {
 }
 
 function getScheduleURL(clientId) {
-  return window.location.href.split('#')[0]+'#schedule='+clientId;
+  const c=clients.find(c=>c.id===clientId);
+  if(!c)return window.location.href.split('#')[0]+'#schedule='+clientId;
+  // Encode client name so it works regardless of ID
+  const encoded=btoa(unescape(encodeURIComponent(c.first+' '+c.last+'|'+clientId)));
+  return window.location.href.split('#')[0]+'#schedule='+encoded;
 }
 
 function copyShareURL() {
@@ -1083,14 +1087,27 @@ function buildVenmoPage() {
   const hash=window.location.hash;
   if(!hash)return;
 
-  // Client schedule page: #schedule=clientId
+  // Client schedule page: #schedule=encoded
   if(hash.startsWith('#schedule=')){
-    const clientId=parseInt(hash.slice(10));
-    if(!clientId)return;
+    const raw=hash.slice(10);
+    let clientId=null, clientName=null;
+    // Try decoding as base64 encoded "First Last|id"
+    try {
+      const decoded=decodeURIComponent(escape(atob(raw)));
+      const parts=decoded.split('|');
+      clientName=parts[0];
+      clientId=parseInt(parts[1])||null;
+    } catch(e) {
+      // Fall back to plain numeric ID
+      clientId=parseInt(raw)||null;
+    }
+    // Find client by ID first, then by name
+    let c=clients.find(c=>c.id===clientId);
+    if(!c&&clientName) c=clients.find(c=>(c.first+' '+c.last)===clientName);
+    if(!clientId&&c) clientId=c.id;
     // Hide login, show client schedule page directly
     document.getElementById('loginScreen').classList.add('hidden');
     document.body.style.background='#f0f6f6';
-    const c=clients.find(c=>c.id===clientId);
     if(!c){document.body.innerHTML='<div style="text-align:center;padding:60px;font-family:Segoe UI,sans-serif;color:#7a9a9a">Schedule not found. Contact Janetes Cleaners at (781) 964-5682.</div>';return;}
     // Render inline instead of new window
     const myBook=bookings.filter(b=>b.clientId===clientId).sort((a,b)=>a.date.localeCompare(b.date));
