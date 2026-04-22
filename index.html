@@ -1105,8 +1105,9 @@ function buildVenmoPage() {
     let c=clients.find(c=>c.id===clientId);
     if(!c&&clientName) c=clients.find(c=>(c.first+' '+c.last)===clientName);
     if(!clientId&&c) clientId=c.id;
-    // Hide login, show client schedule page directly
+    // Hide login and app — show client page only
     document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.add('hidden');
     document.body.style.background='#f0f6f6';
     if(!c){document.body.innerHTML='<div style="text-align:center;padding:60px;font-family:Segoe UI,sans-serif;color:#7a9a9a">Schedule not found. Contact Janetes Cleaners at (781) 964-5682.</div>';return;}
     // Render inline instead of new window
@@ -1176,6 +1177,7 @@ function buildVenmoPage() {
   // Venmo page: #venmo=1
   if(hash.startsWith('#venmo=')){
     document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.add('hidden');
     document.body.style.cssText='margin:0;padding:0;background:#f0f6f6;font-family:Segoe UI,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center';
     document.body.innerHTML=`
       <div style="background:#fff;border-radius:16px;max-width:380px;width:100%;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.1);margin:20px">
@@ -1217,6 +1219,7 @@ function buildVenmoPage() {
     try{
       const data=JSON.parse(decodeURIComponent(escape(atob(hash.slice(5)))));
       document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('app').classList.add('hidden');
       document.body.style.cssText='margin:0;padding:0;background:#f0f6f6;font-family:Segoe UI,sans-serif;min-height:100vh;padding:24px 16px';
       const venmoURL='https://venmo.com/janete-pereira-1?txn=pay&amount='+data.amount+'&note='+encodeURIComponent('Janetes Cleaners Invoice #'+data.invId);
       document.body.innerHTML=`
@@ -1298,9 +1301,13 @@ function initApp(){
   pollClientReplies();
 }
 if(sessionStorage.getItem('jc_auth')){
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
-  initApp();
+  const h=window.location.hash;
+  const isClientPage=h.startsWith('#schedule=')||h.startsWith('#venmo=')||h.startsWith('#inv=');
+  if(!isClientPage){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    initApp();
+  }
 }
 </script>
 </body>
