@@ -28,94 +28,213 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
 .hidden{display:none!important}
-#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 60%,var(--teal-light) 100%);padding:20px;}
-.login-card{background:#fff;border-radius:20px;padding:44px 36px;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(0,0,0,0.22);text-align:center;}
-.login-logo{width:68px;height:68px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border-radius:18px;display:inline-flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:18px;box-shadow:0 4px 16px rgba(13,115,119,0.35);}
+
+/* ══ LOGIN ══ */
+#loginScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 60%,var(--teal-light) 100%);
+  padding:20px;
+}
+.login-card{
+  background:#fff;border-radius:20px;padding:44px 36px;width:100%;max-width:400px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.22);text-align:center;
+}
+.login-logo{
+  width:68px;height:68px;background:linear-gradient(135deg,var(--teal),var(--teal-light));
+  border-radius:18px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:30px;margin-bottom:18px;box-shadow:0 4px 16px rgba(13,115,119,0.35);
+}
 .login-title{font-size:26px;font-weight:700;color:var(--teal-dark);margin-bottom:4px}
 .login-sub{color:var(--text3);font-size:13px;margin-bottom:28px;letter-spacing:0.5px}
-.login-card input{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s;color:var(--text);background:#f7fbfb;}
+.login-card input{
+  width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:14px;margin-bottom:12px;outline:none;transition:border .2s;color:var(--text);
+  background:#f7fbfb;
+}
 .login-card input:focus{border-color:var(--teal)}
-.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;transition:opacity .2s;letter-spacing:0.3px;}
+.btn-login{
+  width:100%;padding:14px;background:linear-gradient(135deg,var(--teal),var(--teal-light));
+  border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;
+  margin-top:4px;transition:opacity .2s;letter-spacing:0.3px;
+}
 .btn-login:hover{opacity:0.9}
 #loginErr{color:var(--red);font-size:13px;margin-top:10px;min-height:18px}
-.skip-note{margin-top:20px;padding:10px 14px;background:var(--yellow-pale);border:1px solid #f0d060;border-radius:8px;font-size:12px;color:#7a6010;line-height:1.4;}
+.skip-note{
+  margin-top:20px;padding:10px 14px;background:var(--yellow-pale);border:1px solid #f0d060;
+  border-radius:8px;font-size:12px;color:#7a6010;line-height:1.4;
+}
+
+/* ══ APP SHELL ══ */
 #app{display:flex;flex-direction:column;min-height:100vh}
-.header{background:linear-gradient(135deg,var(--teal-dark),var(--teal));padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.15);flex-shrink:0;}
+.header{
+  background:linear-gradient(135deg,var(--teal-dark),var(--teal));
+  padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);flex-shrink:0;
+}
 .header-brand{display:flex;align-items:center;gap:10px}
 .header-icon{font-size:22px}
 .header-name{color:#fff;font-size:16px;font-weight:700;letter-spacing:0.3px}
 .header-right{display:flex;align-items:center;gap:8px}
-.wa-btn{background:#25d366;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px;}
-.signout-btn{background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
-.skip-banner{background:#fef3cd;border-bottom:1px solid #f0d060;padding:8px 20px;font-size:12px;color:#7a5c00;text-align:center;}
-.nav{background:#fff;border-bottom:1.5px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.wa-btn{
+  background:#25d366;color:#fff;border:none;border-radius:8px;padding:6px 12px;
+  font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:flex;
+  align-items:center;gap:4px;
+}
+.signout-btn{
+  background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);
+  border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;
+}
+.skip-banner{
+  background:#fef3cd;border-bottom:1px solid #f0d060;
+  padding:8px 20px;font-size:12px;color:#7a5c00;text-align:center;
+}
+
+/* ══ NAV ══ */
+.nav{
+  background:#fff;border-bottom:1.5px solid var(--border);
+  display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0;
+}
 .nav::-webkit-scrollbar{display:none}
-.nav-btn{padding:12px 16px;border:none;background:none;color:var(--text2);font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;border-bottom:2.5px solid transparent;transition:all .2s;}
+.nav-btn{
+  padding:12px 16px;border:none;background:none;color:var(--text2);
+  font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;
+  border-bottom:2.5px solid transparent;transition:all .2s;
+}
 .nav-btn.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
 .nav-btn:hover:not(.active){background:var(--teal-pale);color:var(--teal)}
+
+/* ══ MAIN ══ */
 .main{flex:1;padding:20px;overflow-y:auto}
-.panel{display:none}.panel.active{display:block}
+.panel{display:none}
+.panel.active{display:block}
 .page-title{font-size:20px;font-weight:700;color:var(--teal-dark);margin-bottom:20px}
+
+/* ══ CARDS & GRIDS ══ */
 .card{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
 .card-title{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.stat-card{background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid var(--teal);}
-.stat-card.red{border-left-color:var(--red)}.stat-card.gold{border-left-color:var(--gold)}.stat-card.green{border-left-color:var(--green)}
+
+/* ══ STAT CARDS ══ */
+.stat-card{
+  background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);
+  border-left:4px solid var(--teal);
+}
+.stat-card.red{border-left-color:var(--red)}
+.stat-card.gold{border-left-color:var(--gold)}
+.stat-card.green{border-left-color:var(--green)}
 .stat-num{font-size:28px;font-weight:700;color:var(--teal-dark)}
-.stat-card.red .stat-num{color:var(--red)}.stat-card.gold .stat-num{color:var(--gold)}.stat-card.green .stat-num{color:var(--green)}
+.stat-card.red .stat-num{color:var(--red)}
+.stat-card.gold .stat-num{color:var(--gold)}
+.stat-card.green .stat-num{color:var(--green)}
 .stat-label{font-size:12px;color:var(--text3);margin-top:2px;font-weight:500}
-.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:opacity .2s;}
+
+/* ══ BUTTONS ══ */
+.btn{
+  padding:8px 16px;border-radius:8px;border:none;cursor:pointer;
+  font-size:13px;font-weight:600;transition:opacity .2s;
+}
 .btn:hover{opacity:0.85}
-.btn-primary{background:var(--teal);color:#fff}.btn-danger{background:var(--red);color:#fff}.btn-outline{background:transparent;border:1.5px solid var(--teal);color:var(--teal)}
+.btn-primary{background:var(--teal);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+.btn-outline{background:transparent;border:1.5px solid var(--teal);color:var(--teal)}
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+
+/* ══ FORMS ══ */
 .form-group{margin-bottom:14px}
 .form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;transition:border .2s;background:#fafcfc;color:var(--text);}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:13px;outline:none;transition:border .2s;background:#fafcfc;color:var(--text);
+}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
 .form-group textarea{resize:vertical;min-height:80px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ══ TABLE ══ */
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-thead th{background:var(--teal-pale);color:var(--teal-dark);font-size:11px;font-weight:700;padding:10px 12px;text-align:left;text-transform:uppercase;letter-spacing:0.5px;}
+thead th{
+  background:var(--teal-pale);color:var(--teal-dark);font-size:11px;
+  font-weight:700;padding:10px 12px;text-align:left;text-transform:uppercase;
+  letter-spacing:0.5px;
+}
 tbody tr{border-bottom:1px solid #eef4f4}
 tbody tr:hover{background:#f7fbfb}
 tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
+
+/* ══ BADGES ══ */
 .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
-.badge-green{background:var(--green-pale);color:var(--green)}.badge-red{background:var(--red-pale);color:var(--red)}
-.badge-gold{background:#fef3cd;color:#8a6010}.badge-blue{background:#e8f0fe;color:#1a56aa}.badge-gray{background:#f0f0f0;color:#555}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;}
-.modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.badge-green{background:var(--green-pale);color:var(--green)}
+.badge-red{background:var(--red-pale);color:var(--red)}
+.badge-gold{background:#fef3cd;color:#8a6010}
+.badge-blue{background:#e8f0fe;color:#1a56aa}
+.badge-gray{background:#f0f0f0;color:#555}
+
+/* ══ MODAL ══ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+}
+.modal{
+  background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;
+  max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);
+}
 .modal-title{font-size:18px;font-weight:700;color:var(--teal-dark);margin-bottom:20px}
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* ══ EMPTY STATE ══ */
 .empty{text-align:center;padding:32px;color:var(--text3);font-size:13px}
 .empty-icon{font-size:36px;margin-bottom:8px}
-#toast{position:fixed;bottom:20px;right:20px;background:var(--teal-dark);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999;max-width:300px;box-shadow:var(--shadow);}
+
+/* ══ TOAST ══ */
+#toast{
+  position:fixed;bottom:20px;right:20px;background:var(--teal-dark);color:#fff;
+  padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;
+  opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;
+  z-index:999;max-width:300px;box-shadow:var(--shadow);
+}
 #toast.show{opacity:1;transform:translateY(0)}
-@media(max-width:768px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}.form-row{grid-template-columns:1fr}.main{padding:12px}}
-@media(max-width:480px){.grid4{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:768px){
+  .grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+  .main{padding:12px}
+}
+@media(max-width:480px){
+  .grid4{grid-template-columns:1fr 1fr}
+  .grid2,.grid3{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
+<!-- ══ LOGIN ══ -->
 <div id="loginScreen">
   <div class="login-card">
     <div class="login-logo">🧺</div>
     <div class="login-title">Janete's Cleaners</div>
     <div class="login-sub">Management Suite</div>
-    <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
-    <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter')doLogin()">
     <button class="btn-login" onclick="doLogin()">Sign In</button>
     <div id="loginErr"></div>
     <div class="skip-note">⚠️ Skip Policy: $50 fee for cancellations under 24 hours notice.</div>
   </div>
 </div>
 
+<!-- ══ APP ══ -->
 <div id="app" class="hidden">
   <div class="header">
-    <div class="header-brand"><span class="header-icon">🧺</span><span class="header-name">Janete's Cleaners</span></div>
+    <div class="header-brand">
+      <span class="header-icon">🧺</span>
+      <span class="header-name">Janete's Cleaners</span>
+    </div>
     <div class="header-right">
       <a href="https://wa.me/17819645682" target="_blank" class="wa-btn">🟢 WhatsApp</a>
       <button class="signout-btn" onclick="doLogout()">Sign Out</button>
@@ -133,12 +252,19 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
   </div>
   <div class="main">
 
+    <!-- DASHBOARD -->
     <div class="panel active" id="panel-dashboard">
       <div class="page-title">Dashboard</div>
       <div class="grid4" id="dashStats"></div>
       <div class="grid2">
-        <div class="card"><div class="card-title">Today's Jobs</div><div id="todayJobs"></div></div>
-        <div class="card"><div class="card-title">Recent Activity</div><div id="recentActivity"></div></div>
+        <div class="card">
+          <div class="card-title">Today's Jobs</div>
+          <div id="todayJobs"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Recent Activity</div>
+          <div id="recentActivity"></div>
+        </div>
       </div>
       <div class="card">
         <div class="card-title">Upcoming This Week</div>
@@ -149,9 +275,12 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
       </div>
     </div>
 
+    <!-- SCHEDULE -->
     <div class="panel" id="panel-schedule">
       <div class="page-title">Schedule</div>
-      <div class="btn-row"><button class="btn btn-primary" onclick="openModal('bookingModal')">+ New Booking</button></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="openModal('bookingModal')">+ New Booking</button>
+      </div>
       <div class="card">
         <div class="table-wrap"><table>
           <thead><tr><th>Date</th><th>Time</th><th>Client</th><th>Service</th><th>Address</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
@@ -160,9 +289,12 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
       </div>
     </div>
 
+    <!-- CLIENTS -->
     <div class="panel" id="panel-clients">
       <div class="page-title">Clients</div>
-      <div class="btn-row"><button class="btn btn-primary" onclick="openModal('clientModal')">+ Add Client</button></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="openModal('clientModal')">+ Add Client</button>
+      </div>
       <div class="card">
         <div class="form-group" style="margin-bottom:12px">
           <input type="text" id="clientSearch" placeholder="🔍 Search clients..." oninput="renderClients()">
@@ -174,12 +306,15 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
       </div>
     </div>
 
+    <!-- SKIP TRACKER -->
     <div class="panel" id="panel-skips">
       <div class="page-title">Skip Tracker</div>
       <div class="grid3" id="skipStats"></div>
       <div class="card">
         <div class="card-title">Skip Policy — $50 Fee for cancellations under 24 hours</div>
-        <div class="btn-row" style="margin-top:8px"><button class="btn btn-danger" onclick="openModal('skipModal')">+ Record Skip</button></div>
+        <div class="btn-row" style="margin-top:8px">
+          <button class="btn btn-danger" onclick="openModal('skipModal')">+ Record Skip</button>
+        </div>
         <div class="table-wrap"><table>
           <thead><tr><th>Date</th><th>Client</th><th>Reason</th><th>Fee</th><th>Paid</th><th>Actions</th></tr></thead>
           <tbody id="skipsTbl"></tbody>
@@ -187,47 +322,42 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
       </div>
     </div>
 
+    <!-- SERVICES -->
     <div class="panel" id="panel-services">
       <div class="page-title">Services & Pricing</div>
-      <div class="btn-row"><button class="btn btn-primary" onclick="openModal('serviceModal')">+ Add Service</button></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="openModal('serviceModal')">+ Add Service</button>
+      </div>
       <div class="grid2" id="servicesGrid"></div>
     </div>
 
+    <!-- BILLING -->
     <div class="panel" id="panel-billing">
       <div class="page-title">Billing</div>
       <div class="grid3" id="billingStats"></div>
       <div class="card">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+        <div class="btn-row">
           <button class="btn btn-primary" onclick="openModal('invoiceModal')">+ Create Invoice</button>
-          <select id="billYearFilter" onchange="renderBilling()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fafcfc;color:var(--text);outline:none">
-            <option value="">All Years</option>
-          </select>
-          <select id="billStatusFilter" onchange="renderBilling()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fafcfc;color:var(--text);outline:none">
-            <option value="">All Statuses</option>
-            <option value="unpaid">Unpaid</option>
-            <option value="paid">Paid</option>
-          </select>
-          <button onclick="exportCSV()" style="padding:7px 14px;background:var(--green-pale);color:var(--green);border:1px solid #a3d5bb;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">📥 Export CSV</button>
         </div>
         <div class="table-wrap"><table>
           <thead><tr><th>Invoice #</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="invoicesTbl"></tbody>
-          <tfoot id="invoicesFoot"></tfoot>
         </table></div>
-        <div id="taxSummary" style="display:none;padding:16px;border-top:2px solid var(--border);background:var(--teal-pale);border-radius:0 0 var(--radius) var(--radius)">
-          <div style="font-size:13px;font-weight:700;color:var(--teal-dark);margin-bottom:10px">📊 Tax Summary</div>
-          <div class="grid4" id="taxGrid"></div>
-        </div>
       </div>
     </div>
 
+    <!-- MESSAGES -->
     <div class="panel" id="panel-messages">
       <div class="page-title">Messages & Reminders</div>
       <div class="grid2">
         <div class="card">
           <div class="card-title">Send Reminder</div>
-          <div class="form-group"><label>Client</label><select id="msgClient"></select></div>
-          <div class="form-group"><label>Message Type</label>
+          <div class="form-group">
+            <label>Client</label>
+            <select id="msgClient"></select>
+          </div>
+          <div class="form-group">
+            <label>Message Type</label>
             <select id="msgType">
               <option value="appointment">Appointment Reminder</option>
               <option value="payment">Payment Due</option>
@@ -235,43 +365,78 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
               <option value="custom">Custom Message</option>
             </select>
           </div>
-          <div class="form-group"><label>Message</label><textarea id="msgText" rows="4" placeholder="Type your message..."></textarea></div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="msgText" rows="4" placeholder="Type your message..."></textarea>
+          </div>
           <div class="btn-row">
             <button class="btn btn-primary" onclick="generateMsg()">Generate Message</button>
             <button class="btn btn-outline" onclick="copyMsg()">Copy Text</button>
           </div>
         </div>
-        <div class="card"><div class="card-title">Quick Templates</div><div id="templatesBox"></div></div>
+        <div class="card">
+          <div class="card-title">Quick Templates</div>
+          <div id="templatesBox"></div>
+        </div>
       </div>
-      <div class="card"><div class="card-title">Message Log</div><div id="msgLog"><div class="empty"><div class="empty-icon">💬</div>No messages logged yet.</div></div></div>
+      <div class="card">
+        <div class="card-title">Message Log</div>
+        <div id="msgLog"><div class="empty"><div class="empty-icon">💬</div>No messages logged yet.</div></div>
+      </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- /main -->
+</div><!-- /app -->
 
-<!-- MODALS -->
+<!-- ══ MODALS ══ -->
+
+<!-- Booking Modal -->
 <div class="modal-overlay hidden" id="bookingModal">
   <div class="modal">
     <div class="modal-title">📅 New Booking</div>
     <div class="form-row">
-      <div class="form-group"><label>Client</label><select id="bkClient"></select></div>
-      <div class="form-group"><label>Service</label><select id="bkService" onchange="fillBkAmount()"></select></div>
+      <div class="form-group">
+        <label>Client</label>
+        <select id="bkClient"></select>
+      </div>
+      <div class="form-group">
+        <label>Service</label>
+        <select id="bkService" onchange="fillBkAmount()"></select>
+      </div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Date</label><input type="date" id="bkDate"></div>
-      <div class="form-group"><label>Time</label><input type="time" id="bkTime" value="09:00"></div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="bkDate">
+      </div>
+      <div class="form-group">
+        <label>Time</label>
+        <input type="time" id="bkTime" value="09:00">
+      </div>
     </div>
-    <div class="form-group"><label>Address</label><input type="text" id="bkAddress" placeholder="Service address"></div>
+    <div class="form-group">
+      <label>Address</label>
+      <input type="text" id="bkAddress" placeholder="Service address">
+    </div>
     <div class="form-row">
-      <div class="form-group"><label>Amount ($)</label><input type="number" id="bkAmount" placeholder="0.00"></div>
-      <div class="form-group"><label>Status</label>
+      <div class="form-group">
+        <label>Amount ($)</label>
+        <input type="number" id="bkAmount" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
         <select id="bkStatus">
-          <option value="scheduled">Scheduled</option><option value="confirmed">Confirmed</option>
-          <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
         </select>
       </div>
     </div>
-    <div class="form-group"><label>Notes</label><textarea id="bkNotes" placeholder="Any special instructions..."></textarea></div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="bkNotes" placeholder="Any special instructions..."></textarea>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('bookingModal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveBooking()">Save Booking</button>
@@ -279,20 +444,39 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
   </div>
 </div>
 
+<!-- Client Modal -->
 <div class="modal-overlay hidden" id="clientModal">
   <div class="modal">
     <div class="modal-title">👥 Add / Edit Client</div>
     <input type="hidden" id="clientId">
     <div class="form-row">
-      <div class="form-group"><label>First Name</label><input type="text" id="cFirst" placeholder="First name"></div>
-      <div class="form-group"><label>Last Name</label><input type="text" id="cLast" placeholder="Last name"></div>
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" id="cFirst" placeholder="First name">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" id="cLast" placeholder="Last name">
+      </div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Phone</label><input type="tel" id="cPhone" placeholder="(555) 000-0000"></div>
-      <div class="form-group"><label>Email</label><input type="email" id="cEmail" placeholder="email@example.com"></div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="cPhone" placeholder="(555) 000-0000">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="cEmail" placeholder="email@example.com">
+      </div>
     </div>
-    <div class="form-group"><label>Address</label><input type="text" id="cAddress" placeholder="Home address"></div>
-    <div class="form-group"><label>Notes</label><textarea id="cNotes" placeholder="Preferences, special instructions..."></textarea></div>
+    <div class="form-group">
+      <label>Address</label>
+      <input type="text" id="cAddress" placeholder="Home address">
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="cNotes" placeholder="Preferences, special instructions..."></textarea>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('clientModal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveClient()">Save Client</button>
@@ -300,15 +484,26 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
   </div>
 </div>
 
+<!-- Skip Modal -->
 <div class="modal-overlay hidden" id="skipModal">
   <div class="modal">
     <div class="modal-title">⚠️ Record Skip / Cancellation</div>
-    <div class="form-group"><label>Client</label><select id="skipClient"></select></div>
-    <div class="form-row">
-      <div class="form-group"><label>Date</label><input type="date" id="skipDate"></div>
-      <div class="form-group"><label>Fee ($)</label><input type="number" id="skipFee" value="50"></div>
+    <div class="form-group">
+      <label>Client</label>
+      <select id="skipClient"></select>
     </div>
-    <div class="form-group"><label>Reason</label>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="skipDate">
+      </div>
+      <div class="form-group">
+        <label>Fee ($)</label>
+        <input type="number" id="skipFee" value="50">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Reason</label>
       <select id="skipReason">
         <option value="Cancelled under 24 hours">Cancelled under 24 hours</option>
         <option value="No show">No show</option>
@@ -316,9 +511,12 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
         <option value="Other">Other</option>
       </select>
     </div>
-    <div class="form-group"><label>Fee Paid?</label>
+    <div class="form-group">
+      <label>Fee Paid?</label>
       <select id="skipPaid">
-        <option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="waived">Waived</option>
+        <option value="unpaid">Unpaid</option>
+        <option value="paid">Paid</option>
+        <option value="waived">Waived</option>
       </select>
     </div>
     <div class="modal-footer">
@@ -328,16 +526,29 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
   </div>
 </div>
 
+<!-- Service Modal -->
 <div class="modal-overlay hidden" id="serviceModal">
   <div class="modal">
     <div class="modal-title">✂️ Add / Edit Service</div>
     <input type="hidden" id="serviceId">
-    <div class="form-group"><label>Service Name</label><input type="text" id="svcName" placeholder="e.g. Deep Cleaning"></div>
-    <div class="form-row">
-      <div class="form-group"><label>Price ($)</label><input type="number" id="svcPrice" placeholder="0.00"></div>
-      <div class="form-group"><label>Duration</label><input type="text" id="svcDuration" placeholder="e.g. 3 hours"></div>
+    <div class="form-group">
+      <label>Service Name</label>
+      <input type="text" id="svcName" placeholder="e.g. Deep Cleaning">
     </div>
-    <div class="form-group"><label>Description</label><textarea id="svcDesc" placeholder="What's included..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price ($)</label>
+        <input type="number" id="svcPrice" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>Duration</label>
+        <input type="text" id="svcDuration" placeholder="e.g. 3 hours">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="svcDesc" placeholder="What's included..."></textarea>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('serviceModal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveService()">Save Service</button>
@@ -345,18 +556,34 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
   </div>
 </div>
 
+<!-- Invoice Modal -->
 <div class="modal-overlay hidden" id="invoiceModal">
   <div class="modal">
     <div class="modal-title">🧾 Create Invoice</div>
-    <div class="form-group"><label>Client</label><select id="invClient"></select></div>
-    <div class="form-row">
-      <div class="form-group"><label>Date</label><input type="date" id="invDate"></div>
-      <div class="form-group"><label>Amount ($)</label><input type="number" id="invAmount" placeholder="0.00"></div>
+    <div class="form-group">
+      <label>Client</label>
+      <select id="invClient"></select>
     </div>
-    <div class="form-group"><label>Description</label><textarea id="invDesc" placeholder="Services provided..."></textarea></div>
-    <div class="form-group"><label>Status</label>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="invDate">
+      </div>
+      <div class="form-group">
+        <label>Amount ($)</label>
+        <input type="number" id="invAmount" placeholder="0.00">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="invDesc" placeholder="Services provided..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
       <select id="invStatus">
-        <option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="partial">Partial</option>
+        <option value="unpaid">Unpaid</option>
+        <option value="paid">Paid</option>
+        <option value="partial">Partial</option>
       </select>
     </div>
     <div class="modal-footer">
@@ -402,50 +629,27 @@ function doLogout() {
 }
 
 // ══ STORAGE ══
-function save(key, val) { try { localStorage.setItem('jc_' + key, JSON.stringify(val)); } catch(e){} }
-function load(key, def) { try { const d = localStorage.getItem('jc_' + key); return d ? JSON.parse(d) : def; } catch(e) { return def; } }
+function save(key, val) {
+  try { localStorage.setItem('jc_' + key, JSON.stringify(val)); } catch(e){}
+}
+function load(key, def) {
+  try {
+    const d = localStorage.getItem('jc_' + key);
+    return d ? JSON.parse(d) : def;
+  } catch(e) { return def; }
+}
 
 // ══ DATA ══
-let clients = load('clients', [
-  {id:1,  first:'Karen',      last:'Webster',             phone:'',               email:'julie@findsbyjulie.com',      address:'95 Pinckney St, Boston, MA 02114',             notes:'Alt: 95 Pic Nick St.'},
-  {id:2,  first:'Ann',        last:'West',                phone:'',               email:'',                            address:'31 Lee St., Marblehead, MA 01945',             notes:''},
-  {id:3,  first:'Bill',       last:'Fuller',              phone:'',               email:'',                            address:'Marblehead, MA 01906',                         notes:''},
-  {id:4,  first:'Bob',        last:'Hansen',              phone:'',               email:'',                            address:'119 Water St. Unit 64, Salem, MA 01906',       notes:''},
-  {id:5,  first:'Corman Bags',last:'Co.',                 phone:'',               email:'',                            address:'36 Arlington Street, Chelsea, MA 02150',       notes:'Commercial'},
-  {id:6,  first:'Crest',      last:'Pizzeria',            phone:'',               email:'',                            address:'35 Crest Ave, Winthrop, MA 02152',             notes:'Contact: Peter'},
-  {id:7,  first:'Dan',        last:'Deven',               phone:'',               email:'',                            address:'Marblehead, MA',                               notes:''},
-  {id:8,  first:'Deborah',    last:'Wetmore',             phone:'',               email:'',                            address:'886 West Hill Road, Warren, VT 05674',         notes:''},
-  {id:9,  first:'Eric',       last:'Appel',               phone:'',               email:'',                            address:'8 George Street, Cambridge, MA 02140',         notes:''},
-  {id:10, first:'Erica',      last:'Pelaccia',            phone:'',               email:'',                            address:'81 Prindle Ave, Ansonia, CT 06401',            notes:''},
-  {id:11, first:'Fay',        last:'Ginsberg',            phone:'',               email:'',                            address:'65 East India Row #20G, Boston, MA 02110',     notes:''},
-  {id:12, first:'Faye',       last:'Hinsley',             phone:'',               email:'',                            address:'65 East India Row #20G, Boston, MA 02110',     notes:''},
-  {id:13, first:'Fiorys',     last:'Variatie',            phone:'',               email:'',                            address:'',                                             notes:''},
-  {id:14, first:'Gordon',     last:'College',             phone:'',               email:'',                            address:'Grapevine Rd., Wenham, MA',                    notes:'Commercial'},
-  {id:15, first:'Hansen',     last:'Marine',              phone:'(781) 631-3282', email:'',                            address:'32 Tioga Way, Marblehead, MA 01945',           notes:'Contact: Robert Hansen'},
-  {id:16, first:'Jacquelyn',  last:'Hawkson',             phone:'',               email:'',                            address:'91 Grant St., Lexington, MA 02420',            notes:''},
-  {id:17, first:'Jim',        last:'Lavelle',             phone:'',               email:'',                            address:'211 Mason Terrace, Brookline, MA 02446',       notes:''},
-  {id:18, first:'Joanne',     last:'Ferris',              phone:'',               email:'jferris@eliotchs.org',        address:'95 Pleasant St., Lynn, MA 01901',              notes:''},
-  {id:19, first:'Jode',       last:'Livingston',          phone:'',               email:'mlivingston0012@gmail.com',   address:'28 Myrtle St. Unit 1, Boston, MA 02114',       notes:''},
-  {id:20, first:'Josmar',     last:'D. Pereira',          phone:'7819645682',     email:'',                            address:'Lynn, MA 01904',                               notes:''},
-  {id:21, first:'Kenn',       last:'Mark',                phone:'',               email:'',                            address:'26 Washington Sq., Marblehead, MA 01906',      notes:''},
-  {id:22, first:'Kenneth',    last:'Martin',              phone:'',               email:'',                            address:'24 Harbor Ave., Marblehead, MA 01945',         notes:''},
-  {id:23, first:'Lee',        last:'Oestreicher',         phone:'',               email:'',                            address:'45 Longwood Ave. #103, Brookline, MA 02446',   notes:''},
-  {id:24, first:'Lion River', last:'Properties',          phone:'',               email:'',                            address:'45 Longwood Ave. #103, Brookline, MA 02446',   notes:'Commercial'},
-  {id:25, first:'Lisa',       last:'Dyacme Prop. Mgmt.',  phone:'',               email:'',                            address:'Goodwins Court, Marblehead, MA',               notes:'Dyacme Property Management'},
-  {id:26, first:'Nicholas',   last:'Erpelding',           phone:'',               email:'',                            address:'Attn: Lisa Gallager',                          notes:''},
-  {id:27, first:'Pauline',    last:'Donnelly',            phone:'',               email:'Pauline@donnellyandco.com',   address:'12 Darling St. #3, Marblehead, MA 01945',      notes:''},
-  {id:28, first:'Peter',      last:'Calakoutis',          phone:'',               email:'',                            address:'LynnFells Pkwy, Saugus, MA 01907',             notes:''},
-  {id:29, first:'Phil Fuller',last:'Londonderry',         phone:'',               email:'',                            address:'17 S Parrish Drive, Londonderry, NH 03053',    notes:''},
-  {id:30, first:'Phil Fuller',last:'The Villages',        phone:'',               email:'',                            address:'1325 Gaston Loop, The Villages, FL 32162',     notes:''},
-  {id:31, first:'Robert',     last:'Mattson',             phone:'818-414-7513',   email:'valleyspaservices@yahoo.com', address:'13825 Victory Blvd #1, Valley Glen, CA 91401', notes:''},
-  {id:32, first:'Scott',      last:'Stilianos',           phone:'',               email:'sstili@icloud.com',           address:'1 Bengal Lane, Salem, MA 01906',               notes:''},
-  {id:33, first:'Socs',       last:'Ice Cream',           phone:'',               email:'',                            address:'67 Lynnfells Pkwy, Saugus, MA 01906',          notes:'Commercial'},
-  {id:34, first:'Trevor',     last:'Parsons',             phone:'',               email:'',                            address:'106 Galloupes Road, Swampscott, MA 01907',     notes:''},
-  {id:35, first:'Victoria',   last:'Fitzgerald',          phone:'',               email:'ilsognoinchianti@gmail.com',  address:'',                                             notes:''},
-  {id:36, first:'Nadir',      last:'Vieira',              phone:'',               email:'',                            address:'58 Atkins Ave. Basement, Lynn, MA 01904',      notes:''},
+let clients  = load('clients', [
+  {id:1, first:'Maria',   last:'Santos',   phone:'(207) 555-0101', email:'maria@email.com',   address:'12 Oak St, Sanford ME', notes:'Prefers mornings'},
+  {id:2, first:'Linda',   last:'Johnson',  phone:'(207) 555-0202', email:'linda@email.com',   address:'45 Pine Ave, Sanford ME', notes:'Has 2 dogs'},
+  {id:3, first:'Patricia',last:'Williams', phone:'(207) 555-0303', email:'pat@email.com',     address:'78 Elm Rd, Springvale ME', notes:'Weekly service'},
 ]);
-
-let bookings = load('bookings', []);
+let bookings = load('bookings', [
+  {id:1, clientId:1, service:'Standard Cleaning', date:'2026-04-22', time:'09:00', address:'12 Oak St, Sanford ME', amount:120, status:'confirmed', notes:''},
+  {id:2, clientId:2, service:'Deep Cleaning',      date:'2026-04-23', time:'10:00', address:'45 Pine Ave, Sanford ME', amount:180, status:'scheduled', notes:''},
+  {id:3, clientId:3, service:'Standard Cleaning',  date:'2026-04-24', time:'08:00', address:'78 Elm Rd, Springvale ME', amount:120, status:'scheduled', notes:''},
+]);
 let skips    = load('skips', [
   {id:1, clientId:2, date:'2026-04-10', reason:'Cancelled under 24 hours', fee:50, paid:'unpaid'},
 ]);
@@ -456,18 +660,30 @@ let services = load('services', [
   {id:4, name:'Post-Construction', price:300, duration:'6+ hours',  desc:'Heavy-duty cleaning after renovation or construction'},
 ]);
 let invoices = load('invoices', [
-  {id:4555, clientId:1, date:'2026-04-15', amount:120, desc:'Standard Cleaning — April 15', status:'unpaid'},
-  {id:4556, clientId:2, date:'2026-04-18', amount:50,  desc:'Skip fee — April 10 cancellation', status:'unpaid'},
+  {id:1, clientId:1, date:'2026-04-15', amount:120, desc:'Standard Cleaning — April 15', status:'paid'},
+  {id:2, clientId:2, date:'2026-04-18', amount:50,  desc:'Skip fee — April 10 cancellation', status:'unpaid'},
 ]);
 let msgLog = load('msgLog', []);
-let nextId = load('nextId', 4560);
+let nextId = load('nextId', 100);
+
 function newId() { nextId++; save('nextId', nextId); return nextId; }
 
 // ══ HELPERS ══
-function clientName(id) { const c = clients.find(c=>c.id==id); return c ? c.first + ' ' + c.last : 'Unknown'; }
+function clientName(id) {
+  const c = clients.find(c=>c.id==id);
+  return c ? c.first + ' ' + c.last : 'Unknown';
+}
 function today() { return new Date().toISOString().split('T')[0]; }
-function fmt(d) { if (!d) return ''; const dt = new Date(d + 'T12:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2800); }
+function fmt(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T12:00:00');
+  return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
 
 // ══ PANELS ══
 function showPanel(id, btn) {
@@ -477,6 +693,7 @@ function showPanel(id, btn) {
   btn.classList.add('active');
   renderPanel(id);
 }
+
 function renderPanel(id) {
   if (id==='dashboard') renderDashboard();
   if (id==='schedule')  renderSchedule();
@@ -491,22 +708,52 @@ function renderPanel(id) {
 function renderDashboard() {
   const t = today();
   const todayBks = bookings.filter(b=>b.date===t);
-  const unpaidInv = invoices.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
+  const monthRev = bookings.filter(b=>b.date.startsWith('2026-04') && b.status==='completed')
+    .reduce((s,b)=>s+Number(b.amount),0);
   const unpaidSkips = skips.filter(s=>s.paid==='unpaid').length;
-  const monthRev = invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
+  const unpaidInv = invoices.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
+
   document.getElementById('dashStats').innerHTML = `
     <div class="stat-card"><div class="stat-num">${clients.length}</div><div class="stat-label">Total Clients</div></div>
     <div class="stat-card gold"><div class="stat-num">${todayBks.length}</div><div class="stat-label">Today's Jobs</div></div>
-    <div class="stat-card green"><div class="stat-num">$${monthRev}</div><div class="stat-label">Total Collected</div></div>
-    <div class="stat-card red"><div class="stat-num">$${unpaidInv.toFixed(0)}</div><div class="stat-label">Outstanding</div></div>
+    <div class="stat-card green"><div class="stat-num">$${monthRev}</div><div class="stat-label">Month Revenue</div></div>
+    <div class="stat-card red"><div class="stat-num">${unpaidSkips}</div><div class="stat-label">Unpaid Skip Fees</div></div>
   `;
+
   const todayEl = document.getElementById('todayJobs');
-  if (todayBks.length === 0) { todayEl.innerHTML = '<div class="empty"><div class="empty-icon">☀️</div>No jobs scheduled today.</div>'; }
-  else { todayEl.innerHTML = todayBks.map(b=>`<div style="padding:10px;border-bottom:1px solid #eef4f4;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">${clientName(b.clientId)}</div><div style="color:var(--text3);font-size:12px">${b.time} — ${b.service}</div></div><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':'gold'}">${b.status}</span></div>`).join(''); }
-  const recent = [...invoices].sort((a,b)=>b.id-a.id).slice(0,5);
-  document.getElementById('recentActivity').innerHTML = recent.length ? recent.map(i=>`<div style="padding:8px 0;border-bottom:1px solid #eef4f4;font-size:13px"><span style="color:var(--teal)">🧾</span> <b>${clientName(i.clientId)}</b> — $${i.amount}<div style="color:var(--text3);font-size:11px">${fmt(i.date)} · <span class="badge badge-${i.status==='paid'?'green':'red'}" style="font-size:10px">${i.status}</span></div></div>`).join('') : '<div class="empty">No recent activity.</div>';
+  if (todayBks.length === 0) {
+    todayEl.innerHTML = '<div class="empty"><div class="empty-icon">☀️</div>No jobs scheduled today.</div>';
+  } else {
+    todayEl.innerHTML = todayBks.map(b=>`
+      <div style="padding:10px;border-bottom:1px solid #eef4f4;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:600">${clientName(b.clientId)}</div>
+          <div style="color:var(--text3);font-size:12px">${b.time} — ${b.service}</div>
+        </div>
+        <span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':'gold'}">${b.status}</span>
+      </div>
+    `).join('');
+  }
+
+  const recent = [...bookings].sort((a,b)=>b.id-a.id).slice(0,5);
+  document.getElementById('recentActivity').innerHTML = recent.length ? recent.map(b=>`
+    <div style="padding:8px 0;border-bottom:1px solid #eef4f4;font-size:13px">
+      <span style="color:var(--teal)">📅</span>
+      <b>${clientName(b.clientId)}</b> — ${b.service}
+      <div style="color:var(--text3);font-size:11px">${fmt(b.date)}</div>
+    </div>
+  `).join('') : '<div class="empty">No recent activity.</div>';
+
   const upcoming = bookings.filter(b=>b.date>=today()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
-  document.getElementById('upcomingTbl').innerHTML = upcoming.map(b=>`<tr><td>${fmt(b.date)}</td><td>${clientName(b.clientId)}</td><td>${b.service}</td><td>$${b.amount}</td><td><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':b.status==='cancelled'?'red':'gold'}">${b.status}</span></td></tr>`).join('') || '<tr><td colspan="5" class="empty">No upcoming bookings.</td></tr>';
+  document.getElementById('upcomingTbl').innerHTML = upcoming.map(b=>`
+    <tr>
+      <td>${fmt(b.date)}</td>
+      <td>${clientName(b.clientId)}</td>
+      <td>${b.service}</td>
+      <td>$${b.amount}</td>
+      <td><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':b.status==='cancelled'?'red':'gold'}">${b.status}</span></td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" class="empty">No upcoming bookings.</td></tr>';
 }
 
 // ══ SCHEDULE ══
@@ -514,165 +761,375 @@ function renderSchedule() {
   populateSelect('bkClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
   populateSelect('bkService', services, s=>({val:s.name,lbl:s.name+' ($'+s.price+')'}));
   const sorted = [...bookings].sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('scheduleTbl').innerHTML = sorted.map(b=>`<tr><td>${fmt(b.date)}</td><td>${b.time}</td><td>${clientName(b.clientId)}</td><td>${b.service}</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.address}</td><td>$${b.amount}</td><td><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':b.status==='cancelled'?'red':'gold'}">${b.status}</span></td><td><button class="btn btn-sm btn-outline" onclick="markComplete(${b.id})">✓</button> <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.id})">✕</button></td></tr>`).join('') || '<tr><td colspan="8" class="empty">No bookings yet.</td></tr>';
+  document.getElementById('scheduleTbl').innerHTML = sorted.map(b=>`
+    <tr>
+      <td>${fmt(b.date)}</td>
+      <td>${b.time}</td>
+      <td>${clientName(b.clientId)}</td>
+      <td>${b.service}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.address}</td>
+      <td>$${b.amount}</td>
+      <td><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':b.status==='cancelled'?'red':'gold'}">${b.status}</span></td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="markComplete(${b.id})">✓</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.id})" style="margin-left:4px">✕</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="8" class="empty">No bookings yet.</td></tr>';
 }
-function markComplete(id) { const b=bookings.find(b=>b.id===id); if(b){b.status='completed';save('bookings',bookings);renderSchedule();showToast('Marked as completed!');} }
-function deleteBooking(id) { if(!confirm('Delete this booking?'))return; bookings=bookings.filter(b=>b.id!==id);save('bookings',bookings);renderSchedule();showToast('Booking deleted.'); }
-function fillBkAmount() { const svcName=document.getElementById('bkService').value; const svc=services.find(s=>s.name===svcName); if(svc)document.getElementById('bkAmount').value=svc.price; }
+
+function markComplete(id) {
+  const b = bookings.find(b=>b.id===id);
+  if (b) { b.status='completed'; save('bookings',bookings); renderSchedule(); showToast('Marked as completed!'); }
+}
+function deleteBooking(id) {
+  if (!confirm('Delete this booking?')) return;
+  bookings = bookings.filter(b=>b.id!==id); save('bookings',bookings); renderSchedule(); showToast('Booking deleted.');
+}
+
+function fillBkAmount() {
+  const svcName = document.getElementById('bkService').value;
+  const svc = services.find(s=>s.name===svcName);
+  if (svc) document.getElementById('bkAmount').value = svc.price;
+}
+
 function saveBooking() {
-  const cId=parseInt(document.getElementById('bkClient').value);
-  const date=document.getElementById('bkDate').value;
-  if(!cId||!date){showToast('Please fill in client and date.');return;}
-  const client=clients.find(c=>c.id===cId);
-  bookings.push({id:newId(),clientId:cId,service:document.getElementById('bkService').value,date,time:document.getElementById('bkTime').value,address:document.getElementById('bkAddress').value||(client?client.address:''),amount:parseFloat(document.getElementById('bkAmount').value)||0,status:document.getElementById('bkStatus').value,notes:document.getElementById('bkNotes').value});
-  save('bookings',bookings);closeModal('bookingModal');renderSchedule();showToast('Booking saved!');
+  const cId = parseInt(document.getElementById('bkClient').value);
+  const date = document.getElementById('bkDate').value;
+  if (!cId || !date) { showToast('Please fill in client and date.'); return; }
+  const client = clients.find(c=>c.id===cId);
+  bookings.push({
+    id: newId(),
+    clientId: cId,
+    service:  document.getElementById('bkService').value,
+    date,
+    time:     document.getElementById('bkTime').value,
+    address:  document.getElementById('bkAddress').value || (client ? client.address : ''),
+    amount:   parseFloat(document.getElementById('bkAmount').value)||0,
+    status:   document.getElementById('bkStatus').value,
+    notes:    document.getElementById('bkNotes').value,
+  });
+  save('bookings', bookings);
+  closeModal('bookingModal');
+  renderSchedule();
+  showToast('Booking saved!');
 }
 
 // ══ CLIENTS ══
 function renderClients() {
   populateSelect('msgClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
-  const q=(document.getElementById('clientSearch')?.value||'').toLowerCase();
-  const filtered=q?clients.filter(c=>(c.first+' '+c.last+c.phone+c.email).toLowerCase().includes(q)):clients;
-  document.getElementById('clientsTbl').innerHTML=filtered.map(c=>`<tr><td><b>${c.first} ${c.last}</b></td><td>${c.phone?'<a href="tel:'+c.phone+'" style="color:var(--teal)">'+c.phone+'</a>':''}</td><td>${c.email}</td><td>${c.address}</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes}</td><td><button class="btn btn-sm btn-outline" onclick="editClient(${c.id})">Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteClient(${c.id})">Del</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No clients found.</td></tr>';
+  const q = (document.getElementById('clientSearch')?.value||'').toLowerCase();
+  const filtered = q ? clients.filter(c=>(c.first+' '+c.last+c.phone+c.email).toLowerCase().includes(q)) : clients;
+  document.getElementById('clientsTbl').innerHTML = filtered.map(c=>`
+    <tr>
+      <td><b>${c.first} ${c.last}</b></td>
+      <td><a href="tel:${c.phone}" style="color:var(--teal)">${c.phone}</a></td>
+      <td>${c.email}</td>
+      <td>${c.address}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes}</td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="editClient(${c.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteClient(${c.id})" style="margin-left:4px">Del</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" class="empty">No clients found.</td></tr>';
 }
+
 function saveClient() {
-  const id=document.getElementById('clientId').value;
-  const obj={id:id?parseInt(id):newId(),first:document.getElementById('cFirst').value.trim(),last:document.getElementById('cLast').value.trim(),phone:document.getElementById('cPhone').value.trim(),email:document.getElementById('cEmail').value.trim(),address:document.getElementById('cAddress').value.trim(),notes:document.getElementById('cNotes').value.trim()};
-  if(!obj.first){showToast('First name is required.');return;}
-  if(id){const i=clients.findIndex(c=>c.id==id);if(i>=0)clients[i]=obj;}else clients.push(obj);
-  save('clients',clients);closeModal('clientModal');renderClients();showToast(id?'Client updated!':'Client added!');
+  const id = document.getElementById('clientId').value;
+  const obj = {
+    id: id ? parseInt(id) : newId(),
+    first:   document.getElementById('cFirst').value.trim(),
+    last:    document.getElementById('cLast').value.trim(),
+    phone:   document.getElementById('cPhone').value.trim(),
+    email:   document.getElementById('cEmail').value.trim(),
+    address: document.getElementById('cAddress').value.trim(),
+    notes:   document.getElementById('cNotes').value.trim(),
+  };
+  if (!obj.first) { showToast('First name is required.'); return; }
+  if (id) { const i = clients.findIndex(c=>c.id==id); if(i>=0) clients[i]=obj; }
+  else clients.push(obj);
+  save('clients', clients);
+  closeModal('clientModal');
+  renderClients();
+  showToast(id ? 'Client updated!' : 'Client added!');
 }
+
 function editClient(id) {
-  const c=clients.find(c=>c.id===id);if(!c)return;
-  document.getElementById('clientId').value=c.id;document.getElementById('cFirst').value=c.first;document.getElementById('cLast').value=c.last;document.getElementById('cPhone').value=c.phone;document.getElementById('cEmail').value=c.email;document.getElementById('cAddress').value=c.address;document.getElementById('cNotes').value=c.notes;
+  const c = clients.find(c=>c.id===id);
+  if (!c) return;
+  document.getElementById('clientId').value = c.id;
+  document.getElementById('cFirst').value   = c.first;
+  document.getElementById('cLast').value    = c.last;
+  document.getElementById('cPhone').value   = c.phone;
+  document.getElementById('cEmail').value   = c.email;
+  document.getElementById('cAddress').value = c.address;
+  document.getElementById('cNotes').value   = c.notes;
   openModal('clientModal');
 }
-function deleteClient(id) { if(!confirm('Delete this client?'))return; clients=clients.filter(c=>c.id!==id);save('clients',clients);renderClients();showToast('Client removed.'); }
+
+function deleteClient(id) {
+  if (!confirm('Delete this client?')) return;
+  clients = clients.filter(c=>c.id!==id); save('clients',clients); renderClients(); showToast('Client removed.');
+}
 
 // ══ SKIPS ══
 function renderSkips() {
-  populateSelect('skipClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  document.getElementById('skipDate').value=today();
-  const total=skips.length,unpaid=skips.filter(s=>s.paid==='unpaid').length,revenue=skips.filter(s=>s.paid==='paid').reduce((s,k)=>s+Number(k.fee),0);
-  document.getElementById('skipStats').innerHTML=`<div class="stat-card red"><div class="stat-num">${total}</div><div class="stat-label">Total Skips</div></div><div class="stat-card gold"><div class="stat-num">${unpaid}</div><div class="stat-label">Unpaid Fees</div></div><div class="stat-card green"><div class="stat-num">$${revenue}</div><div class="stat-label">Collected</div></div>`;
-  document.getElementById('skipsTbl').innerHTML=[...skips].sort((a,b)=>b.id-a.id).map(s=>`<tr><td>${fmt(s.date)}</td><td>${clientName(s.clientId)}</td><td>${s.reason}</td><td>$${s.fee}</td><td><span class="badge badge-${s.paid==='paid'?'green':s.paid==='waived'?'gray':'red'}">${s.paid}</span></td><td><button class="btn btn-sm btn-outline" onclick="markSkipPaid(${s.id})">Mark Paid</button> <button class="btn btn-sm btn-danger" onclick="deleteSkip(${s.id})">Del</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No skips recorded.</td></tr>';
+  populateSelect('skipClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  document.getElementById('skipDate').value = today();
+  const total = skips.length;
+  const unpaid = skips.filter(s=>s.paid==='unpaid').length;
+  const revenue = skips.filter(s=>s.paid==='paid').reduce((s,k)=>s+Number(k.fee),0);
+  document.getElementById('skipStats').innerHTML = `
+    <div class="stat-card red"><div class="stat-num">${total}</div><div class="stat-label">Total Skips</div></div>
+    <div class="stat-card gold"><div class="stat-num">${unpaid}</div><div class="stat-label">Unpaid Fees</div></div>
+    <div class="stat-card green"><div class="stat-num">$${revenue}</div><div class="stat-label">Collected</div></div>
+  `;
+  document.getElementById('skipsTbl').innerHTML = [...skips].sort((a,b)=>b.id-a.id).map(s=>`
+    <tr>
+      <td>${fmt(s.date)}</td>
+      <td>${clientName(s.clientId)}</td>
+      <td>${s.reason}</td>
+      <td>$${s.fee}</td>
+      <td><span class="badge badge-${s.paid==='paid'?'green':s.paid==='waived'?'gray':'red'}">${s.paid}</span></td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="markSkipPaid(${s.id})">Mark Paid</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteSkip(${s.id})" style="margin-left:4px">Del</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" class="empty">No skips recorded.</td></tr>';
 }
-function saveSkip() { skips.push({id:newId(),clientId:parseInt(document.getElementById('skipClient').value),date:document.getElementById('skipDate').value,reason:document.getElementById('skipReason').value,fee:parseFloat(document.getElementById('skipFee').value)||50,paid:document.getElementById('skipPaid').value});save('skips',skips);closeModal('skipModal');renderSkips();showToast('Skip recorded!'); }
-function markSkipPaid(id) { const s=skips.find(s=>s.id===id);if(s){s.paid='paid';save('skips',skips);renderSkips();showToast('Marked as paid!');} }
-function deleteSkip(id) { skips=skips.filter(s=>s.id!==id);save('skips',skips);renderSkips();showToast('Record deleted.'); }
+
+function saveSkip() {
+  skips.push({
+    id: newId(),
+    clientId: parseInt(document.getElementById('skipClient').value),
+    date:     document.getElementById('skipDate').value,
+    reason:   document.getElementById('skipReason').value,
+    fee:      parseFloat(document.getElementById('skipFee').value)||50,
+    paid:     document.getElementById('skipPaid').value,
+  });
+  save('skips', skips);
+  closeModal('skipModal');
+  renderSkips();
+  showToast('Skip recorded!');
+}
+
+function markSkipPaid(id) {
+  const s = skips.find(s=>s.id===id);
+  if (s) { s.paid='paid'; save('skips',skips); renderSkips(); showToast('Marked as paid!'); }
+}
+
+function deleteSkip(id) {
+  skips = skips.filter(s=>s.id!==id); save('skips',skips); renderSkips(); showToast('Record deleted.');
+}
 
 // ══ SERVICES ══
 function renderServices() {
-  document.getElementById('servicesGrid').innerHTML=services.map(s=>`<div class="card" style="border-top:3px solid var(--teal)"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div style="font-size:16px;font-weight:700;color:var(--teal-dark)">${s.name}</div><div style="font-size:20px;font-weight:700;color:var(--gold)">$${s.price}</div></div><div style="color:var(--text3);font-size:12px;margin-bottom:6px">⏱ ${s.duration}</div><div style="color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5">${s.desc}</div><div style="display:flex;gap:8px"><button class="btn btn-sm btn-outline" onclick="editService(${s.id})">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteService(${s.id})">Delete</button></div></div>`).join('');
+  document.getElementById('servicesGrid').innerHTML = services.map(s=>`
+    <div class="card" style="border-top:3px solid var(--teal)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="font-size:16px;font-weight:700;color:var(--teal-dark)">${s.name}</div>
+        <div style="font-size:20px;font-weight:700;color:var(--gold)">$${s.price}</div>
+      </div>
+      <div style="color:var(--text3);font-size:12px;margin-bottom:6px">⏱ ${s.duration}</div>
+      <div style="color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5">${s.desc}</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm btn-outline" onclick="editService(${s.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteService(${s.id})">Delete</button>
+      </div>
+    </div>
+  `).join('');
 }
+
 function saveService() {
-  const id=document.getElementById('serviceId').value;
-  const obj={id:id?parseInt(id):newId(),name:document.getElementById('svcName').value.trim(),price:parseFloat(document.getElementById('svcPrice').value)||0,duration:document.getElementById('svcDuration').value.trim(),desc:document.getElementById('svcDesc').value.trim()};
-  if(!obj.name){showToast('Service name required.');return;}
-  if(id){const i=services.findIndex(s=>s.id==id);if(i>=0)services[i]=obj;}else services.push(obj);
-  save('services',services);closeModal('serviceModal');renderServices();showToast('Service saved!');
+  const id = document.getElementById('serviceId').value;
+  const obj = {
+    id: id ? parseInt(id) : newId(),
+    name:     document.getElementById('svcName').value.trim(),
+    price:    parseFloat(document.getElementById('svcPrice').value)||0,
+    duration: document.getElementById('svcDuration').value.trim(),
+    desc:     document.getElementById('svcDesc').value.trim(),
+  };
+  if (!obj.name) { showToast('Service name required.'); return; }
+  if (id) { const i = services.findIndex(s=>s.id==id); if(i>=0) services[i]=obj; }
+  else services.push(obj);
+  save('services', services);
+  closeModal('serviceModal');
+  renderServices();
+  showToast('Service saved!');
 }
-function editService(id) { const s=services.find(s=>s.id===id);if(!s)return;document.getElementById('serviceId').value=s.id;document.getElementById('svcName').value=s.name;document.getElementById('svcPrice').value=s.price;document.getElementById('svcDuration').value=s.duration;document.getElementById('svcDesc').value=s.desc;openModal('serviceModal'); }
-function deleteService(id) { if(!confirm('Delete this service?'))return;services=services.filter(s=>s.id!==id);save('services',services);renderServices();showToast('Service deleted.'); }
+
+function editService(id) {
+  const s = services.find(s=>s.id===id);
+  if (!s) return;
+  document.getElementById('serviceId').value    = s.id;
+  document.getElementById('svcName').value      = s.name;
+  document.getElementById('svcPrice').value     = s.price;
+  document.getElementById('svcDuration').value  = s.duration;
+  document.getElementById('svcDesc').value      = s.desc;
+  openModal('serviceModal');
+}
+
+function deleteService(id) {
+  if (!confirm('Delete this service?')) return;
+  services = services.filter(s=>s.id!==id); save('services',services); renderServices(); showToast('Service deleted.');
+}
 
 // ══ BILLING ══
 function renderBilling() {
-  populateSelect('invClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  document.getElementById('invDate').value=today();
-
-  // Year filter population
-  const yrSel=document.getElementById('billYearFilter');
-  const years=[...new Set(invoices.map(i=>{const m=(i.date||'').match(/\d{4}/);return m?m[0]:null}).filter(Boolean))].sort((a,b)=>b-a);
-  const curYr=yrSel.value;
-  yrSel.innerHTML='<option value="">All Years</option>'+years.map(y=>`<option value="${y}"${curYr===y?' selected':''}>${y}</option>`).join('');
-
-  const yrFilter=yrSel.value;
-  const stFilter=document.getElementById('billStatusFilter').value;
-  let arr=invoices.filter(i=>!yrFilter||(i.date||'').includes(yrFilter)).filter(i=>!stFilter||i.status===stFilter);
-
-  const totalAll=arr.reduce((s,i)=>s+Number(i.amount),0);
-  const totalPaid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
-  const totalUnpaid=arr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
-
-  document.getElementById('billingStats').innerHTML=`
-    <div class="stat-card"><div class="stat-num">$${totalAll.toFixed(0)}</div><div class="stat-label">Total Invoiced</div></div>
-    <div class="stat-card green"><div class="stat-num">$${totalPaid.toFixed(0)}</div><div class="stat-label">Collected</div></div>
-    <div class="stat-card red"><div class="stat-num">$${totalUnpaid.toFixed(0)}</div><div class="stat-label">Outstanding</div></div>
+  populateSelect('invClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  document.getElementById('invDate').value = today();
+  const total   = invoices.reduce((s,i)=>s+Number(i.amount),0);
+  const paid    = invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
+  const unpaid  = invoices.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
+  document.getElementById('billingStats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">$${total}</div><div class="stat-label">Total Invoiced</div></div>
+    <div class="stat-card green"><div class="stat-num">$${paid}</div><div class="stat-label">Collected</div></div>
+    <div class="stat-card red"><div class="stat-num">$${unpaid}</div><div class="stat-label">Outstanding</div></div>
   `;
-
-  document.getElementById('invoicesTbl').innerHTML=[...arr].sort((a,b)=>b.id-a.id).map(inv=>`<tr><td>#${inv.id}</td><td>${clientName(inv.clientId)}</td><td>${fmt(inv.date)}</td><td>$${inv.amount}</td><td><span class="badge badge-${inv.status==='paid'?'green':inv.status==='partial'?'gold':'red'}">${inv.status}</span></td><td><button class="btn btn-sm btn-outline" onclick="markInvPaid(${inv.id})">Mark Paid</button> <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${inv.id})">Del</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No invoices yet.</td></tr>';
-
-  // Totals footer
-  document.getElementById('invoicesFoot').innerHTML=arr.length?`<tr style="background:var(--teal-pale);font-weight:700"><td colspan="3" style="padding:10px 12px;color:var(--teal-dark)">TOTALS (${arr.length} invoices${yrFilter?' — '+yrFilter:''})</td><td style="padding:10px 12px;color:var(--teal-dark)">$${totalAll.toFixed(2)}</td><td colspan="2" style="padding:10px 12px;font-size:12px"><span style="color:var(--green);margin-right:12px">✅ Paid: $${totalPaid.toFixed(2)}</span><span style="color:var(--red)">⏳ Unpaid: $${totalUnpaid.toFixed(2)}</span></td></tr>`:'';
-
-  // Tax summary
-  const ts=document.getElementById('taxSummary');
-  if(arr.length){
-    ts.style.display='block';
-    document.getElementById('taxGrid').innerHTML=`
-      <div class="stat-card"><div class="stat-num">$${totalAll.toFixed(2)}</div><div class="stat-label">Total Revenue${yrFilter?' '+yrFilter:''}</div></div>
-      <div class="stat-card green"><div class="stat-num">$${totalPaid.toFixed(2)}</div><div class="stat-label">Collected${yrFilter?' '+yrFilter:''}</div></div>
-      <div class="stat-card red"><div class="stat-num">$${totalUnpaid.toFixed(2)}</div><div class="stat-label">Outstanding</div></div>
-      <div class="stat-card gold"><div class="stat-num">${arr.length}</div><div class="stat-label">Invoice Count</div></div>`;
-  } else { ts.style.display='none'; }
+  document.getElementById('invoicesTbl').innerHTML = [...invoices].sort((a,b)=>b.id-a.id).map(inv=>`
+    <tr>
+      <td>#${inv.id}</td>
+      <td>${clientName(inv.clientId)}</td>
+      <td>${fmt(inv.date)}</td>
+      <td>$${inv.amount}</td>
+      <td><span class="badge badge-${inv.status==='paid'?'green':inv.status==='partial'?'gold':'red'}">${inv.status}</span></td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="markInvPaid(${inv.id})">Mark Paid</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${inv.id})" style="margin-left:4px">Del</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" class="empty">No invoices yet.</td></tr>';
 }
-function saveInvoice() { invoices.push({id:newId(),clientId:parseInt(document.getElementById('invClient').value),date:document.getElementById('invDate').value,amount:parseFloat(document.getElementById('invAmount').value)||0,desc:document.getElementById('invDesc').value.trim(),status:document.getElementById('invStatus').value});save('invoices',invoices);closeModal('invoiceModal');renderBilling();showToast('Invoice created!'); }
-function markInvPaid(id) { const inv=invoices.find(i=>i.id===id);if(inv){inv.status='paid';save('invoices',invoices);renderBilling();showToast('Marked as paid!');} }
-function deleteInvoice(id) { invoices=invoices.filter(i=>i.id!==id);save('invoices',invoices);renderBilling();showToast('Invoice deleted.'); }
-function exportCSV() {
-  const yrFilter=document.getElementById('billYearFilter').value;
-  const stFilter=document.getElementById('billStatusFilter').value;
-  let arr=invoices.filter(i=>!yrFilter||(i.date||'').includes(yrFilter)).filter(i=>!stFilter||i.status===stFilter).sort((a,b)=>b.id-a.id);
-  if(!arr.length){showToast('No invoices to export.');return;}
-  const paid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
-  const total=arr.reduce((s,i)=>s+Number(i.amount),0);
-  let csv='Invoice #,Client,Date,Amount,Status,Description\n';
-  arr.forEach(i=>{csv+=`${i.id},"${clientName(i.clientId)}",${i.date},${i.amount},${i.status},"${(i.desc||'').replace(/"/g,"'")}"\n`;});
-  csv+=`\n,,,Total Revenue:,$${total.toFixed(2)},\n,,,Total Paid:,$${paid.toFixed(2)},\n,,,Total Unpaid:,$${(total-paid).toFixed(2)},\n`;
-  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='JanetesCleaners'+(yrFilter?'_'+yrFilter:'')+'.csv';a.click();URL.revokeObjectURL(url);
-  showToast('📥 CSV exported!');
+
+function saveInvoice() {
+  invoices.push({
+    id: newId(),
+    clientId: parseInt(document.getElementById('invClient').value),
+    date:     document.getElementById('invDate').value,
+    amount:   parseFloat(document.getElementById('invAmount').value)||0,
+    desc:     document.getElementById('invDesc').value.trim(),
+    status:   document.getElementById('invStatus').value,
+  });
+  save('invoices', invoices);
+  closeModal('invoiceModal');
+  renderBilling();
+  showToast('Invoice created!');
+}
+
+function markInvPaid(id) {
+  const inv = invoices.find(i=>i.id===id);
+  if (inv) { inv.status='paid'; save('invoices',invoices); renderBilling(); showToast('Marked as paid!'); }
+}
+
+function deleteInvoice(id) {
+  invoices = invoices.filter(i=>i.id!==id); save('invoices',invoices); renderBilling(); showToast('Invoice deleted.');
 }
 
 // ══ MESSAGES ══
 const TEMPLATES = [
-  {label:'Appointment Reminder', text:"Hi {name}! This is a reminder that your cleaning is scheduled for {date}. Please make sure the team has access. Thank you! — Janete's Cleaners"},
-  {label:'Payment Due',          text:"Hi {name}, your balance is currently due. You can pay via Venmo @janete-pereira-1 or cash. Thank you! — Janete's Cleaners"},
-  {label:'Skip Policy Notice',   text:"Hi {name}, as per our Skip Policy, a $50 fee applies for cancellations under 24 hours. Please contact us with any questions. — Janete's Cleaners"},
-  {label:'Welcome New Client',   text:"Welcome to Janete's Cleaners, {name}! We're excited to serve you. Please reach out anytime. — Janete's Cleaners 📞 781-964-5682"},
+  { label:'Appointment Reminder', text:'Hi {name}! This is a reminder that your cleaning is scheduled for {date} at {time}. Please make sure the team has access. Thank you! — Janete\'s Cleaners'},
+  { label:'Payment Due',          text:'Hi {name}, your balance of ${amount} is due. You can pay via Venmo @JaneteCleaners or cash. Thank you! — Janete\'s Cleaners'},
+  { label:'Skip Policy Notice',   text:'Hi {name}, as per our Skip Policy, a $50 fee applies for cancellations under 24 hours. Your fee is currently {status}. Please contact us with any questions. — Janete\'s Cleaners'},
+  { label:'Welcome New Client',   text:'Welcome to Janete\'s Cleaners, {name}! We\'re excited to serve you. Your first appointment is scheduled. Please reach out anytime. — Janete\'s Cleaners 📞 781-392-4246'},
 ];
+
 function renderMessages() {
-  populateSelect('msgClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  document.getElementById('templatesBox').innerHTML=TEMPLATES.map((t,i)=>`<div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer" onclick="useTemplate(${i})"><div style="font-weight:600;color:var(--teal);font-size:13px">${t.label}</div><div style="color:var(--text3);font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.text.substring(0,60)}...</div></div>`).join('');
-  const logEl=document.getElementById('msgLog');
-  logEl.innerHTML=msgLog.length?[...msgLog].reverse().map(m=>`<div style="padding:10px;border-bottom:1px solid #eef4f4;font-size:13px"><div style="display:flex;justify-content:space-between"><b>${m.client}</b><span style="color:var(--text3);font-size:11px">${m.date}</span></div><div style="color:var(--text2);margin-top:4px">${m.text}</div></div>`).join(''):'<div class="empty"><div class="empty-icon">💬</div>No messages logged yet.</div>';
+  populateSelect('msgClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  document.getElementById('templatesBox').innerHTML = TEMPLATES.map((t,i)=>`
+    <div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer"
+         onclick="useTemplate(${i})">
+      <div style="font-weight:600;color:var(--teal);font-size:13px">${t.label}</div>
+      <div style="color:var(--text3);font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.text.substring(0,60)}...</div>
+    </div>
+  `).join('');
+
+  const logEl = document.getElementById('msgLog');
+  logEl.innerHTML = msgLog.length ? [...msgLog].reverse().map(m=>`
+    <div style="padding:10px;border-bottom:1px solid #eef4f4;font-size:13px">
+      <div style="display:flex;justify-content:space-between">
+        <b>${m.client}</b>
+        <span style="color:var(--text3);font-size:11px">${m.date}</span>
+      </div>
+      <div style="color:var(--text2);margin-top:4px">${m.text}</div>
+    </div>
+  `).join('') : '<div class="empty"><div class="empty-icon">💬</div>No messages logged yet.</div>';
 }
-function useTemplate(i) { const cId=document.getElementById('msgClient').value;const c=clients.find(c=>c.id==cId);let text=TEMPLATES[i].text;if(c)text=text.replace(/{name}/g,c.first);document.getElementById('msgText').value=text; }
-function generateMsg() { const cId=document.getElementById('msgClient').value;const type=document.getElementById('msgType').value;const c=clients.find(c=>c.id==cId);if(!c){showToast('Select a client first.');return;}const tmpl=TEMPLATES.find(t=>t.label.toLowerCase().includes(type))||TEMPLATES[0];let text=tmpl.text.replace(/{name}/g,c.first);document.getElementById('msgText').value=text; }
-function copyMsg() { const txt=document.getElementById('msgText').value;if(!txt){showToast('Nothing to copy.');return;}navigator.clipboard.writeText(txt).then(()=>showToast('Copied to clipboard!'));const cId=document.getElementById('msgClient').value;const c=clients.find(c=>c.id==cId);msgLog.push({client:c?c.first+' '+c.last:'Unknown',text:txt,date:new Date().toLocaleDateString()});save('msgLog',msgLog);renderMessages(); }
+
+function useTemplate(i) {
+  const cId = document.getElementById('msgClient').value;
+  const c = clients.find(c=>c.id==cId);
+  let text = TEMPLATES[i].text;
+  if (c) text = text.replace(/{name}/g, c.first);
+  document.getElementById('msgText').value = text;
+}
+
+function generateMsg() {
+  const cId = document.getElementById('msgClient').value;
+  const type = document.getElementById('msgType').value;
+  const c = clients.find(c=>c.id==cId);
+  if (!c) { showToast('Select a client first.'); return; }
+  const tmpl = TEMPLATES.find(t=>t.label.toLowerCase().includes(type)) || TEMPLATES[0];
+  let text = tmpl.text.replace(/{name}/g, c.first);
+  document.getElementById('msgText').value = text;
+}
+
+function copyMsg() {
+  const txt = document.getElementById('msgText').value;
+  if (!txt) { showToast('Nothing to copy.'); return; }
+  navigator.clipboard.writeText(txt).then(()=>showToast('Copied to clipboard!'));
+  // log it
+  const cId = document.getElementById('msgClient').value;
+  const c = clients.find(c=>c.id==cId);
+  msgLog.push({ client: c ? c.first+' '+c.last : 'Unknown', text: txt, date: new Date().toLocaleDateString() });
+  save('msgLog', msgLog);
+  renderMessages();
+}
 
 // ══ UTILS ══
-function populateSelect(id,items,mapper) { const el=document.getElementById(id);if(!el)return;const cur=el.value;el.innerHTML=items.map(i=>{const m=mapper(i);return`<option value="${m.val}">${m.lbl}</option>`;}).join('');if(cur)el.value=cur; }
-function openModal(id) {
-  if(id==='serviceModal')document.getElementById('serviceId').value='';
-  if(id==='clientModal'){document.getElementById('clientId').value='';['cFirst','cLast','cPhone','cEmail','cAddress','cNotes'].forEach(f=>document.getElementById(f).value='');}
-  document.getElementById(id).classList.remove('hidden');
-  populateSelect('bkClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  populateSelect('bkService',services,s=>({val:s.name,lbl:s.name+' ($'+s.price+')'}));
-  populateSelect('skipClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  populateSelect('invClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
+function populateSelect(id, items, mapper) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const cur = el.value;
+  el.innerHTML = items.map(i=>{ const m=mapper(i); return `<option value="${m.val}">${m.lbl}</option>`; }).join('');
+  if (cur) el.value = cur;
 }
-function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-document.querySelectorAll('.modal-overlay').forEach(o=>{ o.addEventListener('click',e=>{if(e.target===o)o.classList.add('hidden');}); });
+
+function openModal(id) {
+  // clear service edit id on open
+  if (id==='serviceModal') document.getElementById('serviceId').value='';
+  if (id==='clientModal')  { document.getElementById('clientId').value=''; ['cFirst','cLast','cPhone','cEmail','cAddress','cNotes'].forEach(f=>document.getElementById(f).value=''); }
+  document.getElementById(id).classList.remove('hidden');
+  // populate selects inside modals
+  populateSelect('bkClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  populateSelect('bkService', services, s=>({val:s.name,lbl:s.name+' ($'+s.price+')'}));
+  populateSelect('skipClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  populateSelect('invClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click', e=>{ if(e.target===o) o.classList.add('hidden'); });
+});
 
 // ══ INIT ══
 function initApp() {
   renderDashboard();
-  const d=today();
-  const el=document.getElementById('bkDate');if(el)el.value=d;
-  const sd=document.getElementById('skipDate');if(sd)sd.value=d;
+  // Set today's date defaults
+  const d = today();
+  const el = document.getElementById('bkDate');
+  if (el) el.value = d;
+  const sd = document.getElementById('skipDate');
+  if (sd) sd.value = d;
 }
-if(sessionStorage.getItem('jc_auth')) {
+
+// Auto-login check
+if (sessionStorage.getItem('jc_auth')) {
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   initApp();
