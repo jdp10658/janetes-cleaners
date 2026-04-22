@@ -4,1628 +4,1135 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Janete's Cleaners — Management Suite</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ══ RESET & VARS ══ */
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --red:#C41A1A;--red-pale:#fdf0ee;--red-light:rgba(196,26,26,0.07);
-  --teal:#0d7377;--teal-light:#14a085;--teal-pale:#e6f4f4;--teal-dark:#0a5c5f;
-  --gold:#c9a84c;--gold-pale:#fdf6e3;
-  --bg:#f4f7f7;--surface:#fff;--surface2:#f0f5f5;
-  --border:#d4e4e4;--border2:#e8e8e8;
-  --text:#1a2e2e;--text2:#4a6666;--text3:#7a9a9a;
-  --green:#1a7a5a;--green-pale:#eaf5f0;
-  --radius:12px;--radius-sm:8px;
-  --shadow:0 2px 12px rgba(13,115,119,0.08);
-  --shadow-lg:0 8px 32px rgba(13,115,119,0.14);
+:root {
+  --teal: #0d7377;
+  --teal-light: #14a085;
+  --teal-dark: #095c60;
+  --teal-pale: #e6f4f4;
+  --gold: #c9a84c;
+  --bg: #f0f6f6;
+  --surface: #ffffff;
+  --border: #cce0e0;
+  --text: #1a2e2e;
+  --text2: #4a6a6a;
+  --text3: #7a9a9a;
+  --red: #c0392b;
+  --red-pale: #fdf0ee;
+  --green: #1a7a5a;
+  --green-pale: #eaf5f0;
+  --yellow-pale: #fefce8;
+  --shadow: 0 2px 12px rgba(13,115,119,0.10);
+  --radius: 12px;
 }
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
-
-/* ══ LOGIN ══ */
-#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--teal-dark),var(--teal),var(--teal-light));display:flex;align-items:center;justify-content:center;z-index:999;padding:20px}
-.login-card{background:#fff;border-radius:20px;padding:44px 38px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,0.18);text-align:center}
-.login-logo{width:60px;height:60px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border-radius:15px;display:inline-flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:18px}
-.login-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--teal-dark);margin-bottom:4px}
-.login-sub{color:var(--text3);font-size:12px;margin-bottom:28px;letter-spacing:.5px}
-.login-card input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);margin-bottom:10px;outline:none;transition:border-color .2s}
-.login-card input:focus{border-color:var(--teal)}
-.btn-login{width:100%;padding:12px;background:linear-gradient(135deg,var(--teal),var(--teal-light));color:#fff;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;transition:opacity .2s,transform .1s}
-.btn-login:hover{opacity:.9;transform:translateY(-1px)}
-#login-error{color:var(--red);font-size:11px;margin-top:8px;min-height:16px}
-.skip-note{margin-top:14px;padding:9px 12px;background:var(--gold-pale);border:1px solid #e8d08a;border-radius:8px;font-size:11px;color:#7a5a00}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
 .hidden{display:none!important}
 
-/* ══ HEADER ══ */
-.header{background:#fff;border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+/* ══ LOGIN ══ */
+#loginScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 60%,var(--teal-light) 100%);
+  padding:20px;
+}
+.login-card{
+  background:#fff;border-radius:20px;padding:44px 36px;width:100%;max-width:400px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.22);text-align:center;
+}
+.login-logo{
+  width:68px;height:68px;background:linear-gradient(135deg,var(--teal),var(--teal-light));
+  border-radius:18px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:30px;margin-bottom:18px;box-shadow:0 4px 16px rgba(13,115,119,0.35);
+}
+.login-title{font-size:26px;font-weight:700;color:var(--teal-dark);margin-bottom:4px}
+.login-sub{color:var(--text3);font-size:13px;margin-bottom:28px;letter-spacing:0.5px}
+.login-card input{
+  width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:14px;margin-bottom:12px;outline:none;transition:border .2s;color:var(--text);
+  background:#f7fbfb;
+}
+.login-card input:focus{border-color:var(--teal)}
+.btn-login{
+  width:100%;padding:14px;background:linear-gradient(135deg,var(--teal),var(--teal-light));
+  border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;
+  margin-top:4px;transition:opacity .2s;letter-spacing:0.3px;
+}
+.btn-login:hover{opacity:0.9}
+#loginErr{color:var(--red);font-size:13px;margin-top:10px;min-height:18px}
+.skip-note{
+  margin-top:20px;padding:10px 14px;background:var(--yellow-pale);border:1px solid #f0d060;
+  border-radius:8px;font-size:12px;color:#7a6010;line-height:1.4;
+}
+
+/* ══ APP SHELL ══ */
+#app{display:flex;flex-direction:column;min-height:100vh}
+.header{
+  background:linear-gradient(135deg,var(--teal-dark),var(--teal));
+  padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);flex-shrink:0;
+}
 .header-brand{display:flex;align-items:center;gap:10px}
-.header-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.header-name{font-family:'Playfair Display',serif;font-size:17px;color:var(--teal-dark);font-weight:600}
-.header-right{display:flex;align-items:center;gap:9px}
-.wa-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;background:#25D366;color:#fff;border-radius:18px;font-size:11px;font-weight:600;text-decoration:none;transition:opacity .2s}
-.wa-btn:hover{opacity:.85}
-.skip-banner{background:var(--gold-pale);border-bottom:1px solid #e8d08a;padding:7px 20px;font-size:11px;color:#7a5a00;display:flex;align-items:center;gap:6px}
-.signout-btn{padding:6px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:18px;font-size:11px;font-weight:500;color:var(--text2);cursor:pointer;transition:background .2s}
-.signout-btn:hover{background:var(--border)}
+.header-icon{font-size:22px}
+.header-name{color:#fff;font-size:16px;font-weight:700;letter-spacing:0.3px}
+.header-right{display:flex;align-items:center;gap:8px}
+.wa-btn{
+  background:#25d366;color:#fff;border:none;border-radius:8px;padding:6px 12px;
+  font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:flex;
+  align-items:center;gap:4px;
+}
+.signout-btn{
+  background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);
+  border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;
+}
+.skip-banner{
+  background:#fef3cd;border-bottom:1px solid #f0d060;
+  padding:8px 20px;font-size:12px;color:#7a5c00;text-align:center;
+}
 
 /* ══ NAV ══ */
-.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto}
-.nav-tab{padding:13px 14px;border:none;background:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s}
-.nav-tab:hover{color:var(--teal)}
-.nav-tab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
+.nav{
+  background:#fff;border-bottom:1.5px solid var(--border);
+  display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{
+  padding:12px 16px;border:none;background:none;color:var(--text2);
+  font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;
+  border-bottom:2.5px solid transparent;transition:all .2s;
+}
+.nav-btn.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
+.nav-btn:hover:not(.active){background:var(--teal-pale);color:var(--teal)}
 
 /* ══ MAIN ══ */
-.main{padding:22px 20px;max-width:1120px;margin:0 auto}
-.page{display:none}.page.active{display:block}
-.page-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--teal-dark);margin-bottom:18px;font-weight:600}
+.main{flex:1;padding:20px;overflow-y:auto}
+.panel{display:none}
+.panel.active{display:block}
+.page-title{font-size:20px;font-weight:700;color:var(--teal-dark);margin-bottom:20px}
 
-/* ══ LAYOUT ══ */
-.grid-2{display:grid;grid-template-columns:1fr 300px;gap:16px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 290px;gap:16px}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* ══ CARDS & GRIDS ══ */
+.card{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.card-title{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 
-/* ══ CARDS ══ */
-.card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
-.card-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;background:var(--surface2)}
-.ctitle{font-family:'Playfair Display',serif;font-size:14px;color:var(--teal-dark);font-weight:600}
-.card-body{padding:14px}
-
-/* ══ STATS ══ */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
-.stat-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:18px;box-shadow:var(--shadow)}
-.stat-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
-.stat-value{font-size:26px;font-weight:700;color:var(--teal-dark);font-family:'DM Mono',monospace;line-height:1}
-.stat-value.red{color:var(--red)}
-.stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
-
-/* ══ FORMS ══ */
-.fg{margin-bottom:10px}
-.flabel{display:block;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text2);margin-bottom:4px}
-.finput{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);background:#fff;outline:none;transition:border-color .2s}
-.finput:focus{border-color:var(--teal)}
-textarea.finput{resize:vertical;min-height:55px}
+/* ══ STAT CARDS ══ */
+.stat-card{
+  background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);
+  border-left:4px solid var(--teal);
+}
+.stat-card.red{border-left-color:var(--red)}
+.stat-card.gold{border-left-color:var(--gold)}
+.stat-card.green{border-left-color:var(--green)}
+.stat-num{font-size:28px;font-weight:700;color:var(--teal-dark)}
+.stat-card.red .stat-num{color:var(--red)}
+.stat-card.gold .stat-num{color:var(--gold)}
+.stat-card.green .stat-num{color:var(--green)}
+.stat-label{font-size:12px;color:var(--text3);margin-top:2px;font-weight:500}
 
 /* ══ BUTTONS ══ */
-.btn-main{width:100%;padding:10px;background:var(--teal);color:#fff;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,transform .1s}
-.btn-main:hover{background:var(--teal-dark);transform:translateY(-1px)}
-.btn-del-full{width:100%;margin-top:6px;padding:8px;background:var(--red-pale);color:var(--red);border:1px solid #f7c1c1;border-radius:var(--radius-sm);font-size:11px;font-weight:600;cursor:pointer}
-.btn-del-full:hover{background:#f7c1c1}
-.btn-sec{width:100%;margin-top:6px;padding:7px;background:transparent;color:var(--text3);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer}
-.btn-sec:hover{background:var(--surface2)}
-.btn-xs{padding:3px 8px;border-radius:5px;font-size:10.5px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:opacity .13s;white-space:nowrap;display:inline-flex;align-items:center;gap:2px}
-.btn-xs:hover{opacity:.8}
-.btn-rem{background:#FFF3CD;color:#7A5200}
-.btn-bill{background:var(--green-pale);color:var(--green)}
-.btn-skip{background:var(--red-pale);color:var(--red)}
-.btn-edit{background:#E8EEFF;color:#2244AA}
-.btn-del{background:var(--red-pale);color:var(--red)}
-.btn-link{display:inline-flex;align-items:center;gap:3px;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:opacity .13s}
-.btn-link:hover{opacity:.8}
-.btn-sms-link{background:#E6F1FB;color:#185FA5}
-.btn-email-link{background:var(--green-pale);color:var(--green)}
-.btn-wa-link{background:#E8F5E9;color:#1B5E20}
+.btn{
+  padding:8px 16px;border-radius:8px;border:none;cursor:pointer;
+  font-size:13px;font-weight:600;transition:opacity .2s;
+}
+.btn:hover{opacity:0.85}
+.btn-primary{background:var(--teal);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+.btn-outline{background:transparent;border:1.5px solid var(--teal);color:var(--teal)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+
+/* ══ FORMS ══ */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:13px;outline:none;transition:border .2s;background:#fafcfc;color:var(--text);
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
 /* ══ TABLE ══ */
 .table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px}
-thead th{padding:7px 9px;text-align:left;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border);background:var(--surface2)}
-tbody tr{border-bottom:1px solid var(--border2);transition:background .12s;cursor:pointer}
-tbody tr:hover{background:var(--teal-pale)}
-tbody td{padding:7px 9px;color:var(--text2)}
-tbody td:first-child{color:var(--text);font-weight:500}
-tbody tr.editing-row{background:var(--red-light)}
-.act-cell{display:flex;gap:3px;flex-wrap:wrap}
-.missing-badge{font-size:9px;padding:1px 5px;border-radius:10px;background:#FFF3CD;color:#7A5200;font-weight:600}
-.unread-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-left:4px;vertical-align:middle}
-.empty-td{text-align:center;color:var(--text3);padding:24px;font-size:12px}
+table{width:100%;border-collapse:collapse}
+thead th{
+  background:var(--teal-pale);color:var(--teal-dark);font-size:11px;
+  font-weight:700;padding:10px 12px;text-align:left;text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+tbody tr{border-bottom:1px solid #eef4f4}
+tbody tr:hover{background:#f7fbfb}
+tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
 
 /* ══ BADGES ══ */
-.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
-.badge-red{background:var(--red-pale);color:var(--red);border-color:#f7c1c1}
-.badge-green{background:var(--green-pale);color:var(--green);border-color:#a3d5bb}
-.badge-teal{background:var(--teal-pale);color:var(--teal-dark);border-color:var(--border)}
-.badge-gold{background:var(--gold-pale);color:#7a5a00;border-color:#e8d08a}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:var(--green-pale);color:var(--green)}
+.badge-red{background:var(--red-pale);color:var(--red)}
+.badge-gold{background:#fef3cd;color:#8a6010}
+.badge-blue{background:#e8f0fe;color:#1a56aa}
+.badge-gray{background:#f0f0f0;color:#555}
 
-/* ══ SEARCH ══ */
-.search-row{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;gap:7px}
-.search-row input{flex:1;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 11px;font-size:12px;background:var(--surface2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
-.search-row input:focus{border-color:var(--teal)}
+/* ══ MODAL ══ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+}
+.modal{
+  background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;
+  max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-title{font-size:18px;font-weight:700;color:var(--teal-dark);margin-bottom:20px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
 
-/* ══ EDITING BANNER ══ */
-.editing-banner{background:var(--red-pale);border:1px solid #f7c1c1;border-radius:6px;padding:6px 10px;margin-bottom:9px;font-size:11px;color:var(--red);display:none}
-.editing-banner.show{display:block}
-
-/* ══ CALENDAR ══ */
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cal-month-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--teal-dark);font-weight:600}
-.cal-nav-btn{background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 10px;cursor:pointer;font-size:14px;color:var(--teal)}
-.cal-nav-btn:hover{background:var(--teal-pale)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-day-head{text-align:center;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:3px 0}
-.cal-day{min-height:34px;border-radius:7px;border:1px solid var(--border);padding:2px 3px;cursor:pointer;transition:border-color .12s,background .12s;background:#fff;display:flex;flex-direction:column;align-items:center}
-.cal-day:hover{border-color:var(--teal);background:var(--teal-pale)}
-.cal-day.today{border-color:var(--teal);background:var(--teal);color:#fff}
-.cal-day.today .cal-dnum{color:#fff;font-weight:700}
-.cal-day.sel{border-color:var(--teal);background:var(--teal-pale)}
-.cal-day.sel .cal-dnum{color:var(--teal);font-weight:600}
-.cal-day.empty{background:transparent;border:none;cursor:default}
-.cal-dnum{font-size:10px;font-weight:500;color:var(--text2);margin-top:2px}
-.cal-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);margin-top:1px}
-.cal-day.today .cal-dot{background:#fff}
-.slot-list{margin-top:10px;display:flex;flex-direction:column;gap:5px}
-.slot-item{padding:8px 11px;border-radius:8px;border:1px solid var(--border);font-size:11px;display:flex;justify-content:space-between;align-items:center;background:#fff}
-.slot-client{font-weight:600;color:var(--text)}
-.slot-time{color:var(--text3);margin-top:1px;font-size:10px}
-.btn-remove{background:transparent;border:none;color:#ccc;font-size:14px;cursor:pointer;padding:1px 5px;border-radius:4px}
-.btn-remove:hover{background:var(--surface2);color:var(--red)}
-
-/* ══ TIME SLOTS ══ */
-.time-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
-.time-slot{padding:8px 4px;border:1.5px solid var(--border);border-radius:7px;text-align:center;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--text2)}
-.time-slot:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-pale)}
-.time-slot.sel{border-color:var(--teal);background:var(--teal);color:#fff}
-
-/* ══ SKIP STATS ══ */
-.skip-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-
-/* ══ CHAT ══ */
-.chat-layout{display:grid;grid-template-columns:220px 1fr;gap:0;height:360px;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;background:#fff}
-.chat-sidebar{border-right:1px solid var(--border);overflow-y:auto}
-.chat-sidebar-head{padding:10px 12px;border-bottom:1px solid var(--border);font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;background:var(--surface2)}
-.chat-client-item{padding:10px 12px;border-bottom:1px solid var(--border2);cursor:pointer;transition:background .13s}
-.chat-client-item:hover{background:var(--teal-pale)}
-.chat-client-item.active{background:var(--teal-pale);border-left:3px solid var(--teal)}
-.chat-client-name{font-size:12px;font-weight:600;color:var(--text)}
-.chat-client-preview{font-size:10px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
-.chat-main{display:flex;flex-direction:column}
-.chat-header{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2)}
-.chat-header-name{font-weight:600;font-size:13px;color:var(--text)}
-.chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
-.chat-msg{max-width:75%;padding:8px 12px;border-radius:10px;font-size:12px;line-height:1.4}
-.chat-msg.out{background:var(--teal);color:#fff;align-self:flex-end;border-radius:10px 10px 2px 10px}
-.chat-msg.in{background:var(--surface2);color:var(--text);align-self:flex-start;border-radius:10px 10px 10px 2px}
-.chat-msg.in.unread{background:var(--green-pale);border-left:3px solid var(--green)}
-.chat-meta{font-size:9px;opacity:.6;margin-top:2px}
-.chat-input-row{padding:9px 11px;border-top:1px solid var(--border);display:flex;gap:6px}
-.chat-input{flex:1;border:1.5px solid var(--border);border-radius:20px;padding:7px 13px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;background:var(--surface2)}
-.chat-input:focus{border-color:var(--teal)}
-.chat-send-btn{padding:7px 14px;background:var(--teal);color:#fff;border:none;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:opacity .2s}
-.chat-send-btn:hover{opacity:.85}
-.chat-toolbar{padding:6px 11px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center;background:#fff}
-.tbtn{padding:4px 9px;border:none;border-radius:6px;font-size:10.5px;font-weight:600;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;text-decoration:none}
-.tbtn:hover{opacity:.85}
-.tbtn-link{background:#EEF4FF;color:#2244AA}
-.tbtn-wa{background:#E8F5E9;color:#1B5E20}
-
-/* ══ SERVICES ══ */
-.service-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border2)}
-.service-item:last-child{border-bottom:none}
-.service-name{flex:1;font-weight:500;font-size:13px}
-.service-price{font-family:'DM Mono',monospace;font-size:15px;color:var(--teal-dark);font-weight:600;min-width:52px;text-align:right}
-
-/* ══ PORTAL ══ */
-.portal-wrap{max-width:440px;margin:0 auto}
-.portal-header{background:linear-gradient(135deg,var(--teal-dark),var(--teal));color:#fff;padding:18px 20px 14px;border-radius:var(--radius) var(--radius) 0 0;text-align:center}
-.portal-header .ph-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:600}
-.portal-header .ph-sub{font-size:10px;opacity:.8;margin-top:2px;letter-spacing:.5px}
-.portal-sched{padding:12px 16px;background:#fff;border:1px solid var(--border);border-top:none}
-.sched-item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border2)}
-.sched-item:last-child{border-bottom:none}
-.sched-date{text-align:center;min-width:42px;background:var(--teal-pale);border-radius:8px;padding:6px 4px}
-.sched-date .sday{font-family:'DM Mono',monospace;font-size:20px;line-height:1;color:var(--teal);font-weight:700}
-.sched-date .smon{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)}
-.sched-info .stime{font-weight:600;font-size:12px;color:var(--text)}
-.sched-info .sadd{font-size:10px;color:var(--text3);margin-top:2px}
-.portal-contact{padding:11px 16px;background:#fff;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);display:flex;gap:6px;flex-wrap:wrap}
-.btn-contact{flex:1;min-width:80px;padding:9px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:4px;text-decoration:none;transition:opacity .15s}
-.btn-contact:hover{opacity:.85}
-.btn-sms-c{background:var(--text);color:#FAF7F2}
-.btn-email-c{background:var(--teal);color:#fff}
-
-/* ══ VENMO ══ */
-.venmo-card{background:linear-gradient(135deg,#3D95CE,#008CFF);border-radius:var(--radius);padding:26px;color:#fff;text-align:center;margin-bottom:16px}
-.venmo-logo{font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
-.venmo-handle{font-size:18px;font-weight:600;opacity:.95;margin-bottom:4px}
-.venmo-sub{font-size:11px;opacity:.75}
-.venmo-link{display:inline-block;margin-top:14px;padding:11px 26px;background:#fff;color:#008CFF;border-radius:22px;font-weight:700;font-size:13px;text-decoration:none;transition:opacity .2s}
-.venmo-link:hover{opacity:.9}
-
-/* ══ MODALS ══ */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:16px}
-.modal-overlay.open{display:flex}
-.modal{background:#fff;border-radius:16px;padding:22px;width:100%;max-width:470px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
-.modal h2{font-family:'Playfair Display',serif;font-size:18px;color:var(--teal-dark);margin-bottom:4px;font-weight:600}
-.modal .msub{font-size:11px;color:var(--text3);margin-bottom:14px}
-.modal-actions{display:flex;gap:6px;margin-top:13px;flex-wrap:wrap}
-.btn-modal{flex:1;min-width:60px;padding:8px 6px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text);transition:background .13s;text-align:center}
-.btn-modal:hover{background:var(--surface2)}
-.btn-modal.primary{background:var(--text);color:#FAF7F2;border-color:var(--text)}
-.btn-modal.primary:hover{background:var(--teal)}
-.btn-modal.green{background:var(--green-pale);color:var(--green);border-color:#a3d5bb}
-.btn-modal.green:hover{background:#a3d5bb}
-.btn-modal.blue{background:#E8EEFF;color:#2244AA;border-color:#b3c2f5}
-.btn-modal.blue:hover{background:#b3c2f5}
-
-/* ══ SHARE MODAL ══ */
-.share-info-box{background:#EEF4FF;border:1px solid #b3c2f5;border-radius:8px;padding:11px;margin-bottom:11px}
-
-/* ══ BILLING ══ */
-.bill-filter-row{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fff}
+/* ══ EMPTY STATE ══ */
+.empty{text-align:center;padding:32px;color:var(--text3);font-size:13px}
+.empty-icon{font-size:36px;margin-bottom:8px}
 
 /* ══ TOAST ══ */
-.toast{position:fixed;bottom:16px;right:16px;background:var(--teal-dark);color:#fff;padding:10px 16px;border-radius:10px;font-size:12px;font-weight:500;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;z-index:500;max-width:280px;box-shadow:var(--shadow-lg)}
-.toast.show{opacity:1;transform:translateY(0)}
+#toast{
+  position:fixed;bottom:20px;right:20px;background:var(--teal-dark);color:#fff;
+  padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;
+  opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;
+  z-index:999;max-width:300px;box-shadow:var(--shadow);
+}
+#toast.show{opacity:1;transform:translateY(0)}
 
-/* ══ MOBILE ══ */
+/* ══ RESPONSIVE ══ */
 @media(max-width:768px){
-  .grid-3,.grid-2,.split{grid-template-columns:1fr!important}
-  .skip-stats{grid-template-columns:1fr 1fr}
-  .chat-layout{grid-template-columns:1fr;height:auto}
-  .chat-sidebar{display:none}
-  .modal{width:96vw}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
   .main{padding:12px}
-  thead th:nth-child(3),tbody td:nth-child(3){display:none}
-  .time-slots{grid-template-columns:repeat(3,1fr)}
-  .portal-contact{flex-wrap:wrap}
-  .btn-contact{min-width:45%}
+}
+@media(max-width:480px){
+  .grid4{grid-template-columns:1fr 1fr}
+  .grid2,.grid3{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
 <!-- ══ LOGIN ══ -->
-<div id="login-screen">
+<div id="loginScreen">
   <div class="login-card">
     <div class="login-logo">🧺</div>
     <div class="login-title">Janete's Cleaners</div>
     <div class="login-sub">Management Suite</div>
-    <input type="email" id="login-email" placeholder="Staff email" autocomplete="username">
-    <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleLogin()">
-    <button class="btn-login" onclick="handleLogin()">Sign In</button>
-    <div id="login-error"></div>
+    <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">Sign In</button>
+    <div id="loginErr"></div>
     <div class="skip-note">⚠️ Skip Policy: $50 fee for cancellations under 24 hours notice.</div>
   </div>
 </div>
 
-<!-- ══ MAIN APP ══ -->
-<div id="main-app" class="hidden">
-
-<div class="header">
-  <div class="header-brand">
-    <div class="header-icon">🧺</div>
-    <span class="header-name">Janete's Cleaners</span>
-  </div>
-  <div class="header-right">
-    <a href="https://wa.me/17819645682" target="_blank" class="wa-btn">🟢 WhatsApp</a>
-    <button class="signout-btn" onclick="handleLogout()">Sign Out</button>
-  </div>
-</div>
-
-<div class="skip-banner">⚠️ <strong>Skip Policy Active</strong> — $50 fee for cancellations under 24 hours notice.</div>
-
-<div class="nav">
-  <button class="nav-tab active" onclick="switchPage('dashboard',this)">📊 Dashboard</button>
-  <button class="nav-tab" onclick="switchPage('schedule',this)">📅 Schedule</button>
-  <button class="nav-tab" onclick="switchPage('skips',this)">⚠️ Skip Tracker</button>
-  <button class="nav-tab" onclick="switchPage('services',this)">✂️ Services</button>
-  <button class="nav-tab" onclick="switchPage('portal',this)">🔗 Client Portal</button>
-  <button class="nav-tab" onclick="switchPage('billing',this)">🧾 Billing</button>
-  <button class="nav-tab" onclick="switchPage('venmo',this)">💳 Venmo</button>
-</div>
-
-<div class="main">
-
-<!-- ══ DASHBOARD ══ -->
-<div class="page active" id="page-dashboard">
-  <div class="page-title">Dashboard</div>
-  <div class="stats-grid" id="stats-grid"></div>
-  <div class="grid-3">
-    <div style="grid-column:1/3">
-      <div class="card">
-        <div class="card-head">
-          <span class="ctitle">Client Directory</span>
-          <span class="badge" id="client-count">loading…</span>
-        </div>
-        <div class="search-row">
-          <input type="text" id="searchInput" placeholder="🔍 Search name, phone, email, address…" oninput="renderTable()">
-        </div>
-        <div class="table-wrap">
-          <table><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Via</th><th>Actions</th></tr></thead>
-          <tbody id="tableBody"></tbody></table>
-        </div>
-      </div>
-      <!-- CHAT -->
-      <div class="card">
-        <div class="card-head">
-          <span class="ctitle">Messages</span>
-          <span class="badge badge-teal" id="chat-badge">Select a client</span>
-        </div>
-        <div class="chat-toolbar">
-          <select class="finput" id="chat-client-sel" onchange="switchChatClient()" style="flex:1;font-size:11px">
-            <option value="">— select client —</option>
-          </select>
-          <button class="tbtn tbtn-link" id="chat-link-btn" onclick="shareLinkForChat()" style="display:none">🔗 Share</button>
-          <a id="chat-wa-btn" class="tbtn tbtn-wa" href="#" target="_blank" style="display:none">🟢 WA</a>
-        </div>
-        <div class="chat-layout" style="border:none;border-radius:0;height:320px">
-          <div class="chat-sidebar" id="chat-sidebar-list">
-            <div class="chat-sidebar-head">Clients</div>
-          </div>
-          <div class="chat-main">
-            <div class="chat-messages" id="chat-messages">
-              <div style="text-align:center;color:var(--text3);font-size:11px;padding:20px">Select a client to view messages.</div>
-            </div>
-            <div class="chat-input-row">
-              <input type="text" class="chat-input" id="chat-input" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendChat()" disabled>
-              <button class="chat-send-btn" onclick="sendChat()" disabled id="chat-send-btn">Send</button>
-            </div>
-          </div>
-        </div>
-      </div>
+<!-- ══ APP ══ -->
+<div id="app" class="hidden">
+  <div class="header">
+    <div class="header-brand">
+      <span class="header-icon">🧺</span>
+      <span class="header-name">Janete's Cleaners</span>
     </div>
-    <!-- ADD/EDIT CLIENT -->
-    <div>
-      <div class="card">
-        <div class="card-head"><span class="ctitle" id="form-title">Add Client</span></div>
-        <div class="card-body">
-          <input type="hidden" id="editKey" value="">
-          <div class="editing-banner" id="editing-banner">✏️ Editing: <span id="editing-name"></span></div>
-          <div class="fg"><label class="flabel">Name *</label><input class="finput" id="f-name" placeholder="Full name"></div>
-          <div class="fg"><label class="flabel">Phone</label><input class="finput" id="f-phone" placeholder="(617) 555-0000"></div>
-          <div class="fg"><label class="flabel">Email</label><input class="finput" id="f-email" placeholder="client@email.com"></div>
-          <div class="fg"><label class="flabel">Address</label><input class="finput" id="f-address" placeholder="123 Main St, City, MA"></div>
-          <div class="fg"><label class="flabel">Preferred Contact</label>
-            <select class="finput" id="f-comm"><option value="Phone Call">Phone Call</option><option value="SMS">SMS</option><option value="Email">Email</option></select></div>
-          <div class="fg"><label class="flabel">Notes</label><textarea class="finput" id="f-notes" placeholder="Special instructions…"></textarea></div>
-          <button class="btn-main" id="submit-btn" onclick="submitForm()">Add Client</button>
-          <button class="btn-del-full" id="del-btn" style="display:none" onclick="deleteFromForm()">🗑 Delete This Client</button>
-          <button class="btn-sec" onclick="clearForm()">Clear / Cancel</button>
-        </div>
-      </div>
+    <div class="header-right">
+      <a href="https://wa.me/17819645682" target="_blank" class="wa-btn">🟢 WhatsApp</a>
+      <button class="signout-btn" onclick="doLogout()">Sign Out</button>
     </div>
   </div>
-</div>
+  <div class="skip-banner">⚠️ <b>Skip Policy Active</b> — $50 fee for cancellations under 24 hours notice.</div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="showPanel('dashboard',this)">📊 Dashboard</button>
+    <button class="nav-btn" onclick="showPanel('schedule',this)">📅 Schedule</button>
+    <button class="nav-btn" onclick="showPanel('clients',this)">👥 Clients</button>
+    <button class="nav-btn" onclick="showPanel('skips',this)">⚠️ Skip Tracker</button>
+    <button class="nav-btn" onclick="showPanel('services',this)">✂️ Services</button>
+    <button class="nav-btn" onclick="showPanel('billing',this)">🧾 Billing</button>
+    <button class="nav-btn" onclick="showPanel('messages',this)">💬 Messages</button>
+  </div>
+  <div class="main">
 
-<!-- ══ SCHEDULE ══ -->
-<div class="page" id="page-schedule">
-  <div class="page-title">Schedule</div>
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-head"><span class="ctitle">Calendar</span><span class="badge badge-teal" id="slot-count">0 bookings</span></div>
-      <div class="card-body">
-        <div class="cal-nav">
-          <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
-          <span class="cal-month-name" id="cal-month-name"></span>
-          <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="page-title">Dashboard</div>
+      <div class="grid4" id="dashStats"></div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Today's Jobs</div>
+          <div id="todayJobs"></div>
         </div>
-        <div class="cal-grid" id="cal-grid"></div>
-        <div class="slot-list" id="slot-list"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="ctitle">Book a Slot</span></div>
-      <div class="card-body">
-        <div class="fg"><label class="flabel">Client</label><select class="finput" id="book-client"><option value="">— select —</option></select></div>
-        <div class="fg"><label class="flabel">Date</label><input type="date" class="finput" id="book-date"></div>
-        <div class="fg"><label class="flabel">Time</label>
-          <div class="time-slots" id="time-slots"></div>
+        <div class="card">
+          <div class="card-title">Recent Activity</div>
+          <div id="recentActivity"></div>
         </div>
-        <div class="fg"><label class="flabel">Service</label><select class="finput" id="book-service"></select></div>
-        <button class="btn-main" onclick="bookSlot()">📅 Book Slot</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SKIP TRACKER ══ -->
-<div class="page" id="page-skips">
-  <div class="page-title">Skip & Fee Tracker</div>
-  <div class="stats-grid skip-stats" id="skip-stats"></div>
-  <div class="split">
-    <div class="card">
-      <div class="card-head"><span class="ctitle">Log a Skip</span></div>
-      <div class="card-body">
-        <div class="fg"><label class="flabel">Client</label><select class="finput" id="skip-client"><option value="">— select —</option></select></div>
-        <div class="fg"><label class="flabel">Date</label><input type="date" class="finput" id="skip-date"></div>
-        <div class="fg"><label class="flabel">Notice Given</label>
-          <select class="finput" id="skip-notice">
-            <option value="none">No notice</option>
-            <option value="same-day">Same day</option>
-            <option value="under-24">Under 24hr</option>
-            <option value="over-24">Over 24hr</option>
-          </select></div>
-        <button class="btn-main" onclick="logSkip()">⚠️ Log Skip</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="ctitle">Skip Log</span><span class="badge badge-red" id="skip-total-badge">$0 outstanding</span></div>
-      <div class="table-wrap">
-        <table><thead><tr><th>Client</th><th>Date</th><th>Notice</th><th>Fee</th><th>Status</th><th></th></tr></thead>
-        <tbody id="skip-tbody"></tbody></table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SERVICES ══ -->
-<div class="page" id="page-services">
-  <div class="page-title">Services & Pricing</div>
-  <div class="split">
-    <div class="card">
-      <div class="card-head"><span class="ctitle">Current Services</span></div>
-      <div class="card-body" id="svc-list"></div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="ctitle">Add New Service</span></div>
-      <div class="card-body">
-        <div class="fg"><label class="flabel">Service Name</label><input class="finput" id="new-svc-name" placeholder="e.g. Window Cleaning"></div>
-        <div class="fg"><label class="flabel">Price ($)</label><input class="finput" type="number" id="new-svc-price" placeholder="0" min="0"></div>
-        <button class="btn-main" onclick="addService()">➕ Add Service</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ CLIENT PORTAL ══ -->
-<div class="page" id="page-portal">
-  <div class="portal-wrap">
-    <div class="fg" style="margin-bottom:14px"><label class="flabel">Select Client</label>
-      <select class="finput" id="portal-client" onchange="renderPortal()"><option value="">— select client —</option></select></div>
-    <div id="portal-content"></div>
-  </div>
-</div>
-
-<!-- ══ BILLING ══ -->
-<div class="page" id="page-billing">
-  <div class="page-title">Billing History</div>
-  <div class="card">
-    <div class="card-head">
-      <span class="ctitle">Invoices</span>
-      <span class="badge badge-teal" id="billing-total-badge">loading…</span>
-    </div>
-    <div class="bill-filter-row">
-      <select class="finput" id="billing-client-filter" style="max-width:200px;font-size:12px" onchange="renderBillingHistory()">
-        <option value="">All Clients</option>
-      </select>
-      <select class="finput" id="billing-status-filter" style="max-width:130px;font-size:12px" onchange="renderBillingHistory()">
-        <option value="">All Statuses</option>
-        <option value="unpaid">Unpaid</option>
-        <option value="paid">Paid</option>
-      </select>
-      <select class="finput" id="billing-year-filter" style="max-width:110px;font-size:12px" onchange="renderBillingHistory()">
-        <option value="">All Years</option>
-      </select>
-      <button onclick="exportBillingCSV()" style="padding:6px 12px;background:var(--green-pale);color:var(--green);border:1px solid #a3d5bb;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap">📥 Export CSV</button>
-    </div>
-    <div class="table-wrap">
-      <table><thead><tr><th>Invoice #</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="billing-tbody"></tbody>
-      <tfoot id="billing-tfoot"></tfoot></table>
-    </div>
-    <div id="billing-tax-summary" style="padding:14px 16px;border-top:2px solid var(--border);background:var(--surface2);display:none">
-      <div style="font-family:'Playfair Display',serif;font-size:13px;color:var(--teal-dark);font-weight:600;margin-bottom:10px">📊 Tax Summary</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px" id="billing-tax-grid"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ VENMO ══ -->
-<div class="page" id="page-venmo">
-  <div class="page-title">Venmo Payment</div>
-  <div class="split">
-    <div>
-      <div class="venmo-card">
-        <div class="venmo-logo">venmo</div>
-        <div class="venmo-handle">@janete-pereira-1</div>
-        <div class="venmo-sub">Janete's Cleaners — Accept payments instantly</div>
-        <a href="https://venmo.com/janete-pereira-1" target="_blank" class="venmo-link">Open Venmo App →</a>
       </div>
       <div class="card">
-        <div class="card-head"><span class="ctitle">Shareable Payment Link</span></div>
-        <div class="card-body">
-          <p style="font-size:12px;color:var(--text2);margin-bottom:10px">Send this link so clients can pay from any browser.</p>
-          <div id="venmo-page-url" style="font-size:11px;color:#2244AA;word-break:break-all;cursor:pointer;margin-bottom:10px;padding:8px;background:#EEF4FF;border-radius:6px" onclick="copyVenmoPageLink()"></div>
-          <div style="display:flex;gap:7px;flex-wrap:wrap">
-            <button onclick="copyVenmoPageLink()" class="btn-main" style="flex:1">📋 Copy Link</button>
-            <button onclick="openVenmoPage()" class="btn-main" style="flex:1;background:var(--text)">Preview Page</button>
+        <div class="card-title">Upcoming This Week</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Date</th><th>Client</th><th>Service</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody id="upcomingTbl"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="panel" id="panel-schedule">
+      <div class="page-title">Schedule</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="openModal('bookingModal')">+ New Booking</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Date</th><th>Time</th><th>Client</th><th>Service</th><th>Address</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="scheduleTbl"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="panel" id="panel-clients">
+      <div class="page-title">Clients</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="openModal('clientModal')">+ Add Client</button>
+      </div>
+      <div class="card">
+        <div class="form-group" style="margin-bottom:12px">
+          <input type="text" id="clientSearch" placeholder="🔍 Search clients..." oninput="renderClients()">
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Notes</th><th>Actions</th></tr></thead>
+          <tbody id="clientsTbl"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- SKIP TRACKER -->
+    <div class="panel" id="panel-skips">
+      <div class="page-title">Skip Tracker</div>
+      <div class="grid3" id="skipStats"></div>
+      <div class="card">
+        <div class="card-title">Skip Policy — $50 Fee for cancellations under 24 hours</div>
+        <div class="btn-row" style="margin-top:8px">
+          <button class="btn btn-danger" onclick="openModal('skipModal')">+ Record Skip</button>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Date</th><th>Client</th><th>Reason</th><th>Fee</th><th>Paid</th><th>Actions</th></tr></thead>
+          <tbody id="skipsTbl"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="panel" id="panel-services">
+      <div class="page-title">Services & Pricing</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="openModal('serviceModal')">+ Add Service</button>
+      </div>
+      <div class="grid2" id="servicesGrid"></div>
+    </div>
+
+    <!-- BILLING -->
+    <div class="panel" id="panel-billing">
+      <div class="page-title">Billing</div>
+      <div class="grid3" id="billingStats"></div>
+      <div class="card">
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="openModal('invoiceModal')">+ Create Invoice</button>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Invoice #</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="invoicesTbl"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="panel" id="panel-messages">
+      <div class="page-title">Messages & Reminders</div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Send Reminder</div>
+          <div class="form-group">
+            <label>Client</label>
+            <select id="msgClient"></select>
           </div>
-          <div style="margin-top:12px">
-            <label class="flabel">Custom Amount (optional)</label>
-            <div style="display:flex;gap:7px;margin-top:4px">
-              <input class="finput" type="number" id="venmo-custom-amount" placeholder="0.00" min="0" step="0.01" style="width:110px;text-align:right" oninput="updateVenmoURL()">
-              <input class="finput" id="venmo-custom-note" placeholder="e.g. March cleaning" style="flex:1" oninput="updateVenmoURL()">
-            </div>
+          <div class="form-group">
+            <label>Message Type</label>
+            <select id="msgType">
+              <option value="appointment">Appointment Reminder</option>
+              <option value="payment">Payment Due</option>
+              <option value="skip">Skip Policy Notice</option>
+              <option value="custom">Custom Message</option>
+            </select>
           </div>
-          <a id="venmo-direct-btn" href="https://venmo.com/janete-pereira-1" target="_blank" style="display:block;text-align:center;padding:12px;background:#008CFF;color:#fff;border-radius:9px;font-weight:700;font-size:14px;text-decoration:none;margin-top:12px">Open Venmo — @janete-pereira-1</a>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="msgText" rows="4" placeholder="Type your message..."></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateMsg()">Generate Message</button>
+            <button class="btn btn-outline" onclick="copyMsg()">Copy Text</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Quick Templates</div>
+          <div id="templatesBox"></div>
         </div>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="ctitle">Send to Specific Client</span></div>
-      <div class="card-body">
-        <div class="fg"><label class="flabel">Client</label><select class="finput" id="venmo-client-sel" onchange="updateVenmoClientLink()"><option value="">— select client —</option></select></div>
-        <div class="fg"><label class="flabel">Amount ($)</label><input class="finput" type="number" id="venmo-client-amt" placeholder="0.00" min="0" step="0.01" oninput="updateVenmoClientLink()"></div>
-        <div class="fg"><label class="flabel">Note</label><input class="finput" id="venmo-client-note" placeholder="Cleaning service" oninput="updateVenmoClientLink()"></div>
-        <div id="venmo-client-links" style="display:flex;gap:7px;flex-wrap:wrap;margin-top:6px"></div>
+      <div class="card">
+        <div class="card-title">Message Log</div>
+        <div id="msgLog"><div class="empty"><div class="empty-icon">💬</div>No messages logged yet.</div></div>
       </div>
     </div>
-  </div>
-</div>
 
-</div><!-- /main -->
-</div><!-- /main-app -->
+  </div><!-- /main -->
+</div><!-- /app -->
 
 <!-- ══ MODALS ══ -->
-<div class="modal-overlay" id="profile-modal">
-  <div class="modal" style="max-width:360px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <h2>Client Profile</h2>
-      <button onclick="closeProfile()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3)">✕</button>
-    </div>
-    <div id="profile-body"></div>
-  </div>
-</div>
 
-<div class="modal-overlay" id="reminder-modal">
+<!-- Booking Modal -->
+<div class="modal-overlay hidden" id="bookingModal">
   <div class="modal">
-    <h2>Send Reminder</h2>
-    <div class="msub" id="rem-client-sub"></div>
-    <div class="fg"><label class="flabel">Message</label><textarea class="finput" id="rem-msg" style="min-height:75px"></textarea></div>
-    <div style="background:var(--surface2);border-radius:8px;padding:10px;margin-bottom:10px;border:1px solid var(--border)">
-      <div style="font-weight:600;color:var(--text);margin-bottom:7px;font-size:10px;letter-spacing:.07em;text-transform:uppercase">Quick Send</div>
-      <div id="rem-links" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    <div class="modal-title">📅 New Booking</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Client</label>
+        <select id="bkClient"></select>
+      </div>
+      <div class="form-group">
+        <label>Service</label>
+        <select id="bkService" onchange="fillBkAmount()"></select>
+      </div>
     </div>
-    <div class="modal-actions"><button class="btn-modal" onclick="closeReminder()">Close</button></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="bkDate">
+      </div>
+      <div class="form-group">
+        <label>Time</label>
+        <input type="time" id="bkTime" value="09:00">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      <input type="text" id="bkAddress" placeholder="Service address">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Amount ($)</label>
+        <input type="number" id="bkAmount" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="bkStatus">
+          <option value="scheduled">Scheduled</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="bkNotes" placeholder="Any special instructions..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('bookingModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBooking()">Save Booking</button>
+    </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="share-modal">
-  <div class="modal" style="max-width:420px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <h2>Client Schedule Link</h2>
-      <button onclick="closeShareModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3)">✕</button>
+<!-- Client Modal -->
+<div class="modal-overlay hidden" id="clientModal">
+  <div class="modal">
+    <div class="modal-title">👥 Add / Edit Client</div>
+    <input type="hidden" id="clientId">
+    <div class="form-row">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" id="cFirst" placeholder="First name">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" id="cLast" placeholder="Last name">
+      </div>
     </div>
-    <div class="msub" id="share-modal-sub"></div>
-    <div class="share-info-box">
-      <div style="font-size:9.5px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px">Shareable Link</div>
-      <div id="share-url-preview" style="font-size:11px;color:#2244AA;word-break:break-all;line-height:1.5;cursor:pointer" onclick="copyShareLink()" title="Click to copy"></div>
-      <div style="font-size:11px;color:var(--text2);line-height:1.5;margin-top:8px">Client opens this link → sees their appointments → can <strong>reply directly</strong>. Their message appears in your <strong>Messages panel</strong>.</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="cPhone" placeholder="(555) 000-0000">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="cEmail" placeholder="email@example.com">
+      </div>
     </div>
-    <div class="modal-actions" style="margin-bottom:0">
-      <button class="btn-modal blue" onclick="openShareLink()">🔗 Open & Preview</button>
-      <button class="btn-modal green" onclick="copyShareLink()">📋 Copy Link</button>
+    <div class="form-group">
+      <label>Address</label>
+      <input type="text" id="cAddress" placeholder="Home address">
     </div>
-    <div style="margin-top:10px;font-size:10px;color:var(--text3);text-align:center;margin-bottom:8px">— or send directly —</div>
-    <div class="modal-actions">
-      <button class="btn-modal" onclick="sendShareViaWA()" style="background:#E8F5E9;border-color:#a5d6a7;color:#1B5E20">🟢 WhatsApp</button>
-      <button class="btn-modal" onclick="sendShareViaEmail()" style="background:var(--green-pale);border-color:#a3d5bb;color:var(--green)">✉ Email</button>
-      <button class="btn-modal" onclick="sendShareViaSMS()" style="background:#E6F1FB;border-color:#90caf9;color:#185FA5">💬 SMS</button>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="cNotes" placeholder="Preferences, special instructions..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('clientModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveClient()">Save Client</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- Skip Modal -->
+<div class="modal-overlay hidden" id="skipModal">
+  <div class="modal">
+    <div class="modal-title">⚠️ Record Skip / Cancellation</div>
+    <div class="form-group">
+      <label>Client</label>
+      <select id="skipClient"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="skipDate">
+      </div>
+      <div class="form-group">
+        <label>Fee ($)</label>
+        <input type="number" id="skipFee" value="50">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Reason</label>
+      <select id="skipReason">
+        <option value="Cancelled under 24 hours">Cancelled under 24 hours</option>
+        <option value="No show">No show</option>
+        <option value="Rescheduled last minute">Rescheduled last minute</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Fee Paid?</label>
+      <select id="skipPaid">
+        <option value="unpaid">Unpaid</option>
+        <option value="paid">Paid</option>
+        <option value="waived">Waived</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('skipModal')">Cancel</button>
+      <button class="btn btn-danger" onclick="saveSkip()">Record Skip</button>
+    </div>
+  </div>
+</div>
+
+<!-- Service Modal -->
+<div class="modal-overlay hidden" id="serviceModal">
+  <div class="modal">
+    <div class="modal-title">✂️ Add / Edit Service</div>
+    <input type="hidden" id="serviceId">
+    <div class="form-group">
+      <label>Service Name</label>
+      <input type="text" id="svcName" placeholder="e.g. Deep Cleaning">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price ($)</label>
+        <input type="number" id="svcPrice" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>Duration</label>
+        <input type="text" id="svcDuration" placeholder="e.g. 3 hours">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="svcDesc" placeholder="What's included..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('serviceModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveService()">Save Service</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invoice Modal -->
+<div class="modal-overlay hidden" id="invoiceModal">
+  <div class="modal">
+    <div class="modal-title">🧾 Create Invoice</div>
+    <div class="form-group">
+      <label>Client</label>
+      <select id="invClient"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="invDate">
+      </div>
+      <div class="form-group">
+        <label>Amount ($)</label>
+        <input type="number" id="invAmount" placeholder="0.00">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="invDesc" placeholder="Services provided..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="invStatus">
+        <option value="unpaid">Unpaid</option>
+        <option value="paid">Paid</option>
+        <option value="partial">Partial</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('invoiceModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveInvoice()">Create Invoice</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
 
 <script>
-// ══ FIREBASE ══
-const firebaseConfig={
-  apiKey:"AIzaSyBFBm8_E8BW2yPOLSmTCuD93Yiy3I5_XcY",
-  authDomain:"janete-s-cleaners.firebaseapp.com",
-  databaseURL:"https://janete-s-cleaners-default-rtdb.firebaseio.com",
-  projectId:"janete-s-cleaners"
-};
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth();
-const db=firebase.database();
-
-// ══ CLIENT/INVOICE/VENMO HASH MODES (unchanged from original) ══
-(function(){
-  const hash=window.location.hash;
-  if(hash&&hash.startsWith('#invoice=')){
-    try{
-      const data=JSON.parse(decodeURIComponent(escape(atob(hash.slice(9)))));
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('main-app').classList.add('hidden');
-      document.body.style.background='#f4f7f7';
-      const wrap=document.createElement('div');
-      wrap.style.cssText='max-width:560px;margin:0 auto;padding:20px 14px;font-family:DM Sans,sans-serif';
-      document.body.appendChild(wrap);
-      const rows=data.lines.map(l=>`<tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#444;font-size:14px">${(l.desc||'').replace(/</g,'&lt;')}</td><td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;font-weight:500">$${parseFloat(l.amt).toFixed(2)}</td></tr>`).join('');
-      const venmoURL='https://venmo.com/'+data.venmoUser+'?txn=pay&amount='+data.total+'&note='+encodeURIComponent('Janetes Cleaners Invoice #'+data.invNum);
-      wrap.innerHTML=`
-        <div style="background:linear-gradient(135deg,#0a5c5f,#0d7377);color:#fff;padding:22px 26px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:flex-end">
-          <div><div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600">Janete's Cleaners Inc.</div><div style="font-size:11px;opacity:.8;margin-top:2px">${data.clientName} — ${data.date}</div></div>
-          <div style="font-size:16px;opacity:.85;font-family:'DM Mono',monospace">INV #${data.invNum}</div>
-        </div>
-        <div style="background:#fff;border:1px solid #d4e4e4;border-top:none;padding:22px 26px">
-          <table style="width:100%;border-collapse:collapse">
-            <thead><tr><th style="padding:6px 0;text-align:left;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#7a9a9a;border-bottom:2px solid #eee">Description</th><th style="padding:6px 0;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#7a9a9a;border-bottom:2px solid #eee">Amount</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-          <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:2px solid #ddd;font-weight:600;font-size:18px"><span>Total Due</span><span>$${data.total}</span></div>
-        </div>
-        <div style="background:#fff;border:1px solid #d4e4e4;border-top:none;border-radius:0 0 12px 12px;padding:14px 26px;font-size:11px;color:#aaa;text-align:center">Thank you for choosing Janete's Cleaners! · (781) 964-5682</div>
-        <div style="margin-top:14px"><a href="${venmoURL}" target="_blank" style="display:block;text-align:center;padding:14px;background:#008CFF;color:#fff;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none">Pay $${data.total} with Venmo</a></div>`;
-    }catch(e){document.body.innerHTML='<div style="text-align:center;padding:60px;color:#C41A1A">Invalid invoice link.</div>';}
-    return;
-  }
-  if(hash&&hash.startsWith('#venmo=')){
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('main-app').classList.add('hidden');
-    document.body.style.cssText='margin:0;padding:0;background:#f4f7f7;font-family:DM Sans,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center';
-    const wrap=document.createElement('div');
-    wrap.style.cssText='max-width:400px;width:100%;margin:20px auto;overflow:hidden;border-radius:16px;box-shadow:0 8px 32px rgba(13,115,119,0.14)';
-    document.body.appendChild(wrap);
-    wrap.innerHTML=`
-      <div style="background:linear-gradient(135deg,#0a5c5f,#0d7377);color:#fff;padding:28px;text-align:center">
-        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:600">Janete's Cleaners Inc.</div>
-        <div style="font-size:12px;opacity:.8;margin-top:4px">Secure Payment via Venmo</div>
-      </div>
-      <div style="background:#fff;padding:28px">
-        <label style="display:block;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#7a9a9a;margin-bottom:5px">Amount ($)</label>
-        <input type="number" id="vamt" placeholder="0.00" min="0" step="0.01" style="width:100%;border:1.5px solid #d4e4e4;border-radius:8px;padding:11px 14px;font-size:15px;background:#f0f5f5;outline:none;box-sizing:border-box;margin-bottom:12px" oninput="updateVBtn()">
-        <label style="display:block;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#7a9a9a;margin-bottom:5px">Note (optional)</label>
-        <input type="text" id="vnote" placeholder="e.g. March cleaning" style="width:100%;border:1.5px solid #d4e4e4;border-radius:8px;padding:11px 14px;font-size:15px;background:#f0f5f5;outline:none;box-sizing:border-box;margin-bottom:18px" oninput="updateVBtn()">
-        <a id="vpay" href="https://venmo.com/janete-pereira-1" target="_blank" style="display:block;text-align:center;padding:16px;background:#008CFF;color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;margin-bottom:14px">Pay with Venmo</a>
-        <div style="text-align:center;font-size:12px;color:#aaa;line-height:1.6">Venmo handle: <strong style="color:#555">@janete-pereira-1</strong><br>Or search in the Venmo app<br>Questions? <a href="tel:+17819645682" style="color:#0d7377">(781) 964-5682</a></div>
-      </div>`;
-    window.updateVBtn=function(){
-      const a=parseFloat(document.getElementById('vamt').value)||0;
-      const n=document.getElementById('vnote').value||'Cleaning Service';
-      const btn=document.getElementById('vpay');
-      btn.href=a>0?'https://venmo.com/janete-pereira-1?txn=pay&amount='+a.toFixed(2)+'&note='+encodeURIComponent(n):'https://venmo.com/janete-pereira-1';
-      btn.textContent=a>0?'Pay $'+a.toFixed(2)+' with Venmo':'Pay with Venmo';
-    };
-    return;
-  }
-  if(hash&&hash.startsWith('#client=')){
-    const clientKey=decodeURIComponent(hash.slice(8));
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('main-app').classList.add('hidden');
-    document.body.style.background='#f4f7f7';
-    const wrapper=document.createElement('div');
-    wrapper.innerHTML='<div style="text-align:center;padding:60px 20px;color:#7a9a9a;font-size:13px">Loading your schedule…</div>';
-    document.body.appendChild(wrapper);
-    Promise.all([db.ref('clients/'+clientKey).once('value'),db.ref('bookings').once('value')]).then(([cSnap,bSnap])=>{
-      const c=cSnap.val();
-      if(!c){wrapper.innerHTML='<div style="text-align:center;padding:60px;color:#7a9a9a">Schedule not found. Please contact Janete\'s Cleaners at (781) 964-5682.</div>';return;}
-      const allBookings=bSnap.val()||{};
-      const myBook=Object.values(allBookings).filter(b=>b.client===c.name).sort((a,b)=>a.date.localeCompare(b.date));
-      const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-      const apptRows=myBook.length?myBook.map(b=>{
-        const dt=new Date(b.date+'T12:00:00');
-        return `<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #eee">
-          <div style="text-align:center;min-width:48px;background:#e6f4f4;border-radius:8px;padding:7px 4px">
-            <div style="font-family:'DM Mono',monospace;font-size:24px;line-height:1;color:#0d7377;font-weight:700">${dt.getDate()}</div>
-            <div style="font-size:10px;text-transform:uppercase;color:#7a9a9a;letter-spacing:.07em">${MN[dt.getMonth()].slice(0,3)}</div>
-          </div>
-          <div><div style="font-weight:600;font-size:14px;color:#1a2e2e">${b.time} — ${b.service}</div><div style="font-size:12px;color:#7a9a9a;margin-top:2px">${c.address||''}</div></div>
-        </div>`;
-      }).join(''):'<div style="color:#7a9a9a;font-size:13px;padding:20px 0;text-align:center">No upcoming appointments scheduled yet.</div>';
-      wrapper.innerHTML=`
-        <div style="background:linear-gradient(135deg,#0a5c5f,#0d7377);color:#fff;padding:20px 20px 16px;text-align:center;border-radius:0 0 10px 10px">
-          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600">Janete's Cleaners Inc.</div>
-          <div style="font-size:13px;opacity:.85;margin-top:3px">Schedule for ${(c.name||'').replace(/</g,'&lt;')}</div>
-        </div>
-        <div style="max-width:480px;margin:0 auto;padding:16px">
-          <div style="background:#fdf6e3;border:1px solid #e8d08a;border-radius:8px;padding:11px 14px;font-size:12px;color:#7a5a00;margin-bottom:14px">⚠ <strong>Skip Policy:</strong> A $50 fee applies to cancellations with less than 24 hours notice.</div>
-          <div style="background:#fff;border-radius:10px;border:1px solid #d4e4e4;overflow:hidden;margin-bottom:14px">
-            <div style="padding:11px 16px;border-bottom:1px solid #eee;font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:#0a5c5f">Your Upcoming Appointments</div>
-            <div style="padding:0 16px">${apptRows}</div>
-          </div>
-          <div style="background:#fff;border-radius:10px;border:1px solid #d4e4e4;overflow:hidden;margin-bottom:14px">
-            <div style="padding:11px 16px;border-bottom:1px solid #eee;font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:#0a5c5f">Messages</div>
-            <div id="client-thread" style="padding:10px 14px;display:flex;flex-direction:column;gap:8px;min-height:40px"><div style="text-align:center;color:#bbb;font-size:11px;padding:8px 0">No messages yet.</div></div>
-          </div>
-          <div style="background:#fff;border-radius:10px;border:1px solid #d4e4e4;overflow:hidden">
-            <div style="padding:11px 16px;border-bottom:1px solid #eee;font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:#0a5c5f">Send a Message</div>
-            <div style="padding:14px 16px">
-              <p style="font-size:12px;color:#7a9a9a;margin-bottom:10px">Your message goes straight to our dashboard — no app needed.</p>
-              <textarea id="reply-text" style="width:100%;border:1.5px solid #d4e4e4;border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:70px;outline:none;background:#f0f5f5;margin-bottom:10px;box-sizing:border-box" placeholder="Type your message here…"></textarea>
-              <button id="reply-btn" onclick="sendClientReply('${clientKey}','${(c.name||'').replace(/'/g,"\\'")}',this)" style="width:100%;padding:11px;background:#0d7377;color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Send Message</button>
-            </div>
-          </div>
-          <div style="text-align:center;margin-top:18px;font-size:11px;color:#aaa">Janete's Cleaners · Lynn, MA · (781) 964-5682</div>
-        </div>`;
-      db.ref('messages/'+clientKey).on('value',snap=>{
-        const thread=document.getElementById('client-thread');if(!thread)return;
-        const msgs=snap.val()?Object.values(snap.val()).sort((a,b)=>(a.ts||0)-(b.ts||0)):[];
-        if(!msgs.length){thread.innerHTML='<div style="text-align:center;color:#bbb;font-size:11px;padding:8px 0">No messages yet.</div>';return;}
-        thread.innerHTML=msgs.map(m=>{
-          const isOut=m.dir==='out';
-          return `<div style="display:flex;flex-direction:column;align-items:${isOut?'flex-start':'flex-end'}">
-            <div style="max-width:82%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.4;background:${isOut?'#f0f5f5':'#0d7377'};color:${isOut?'#1a2e2e':'#fff'};border-bottom-${isOut?'left':'right'}-radius:3px">
-              ${(m.text||'').replace(/</g,'&lt;')}<div style="font-size:9px;opacity:.6;margin-top:3px">${isOut?'Janete\'s Cleaners':'You'} · ${m.time||''}</div>
-            </div>
-          </div>`;
-        }).join('');
-        thread.scrollTop=thread.scrollHeight;
-      });
-    }).catch(err=>{wrapper.innerHTML=`<div style="text-align:center;padding:60px;color:#C41A1A">Error: ${err.message}</div>`;});
-    return;
-  }
-})();
-
-function sendClientReply(clientKey,clientName,btn){
-  const textarea=document.getElementById('reply-text');
-  const text=textarea?textarea.value.trim():'';
-  if(!text){alert('Please type a message first.');return;}
-  btn.textContent='Sending…';btn.disabled=true;
-  db.ref('messages/'+clientKey).push({
-    dir:'in',text,from:clientName,
-    time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-    ts:Date.now(),unread:true
-  }).then(()=>{
-    if(textarea)textarea.style.display='none';
-    btn.style.display='none';
-    const ok=document.createElement('div');
-    ok.style.cssText='background:#eaf5f0;border:1px solid #a3d5bb;border-radius:8px;padding:12px;font-size:13px;color:#1a7a5a;margin-top:8px';
-    ok.textContent='✅ Message sent! We\'ll get back to you shortly.';
-    btn.parentNode.appendChild(ok);
-  }).catch(err=>{btn.textContent='Send Message';btn.disabled=false;alert('Could not send: '+err.message);});
-}
-
 // ══ AUTH ══
-function handleLogin(){
-  const e=document.getElementById('login-email').value.trim();
-  const p=document.getElementById('login-pass').value;
-  document.getElementById('login-error').textContent='';
-  auth.signInWithEmailAndPassword(e,p).catch(err=>document.getElementById('login-error').textContent=err.message);
-}
-function handleLogout(){auth.signOut();}
-auth.onAuthStateChanged(user=>{
-  const h=window.location.hash;
-  if(h.startsWith('#client=')||h.startsWith('#invoice=')||h.startsWith('#venmo='))return;
-  if(user){
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('main-app').classList.remove('hidden');
+const USERS = [
+  { email: 'janete@janetecleaners.com', password: 'Yeshua33' },
+  { email: 'jdp10658@gmail.com',        password: 'Yeshua33' },
+  { email: 'jdpl0658@gmail.com',        password: 'Yeshua33' },
+];
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('loginPass').value;
+  const err   = document.getElementById('loginErr');
+  const valid = USERS.find(u => u.email.toLowerCase() === email && u.password === pass);
+  if (valid) {
+    sessionStorage.setItem('jc_auth', '1');
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
     initApp();
   } else {
-    document.getElementById('login-screen').classList.remove('hidden');
-    document.getElementById('main-app').classList.add('hidden');
+    err.textContent = 'Incorrect email or password. Please try again.';
+    document.getElementById('loginPass').value = '';
   }
-});
-
-// ══ STATE ══
-let clients={},bookings={},skips={},messages={},invoices={};
-let servicePrices={"Standard Clean":75,"Deep Clean":120,"Move-In/Out":150,"Post-Construction":200};
-let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
-let selectedDay=null,billTargetKey=null,billLines=[],activeChatKey=null,shareTargetKey=null;
-let unreadCounts={};
-let selectedTime='9:00 AM';
-const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const TIMES=['8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM'];
-
-// ══ INIT ══
-function initApp(){
-  db.ref('clients').on('value',snap=>{clients=snap.val()||{};renderTable();refreshAllDropdowns();renderDashboardStats();});
-  db.ref('bookings').on('value',snap=>{bookings=snap.val()||{};renderDashboardStats();if(document.getElementById('page-schedule').classList.contains('active'))renderCalendar();});
-  db.ref('skips').on('value',snap=>{skips=snap.val()||{};renderDashboardStats();if(document.getElementById('page-skips').classList.contains('active'))renderSkipTable();});
-  db.ref('messages').on('value',snap=>{
-    messages=snap.val()||{};
-    unreadCounts={};
-    Object.entries(messages).forEach(([cKey,thread])=>{
-      const u=Object.values(thread||{}).filter(m=>m.dir==='in'&&m.unread).length;
-      if(u>0)unreadCounts[cKey]=u;
-    });
-    renderTable();renderChatSidebar();
-    if(activeChatKey)renderChatMessages();
-    updateChatBadge();
-  });
-  db.ref('invoices').on('value',snap=>{
-    invoices=snap.val()||{};
-    renderDashboardStats();
-    if(document.getElementById('page-billing').classList.contains('active'))renderBillingHistory();
-    const sel=document.getElementById('billing-client-filter');
-    if(sel){
-      const cur=sel.value;
-      const names=[...new Set(Object.values(invoices).map(i=>i.clientName))].sort();
-      sel.innerHTML='<option value="">All Clients</option>'+names.map(n=>`<option value="${esc(n)}"${cur===n?' selected':''}>${esc(n)}</option>`).join('');
-    }
-  });
-  db.ref('servicePrices').once('value',snap=>{if(snap.val())servicePrices=snap.val();refreshServiceDropdowns();});
-  seedClientsIfEmpty();
-  document.getElementById('book-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('skip-date').value=new Date().toISOString().split('T')[0];
-  renderTimeslots();
 }
 
-// ══ UTILS ══
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function formatPhone(p){const d=(p||'').replace(/\D/g,'');return d.length===10?`(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`:p||'';}
-function fmtMoney(n){return'$'+parseFloat(n||0).toFixed(2);}
-function nowStr(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
-function clientsArr(){return Object.entries(clients).map(([k,v])=>({key:k,...v})).sort((a,b)=>(a.name||'').localeCompare(b.name||''));}
-function bookingsArr(){return Object.entries(bookings).map(([k,v])=>({key:k,...v}));}
-function skipsArr(){return Object.entries(skips).map(([k,v])=>({key:k,...v}));}
-function refreshAllDropdowns(){['book-client','skip-client','portal-client','venmo-client-sel'].forEach(populateDropdown);renderChatSidebar();}
-function populateDropdown(id){
-  const sel=document.getElementById(id);if(!sel)return;
-  const cur=sel.value;
-  sel.innerHTML='<option value="">— select —</option>'+clientsArr().map(c=>`<option value="${c.key}"${cur===c.key?' selected':''}>${esc(c.name)}</option>`).join('');
-}
-function refreshServiceDropdowns(){
-  const s=document.getElementById('book-service');if(!s)return;
-  s.innerHTML=Object.keys(servicePrices).map(n=>`<option>${esc(n)}</option>`).join('');
-}
-function updateChatBadge(){
-  const total=Object.values(unreadCounts).reduce((a,b)=>a+b,0);
-  const badge=document.getElementById('chat-badge');
-  if(badge)badge.textContent=activeChatKey?(clients[activeChatKey]?.name||'Chat'):total>0?total+' new messages':'Select a client';
+function doLogout() {
+  sessionStorage.removeItem('jc_auth');
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginErr').textContent = '';
 }
 
-// ══ DASHBOARD STATS ══
-function renderDashboardStats(){
-  const today=new Date().toISOString().split('T')[0];
-  const todayBooks=bookingsArr().filter(b=>b.date===today);
-  const unpaid=Object.values(invoices).filter(i=>i.status==='unpaid').reduce((s,i)=>s+parseFloat(i.total||0),0);
-  const skipFees=skipsArr().filter(s=>s.feeStatus==='unpaid'&&s.fee>0).reduce((s,k)=>s+k.fee,0);
-  const totalUnread=Object.values(unreadCounts).reduce((a,b)=>a+b,0);
-  document.getElementById('stats-grid').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Total Clients</div><div class="stat-value">${Object.keys(clients).length}</div><div class="stat-sub">in directory</div></div>
-    <div class="stat-card"><div class="stat-label">Today's Bookings</div><div class="stat-value">${todayBooks.length}</div><div class="stat-sub">${today}</div></div>
-    <div class="stat-card"><div class="stat-label">Outstanding</div><div class="stat-value red">$${unpaid.toFixed(0)}</div><div class="stat-sub">unpaid invoices</div></div>
-    <div class="stat-card"><div class="stat-label">Skip Fees Due</div><div class="stat-value red">$${skipFees}</div><div class="stat-sub">uncollected</div></div>
-    ${totalUnread>0?`<div class="stat-card"><div class="stat-label">New Messages</div><div class="stat-value red">${totalUnread}</div><div class="stat-sub">unread</div></div>`:''}
+// ══ STORAGE ══
+function save(key, val) {
+  try { localStorage.setItem('jc_' + key, JSON.stringify(val)); } catch(e){}
+}
+function load(key, def) {
+  try {
+    const d = localStorage.getItem('jc_' + key);
+    return d ? JSON.parse(d) : def;
+  } catch(e) { return def; }
+}
+
+// ══ DATA ══
+let clients  = load('clients', [
+  {id:1, first:'Maria',   last:'Santos',   phone:'(207) 555-0101', email:'maria@email.com',   address:'12 Oak St, Sanford ME', notes:'Prefers mornings'},
+  {id:2, first:'Linda',   last:'Johnson',  phone:'(207) 555-0202', email:'linda@email.com',   address:'45 Pine Ave, Sanford ME', notes:'Has 2 dogs'},
+  {id:3, first:'Patricia',last:'Williams', phone:'(207) 555-0303', email:'pat@email.com',     address:'78 Elm Rd, Springvale ME', notes:'Weekly service'},
+]);
+let bookings = load('bookings', [
+  {id:1, clientId:1, service:'Standard Cleaning', date:'2026-04-22', time:'09:00', address:'12 Oak St, Sanford ME', amount:120, status:'confirmed', notes:''},
+  {id:2, clientId:2, service:'Deep Cleaning',      date:'2026-04-23', time:'10:00', address:'45 Pine Ave, Sanford ME', amount:180, status:'scheduled', notes:''},
+  {id:3, clientId:3, service:'Standard Cleaning',  date:'2026-04-24', time:'08:00', address:'78 Elm Rd, Springvale ME', amount:120, status:'scheduled', notes:''},
+]);
+let skips    = load('skips', [
+  {id:1, clientId:2, date:'2026-04-10', reason:'Cancelled under 24 hours', fee:50, paid:'unpaid'},
+]);
+let services = load('services', [
+  {id:1, name:'Standard Cleaning', price:120, duration:'2-3 hours', desc:'Vacuuming, mopping, dusting, kitchen & bathroom cleaning'},
+  {id:2, name:'Deep Cleaning',     price:180, duration:'4-5 hours', desc:'Everything in standard + baseboards, inside appliances, windows'},
+  {id:3, name:'Move In/Out',       price:250, duration:'5-6 hours', desc:'Full deep clean for moving transitions'},
+  {id:4, name:'Post-Construction', price:300, duration:'6+ hours',  desc:'Heavy-duty cleaning after renovation or construction'},
+]);
+let invoices = load('invoices', [
+  {id:1, clientId:1, date:'2026-04-15', amount:120, desc:'Standard Cleaning — April 15', status:'paid'},
+  {id:2, clientId:2, date:'2026-04-18', amount:50,  desc:'Skip fee — April 10 cancellation', status:'unpaid'},
+]);
+let msgLog = load('msgLog', []);
+let nextId = load('nextId', 100);
+
+function newId() { nextId++; save('nextId', nextId); return nextId; }
+
+// ══ HELPERS ══
+function clientName(id) {
+  const c = clients.find(c=>c.id==id);
+  return c ? c.first + ' ' + c.last : 'Unknown';
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmt(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T12:00:00');
+  return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ══ PANELS ══
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+  renderPanel(id);
+}
+
+function renderPanel(id) {
+  if (id==='dashboard') renderDashboard();
+  if (id==='schedule')  renderSchedule();
+  if (id==='clients')   renderClients();
+  if (id==='skips')     renderSkips();
+  if (id==='services')  renderServices();
+  if (id==='billing')   renderBilling();
+  if (id==='messages')  renderMessages();
+}
+
+// ══ DASHBOARD ══
+function renderDashboard() {
+  const t = today();
+  const todayBks = bookings.filter(b=>b.date===t);
+  const monthRev = bookings.filter(b=>b.date.startsWith('2026-04') && b.status==='completed')
+    .reduce((s,b)=>s+Number(b.amount),0);
+  const unpaidSkips = skips.filter(s=>s.paid==='unpaid').length;
+  const unpaidInv = invoices.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
+
+  document.getElementById('dashStats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${clients.length}</div><div class="stat-label">Total Clients</div></div>
+    <div class="stat-card gold"><div class="stat-num">${todayBks.length}</div><div class="stat-label">Today's Jobs</div></div>
+    <div class="stat-card green"><div class="stat-num">$${monthRev}</div><div class="stat-label">Month Revenue</div></div>
+    <div class="stat-card red"><div class="stat-num">${unpaidSkips}</div><div class="stat-label">Unpaid Skip Fees</div></div>
   `;
+
+  const todayEl = document.getElementById('todayJobs');
+  if (todayBks.length === 0) {
+    todayEl.innerHTML = '<div class="empty"><div class="empty-icon">☀️</div>No jobs scheduled today.</div>';
+  } else {
+    todayEl.innerHTML = todayBks.map(b=>`
+      <div style="padding:10px;border-bottom:1px solid #eef4f4;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:600">${clientName(b.clientId)}</div>
+          <div style="color:var(--text3);font-size:12px">${b.time} — ${b.service}</div>
+        </div>
+        <span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':'gold'}">${b.status}</span>
+      </div>
+    `).join('');
+  }
+
+  const recent = [...bookings].sort((a,b)=>b.id-a.id).slice(0,5);
+  document.getElementById('recentActivity').innerHTML = recent.length ? recent.map(b=>`
+    <div style="padding:8px 0;border-bottom:1px solid #eef4f4;font-size:13px">
+      <span style="color:var(--teal)">📅</span>
+      <b>${clientName(b.clientId)}</b> — ${b.service}
+      <div style="color:var(--text3);font-size:11px">${fmt(b.date)}</div>
+    </div>
+  `).join('') : '<div class="empty">No recent activity.</div>';
+
+  const upcoming = bookings.filter(b=>b.date>=today()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
+  document.getElementById('upcomingTbl').innerHTML = upcoming.map(b=>`
+    <tr>
+      <td>${fmt(b.date)}</td>
+      <td>${clientName(b.clientId)}</td>
+      <td>${b.service}</td>
+      <td>$${b.amount}</td>
+      <td><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':b.status==='cancelled'?'red':'gold'}">${b.status}</span></td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" class="empty">No upcoming bookings.</td></tr>';
 }
 
-// ══ NAV ══
-function switchPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  el.classList.add('active');
-  if(id==='schedule'){renderCalendar();populateDropdown('book-client');refreshServiceDropdowns();renderTimeslots();}
-  if(id==='portal')populateDropdown('portal-client');
-  if(id==='skips'){populateDropdown('skip-client');renderSkipTable();}
-  if(id==='services')renderServiceList();
-  if(id==='billing'){renderBillingHistory();}
-  if(id==='venmo')initVenmoPage();
-  if(id==='dashboard'){renderDashboardStats();renderChatSidebar();}
-}
-
-// ══ CLIENT TABLE ══
-function renderTable(){
-  const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
-  const arr=clientsArr().filter(c=>[c.name,c.phone,c.email,c.address].some(v=>(v||'').toLowerCase().includes(q)));
-  document.getElementById('client-count').textContent=Object.keys(clients).length+' clients';
-  const editingKey=document.getElementById('editKey').value;
-  const tb=document.getElementById('tableBody');if(!tb)return;
-  if(!arr.length){tb.innerHTML='<tr><td class="empty-td" colspan="5">No clients found.</td></tr>';return;}
-  tb.innerHTML=arr.map(c=>{
-    const icon=c.comm==='Email'?'✉':c.comm==='SMS'?'💬':'📞';
-    const dot=unreadCounts[c.key]?`<span class="unread-dot" onclick="event.stopPropagation();openChatFor('${c.key}')" title="New message" style="cursor:pointer"></span>`:'';
-    return `<tr class="${c.key===editingKey?'editing-row':''}" onclick="selectRow('${c.key}')">
-      <td>${esc(c.name)}${dot}</td>
-      <td>${c.phone?`<a href="tel:${esc(c.phone)}" onclick="event.stopPropagation()" style="color:var(--text2)">${esc(formatPhone(c.phone))}</a>`:'<span class="missing-badge">no phone</span>'}</td>
-      <td>${c.email?`<a href="mailto:${esc(c.email)}" onclick="event.stopPropagation()" style="color:#185FA5">${esc(c.email)}</a>`:'<span class="missing-badge">no email</span>'}</td>
-      <td>${icon} ${esc(c.comm||'')}</td>
-      <td class="act-cell">
-        <button class="btn-xs btn-edit" onclick="event.stopPropagation();selectRow('${c.key}')">✏️</button>
-        <button class="btn-xs" style="background:var(--surface2);color:var(--text2)" onclick="event.stopPropagation();openProfile('${c.key}')">👤</button>
-        <button class="btn-xs btn-rem" onclick="event.stopPropagation();openReminder('${c.key}')">Remind</button>
-        <button class="btn-xs btn-bill" onclick="event.stopPropagation();openBill('${c.key}')">Bill</button>
-        <button class="btn-xs btn-skip" onclick="event.stopPropagation();quickSkip('${c.key}')">Skip</button>
-        <button class="btn-xs" style="background:#EEF4FF;color:#2244AA" onclick="event.stopPropagation();openShareModal('${c.key}')">🔗</button>
-        <button class="btn-xs btn-del" onclick="event.stopPropagation();confirmDelete('${c.key}')">🗑</button>
+// ══ SCHEDULE ══
+function renderSchedule() {
+  populateSelect('bkClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  populateSelect('bkService', services, s=>({val:s.name,lbl:s.name+' ($'+s.price+')'}));
+  const sorted = [...bookings].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('scheduleTbl').innerHTML = sorted.map(b=>`
+    <tr>
+      <td>${fmt(b.date)}</td>
+      <td>${b.time}</td>
+      <td>${clientName(b.clientId)}</td>
+      <td>${b.service}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.address}</td>
+      <td>$${b.amount}</td>
+      <td><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':b.status==='cancelled'?'red':'gold'}">${b.status}</span></td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="markComplete(${b.id})">✓</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.id})" style="margin-left:4px">✕</button>
       </td>
-    </tr>`;
-  }).join('');
+    </tr>
+  `).join('') || '<tr><td colspan="8" class="empty">No bookings yet.</td></tr>';
 }
 
-function selectRow(key){
-  const c=clients[key];if(!c)return;
-  document.getElementById('editKey').value=key;
-  document.getElementById('f-name').value=c.name||'';
-  document.getElementById('f-phone').value=c.phone||'';
-  document.getElementById('f-email').value=c.email||'';
-  document.getElementById('f-address').value=c.address||'';
-  document.getElementById('f-comm').value=c.comm||'Phone Call';
-  document.getElementById('f-notes').value=c.notes||'';
-  document.getElementById('form-title').textContent='Edit Client';
-  document.getElementById('submit-btn').textContent='Save Changes';
-  document.getElementById('del-btn').style.display='block';
-  document.getElementById('editing-banner').classList.add('show');
-  document.getElementById('editing-name').textContent=c.name;
-  renderTable();
+function markComplete(id) {
+  const b = bookings.find(b=>b.id===id);
+  if (b) { b.status='completed'; save('bookings',bookings); renderSchedule(); showToast('Marked as completed!'); }
+}
+function deleteBooking(id) {
+  if (!confirm('Delete this booking?')) return;
+  bookings = bookings.filter(b=>b.id!==id); save('bookings',bookings); renderSchedule(); showToast('Booking deleted.');
 }
 
-function submitForm(){
-  const name=document.getElementById('f-name').value.trim();
-  if(!name){showToast('Name is required.');return;}
-  const obj={name,phone:document.getElementById('f-phone').value.trim(),email:document.getElementById('f-email').value.trim(),address:document.getElementById('f-address').value.trim(),comm:document.getElementById('f-comm').value,notes:document.getElementById('f-notes').value.trim()};
-  const key=document.getElementById('editKey').value;
-  if(key){db.ref('clients/'+key).update(obj);showToast('✅ Updated: '+name);}
-  else{db.ref('clients').push(obj);showToast('✅ Added: '+name);}
-  clearForm();
+function fillBkAmount() {
+  const svcName = document.getElementById('bkService').value;
+  const svc = services.find(s=>s.name===svcName);
+  if (svc) document.getElementById('bkAmount').value = svc.price;
 }
 
-function clearForm(){
-  ['f-name','f-phone','f-email','f-address','f-notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-comm').value='Phone Call';
-  document.getElementById('editKey').value='';
-  document.getElementById('form-title').textContent='Add Client';
-  document.getElementById('submit-btn').textContent='Add Client';
-  document.getElementById('del-btn').style.display='none';
-  document.getElementById('editing-banner').classList.remove('show');
-  renderTable();
-}
-
-function confirmDelete(key){
-  const c=clients[key];if(!c)return;
-  if(confirm('Delete "'+c.name+'"? This cannot be undone.')){db.ref('clients/'+key).remove();clearForm();showToast('🗑 Deleted: '+c.name);}
-}
-function deleteFromForm(){const k=document.getElementById('editKey').value;if(k)confirmDelete(k);}
-
-// ══ CHAT ══
-function renderChatSidebar(){
-  const el=document.getElementById('chat-sidebar-list');if(!el)return;
-  const arr=clientsArr();
-  let html='<div class="chat-sidebar-head">Clients</div>';
-  if(!arr.length){html+='<div style="padding:12px;font-size:11px;color:var(--text3)">No clients yet.</div>';}
-  else{
-    html+=arr.map(c=>{
-      const msgs=messages[c.key]?Object.values(messages[c.key]).sort((a,b)=>(a.ts||0)-(b.ts||0)):[];
-      const last=msgs.length?msgs[msgs.length-1].text.substring(0,36)+'…':'No messages';
-      const u=unreadCounts[c.key]||0;
-      return `<div class="chat-client-item${activeChatKey===c.key?' active':''}" onclick="openChatFor('${c.key}')">
-        <div class="chat-client-name">${esc(c.name)}${u?`<span class="unread-dot" style="margin-left:4px"></span>`:''}</div>
-        <div class="chat-client-preview">${esc(last)}</div>
-      </div>`;
-    }).join('');
-  }
-  el.innerHTML=html;
-}
-
-function openChatFor(key){
-  document.getElementById('chat-client-sel').value=key;
-  switchChatClient();
-}
-
-function switchChatClient(){
-  const key=document.getElementById('chat-client-sel').value;
-  activeChatKey=key||null;
-  const c=key?clients[key]:null;
-  const phone=(c?.phone||'').replace(/\D/g,'');
-  const waBtn=document.getElementById('chat-wa-btn');
-  const linkBtn=document.getElementById('chat-link-btn');
-  const inp=document.getElementById('chat-input');
-  const snd=document.getElementById('chat-send-btn');
-  if(!key){
-    inp.disabled=true;snd.disabled=true;
-    if(waBtn)waBtn.style.display='none';
-    if(linkBtn)linkBtn.style.display='none';
-    document.getElementById('chat-messages').innerHTML='<div style="text-align:center;color:var(--text3);font-size:11px;padding:20px">Select a client above to view messages.</div>';
-    updateChatBadge();return;
-  }
-  inp.disabled=false;snd.disabled=false;
-  if(phone&&waBtn){waBtn.href=`https://wa.me/1${phone}`;waBtn.style.display='inline-flex';}else if(waBtn)waBtn.style.display='none';
-  if(linkBtn)linkBtn.style.display='inline-flex';
-  if(messages[key]){
-    Object.entries(messages[key]).forEach(([mk,m])=>{if(m.dir==='in'&&m.unread)db.ref(`messages/${key}/${mk}/unread`).set(false);});
-  }
-  renderChatMessages();
-  renderChatSidebar();
-  updateChatBadge();
-}
-
-function renderChatMessages(){
-  const key=activeChatKey;
-  const box=document.getElementById('chat-messages');if(!key||!box)return;
-  const thread=messages[key]?Object.values(messages[key]).sort((a,b)=>(a.ts||0)-(b.ts||0)):[];
-  if(!thread.length){box.innerHTML=`<div style="text-align:center;color:var(--text3);font-size:11px;padding:20px">No messages yet.<br>Send one below or share the schedule link.</div>`;return;}
-  box.innerHTML=thread.map(m=>`<div class="chat-msg ${m.dir}${m.dir==='in'&&m.unread?' unread':''}">${esc(m.text)}<div class="chat-meta">${m.dir==='out'?'You':'Client'} · ${m.time||''}</div></div>`).join('');
-  box.scrollTop=box.scrollHeight;
-}
-
-function sendChat(){
-  const inp=document.getElementById('chat-input');
-  const text=inp.value.trim();
-  if(!text||!activeChatKey)return;
-  const snd=document.getElementById('chat-send-btn');
-  snd.disabled=true;
-  db.ref(`messages/${activeChatKey}`).push({dir:'out',text,time:nowStr(),ts:Date.now()})
-    .then(()=>{inp.value='';snd.disabled=false;})
-    .catch(err=>{snd.disabled=false;showToast('Error: '+err.message);});
-}
-
-function shareLinkForChat(){if(activeChatKey)openShareModal(activeChatKey);}
-
-// ══ SHARE MODAL ══
-function openShareModal(key){
-  shareTargetKey=key;
-  const c=clients[key];if(!c)return;
-  document.getElementById('share-modal-sub').textContent='For: '+c.name;
-  const url=getShareURL(key);
-  document.getElementById('share-url-preview').textContent=url;
-  document.getElementById('share-modal').classList.add('open');
-}
-function closeShareModal(){document.getElementById('share-modal').classList.remove('open');}
-function getShareURL(k){return'https://jdp10658.github.io/janetes-cleaners/#client='+encodeURIComponent(k);}
-function openShareLink(){window.open(getShareURL(shareTargetKey),'_blank');}
-function copyShareLink(){
-  navigator.clipboard.writeText(getShareURL(shareTargetKey))
-    .then(()=>showToast('🔗 Link copied!'))
-    .catch(()=>prompt('Copy this link:',getShareURL(shareTargetKey)));
-  closeShareModal();
-}
-function sendShareViaWA(){
-  const c=clients[shareTargetKey];if(!c)return;
-  const phone=(c.phone||'').replace(/\D/g,'');
-  if(!phone){showToast('No phone on file for '+c.name);return;}
-  const url=getShareURL(shareTargetKey);
-  const msg='Hi '+c.name.split(' ')[0]+', here is your cleaning schedule from Janete\'s Cleaners! View your appointments and message us directly:\n\n'+url;
-  window.open('https://wa.me/1'+phone+'?text='+encodeURIComponent(msg),'_blank');
-  closeShareModal();
-}
-function sendShareViaEmail(){
-  const c=clients[shareTargetKey];if(!c)return;
-  if(!c.email){showToast('No email on file for '+c.name);return;}
-  const url=getShareURL(shareTargetKey);
-  const sub=encodeURIComponent('Your Cleaning Schedule — Janete\'s Cleaners');
-  const body=encodeURIComponent('Hi '+c.name.split(' ')[0]+',\n\nHere is your upcoming cleaning schedule:\n\n'+url+'\n\nThank you!\nJanete\'s Cleaners · (781) 964-5682');
-  window.open('mailto:'+c.email+'?subject='+sub+'&body='+body,'_blank');
-  closeShareModal();
-}
-function sendShareViaSMS(){
-  const c=clients[shareTargetKey];if(!c)return;
-  const phone=(c.phone||'').replace(/\D/g,'');
-  if(!phone){showToast('No phone on file for '+c.name);return;}
-  const url=getShareURL(shareTargetKey);
-  window.open('sms:+1'+phone+'?body='+encodeURIComponent('Hi '+c.name.split(' ')[0]+', your cleaning schedule from Janete\'s Cleaners: '+url),'_blank');
-  closeShareModal();
-}
-
-// ══ PROFILE MODAL ══
-function openProfile(key){
-  const c=clients[key];if(!c)return;
-  const phone=(c.phone||'').replace(/\D/g,'');
-  let body=`<div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--teal-dark);margin-bottom:12px;font-weight:600">${esc(c.name)}</div>`;
-  body+=`<table style="width:100%;font-size:12px;border-collapse:collapse;margin-bottom:14px">`;
-  const row=(l,v,href)=>`<tr><td style="padding:6px 0;border-bottom:1px solid var(--border2);color:var(--text3);width:70px;font-size:11px">${l}</td><td style="padding:6px 0;border-bottom:1px solid var(--border2)">${href&&v?`<a href="${href}" style="color:#185FA5">${v}</a>`:v||'—'}</td></tr>`;
-  body+=row('Phone',c.phone?formatPhone(c.phone):'',c.phone?`tel:${c.phone}`:'');
-  body+=row('Email',c.email,c.email?`mailto:${c.email}`:'');
-  body+=row('Address',c.address,'');
-  body+=row('Via',c.comm,'');
-  if(c.notes)body+=row('Notes',c.notes,'');
-  body+=`</table><div style="display:flex;gap:6px;flex-wrap:wrap">`;
-  if(phone)body+=`<a class="btn-link btn-sms-link" href="sms:+1${phone}">💬 SMS</a>`;
-  if(phone)body+=`<a class="btn-link btn-wa-link" href="https://wa.me/1${phone}" target="_blank">🟢 WA</a>`;
-  if(c.email)body+=`<a class="btn-link btn-email-link" href="mailto:${c.email}">✉ Email</a>`;
-  body+=`<button class="btn-link" style="background:#EEF4FF;color:#2244AA" onclick="openShareModal('${key}');closeProfile()">🔗 Share</button>`;
-  body+=`<button class="btn-link" style="background:var(--green-pale);color:var(--green)" onclick="closeProfile();openBill('${key}')">🧾 Invoice</button>`;
-  body+=`</div>`;
-  document.getElementById('profile-body').innerHTML=body;
-  document.getElementById('profile-modal').classList.add('open');
-}
-function closeProfile(){document.getElementById('profile-modal').classList.remove('open');}
-
-// ══ REMINDER ══
-function openReminder(key){
-  const c=clients[key];if(!c)return;
-  const msg=`Hi ${c.name.split(' ')[0]}, this is a reminder from Janete's Cleaners about your upcoming appointment. Please note: cancellations with less than 24hr notice incur a $50 fee. Reply to confirm or contact us to reschedule.`;
-  document.getElementById('rem-client-sub').textContent='Sending to: '+c.name;
-  document.getElementById('rem-msg').value=msg;
-  const phone=(c.phone||'').replace(/\D/g,'');
-  let links='';
-  if(phone)links+=`<a class="btn-link btn-sms-link" href="sms:+1${phone}?body=${encodeURIComponent(msg)}" target="_blank">💬 SMS</a>`;
-  if(phone)links+=`<a class="btn-link btn-wa-link" href="https://wa.me/1${phone}?text=${encodeURIComponent(msg)}" target="_blank">🟢 WA</a>`;
-  if(c.email)links+=`<a class="btn-link btn-email-link" href="mailto:${c.email}?subject=${encodeURIComponent("Reminder — Janete's Cleaners")}&body=${encodeURIComponent(msg)}" target="_blank">✉ Email</a>`;
-  if(!phone&&!c.email)links='<span style="font-size:11px;color:var(--red)">No phone or email on file.</span>';
-  document.getElementById('rem-links').innerHTML=links;
-  document.getElementById('reminder-modal').classList.add('open');
-}
-function closeReminder(){document.getElementById('reminder-modal').classList.remove('open');}
-
-// ══ INVOICE ══
-function openBill(key){
-  billTargetKey=key;
-  const c=clients[key];if(!c)return;
-  billLines=[];
-  const myBook=bookingsArr().filter(b=>b.client===c.name);
-  if(myBook.length)myBook.forEach(b=>billLines.push({desc:b.date+' — '+b.service,amt:servicePrices[b.service]||75}));
-  else{const f=Object.keys(servicePrices)[0]||'Standard Clean';billLines.push({desc:f,amt:servicePrices[f]||75});}
-  skipsArr().filter(s=>s.client===c.name&&s.feeStatus==='unpaid').forEach(s=>billLines.push({desc:'Skip fee — '+s.date,amt:50,isSkip:true}));
-  openInvoicePage(key);
-}
-
-function openInvoicePage(key,existingInvNum){
-  const c=clients[key||billTargetKey];if(!c)return;
-  let invNum;
-  if(existingInvNum){invNum=existingInvNum;}
-  else{
-    invNum=parseInt(localStorage.getItem('jc_inv_num')||'4554')+1;
-    localStorage.setItem('jc_inv_num',invNum);
-    const totalAmt=billLines.reduce((s,l)=>s+(parseFloat(l.amt)||0),0);
-    db.ref('invoices').push({invNum,clientKey:key||billTargetKey,clientName:c.name,date:new Date().toLocaleDateString(),ts:Date.now(),total:totalAmt.toFixed(2),lines:billLines.map(l=>({desc:l.desc,amt:l.amt})),status:'unpaid'});
-  }
-  const w=window.open('','_blank');
-  w.document.open();
-  w.invoiceData={lines:billLines.map(l=>({desc:l.desc,amt:parseFloat(l.amt)||0})),clientName:c.name,venmoUser:'janete-pereira-1',phone:(c.phone||'').replace(/\D/g,''),email:c.email||'',invNum,date:new Date().toLocaleDateString()};
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice #${invNum} - ${esc(c.name)}</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:#f4f7f7;min-height:100vh;padding:24px 14px}.wrap{max-width:580px;margin:0 auto}.inv{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(13,115,119,0.1);margin-bottom:14px}.ih{background:linear-gradient(135deg,#0a5c5f,#0d7377);color:#fff;padding:22px 26px;display:flex;justify-content:space-between;align-items:flex-end}.ib{font-family:'Playfair Display',serif;font-size:22px;font-weight:600}.ib-sub{font-size:11px;opacity:.75;margin-top:2px}.inv-num{font-family:'DM Mono',monospace;font-size:16px;opacity:.85}.ibody{padding:22px 26px}table{width:100%;border-collapse:collapse}th{padding:6px 8px;text-align:left;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#7a9a9a;border-bottom:2px solid #eee}th:last-child{text-align:right}.tot{display:flex;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:2px solid #ddd;font-weight:600;font-size:18px}.ft{padding:12px 26px 16px;font-size:11px;color:#aaa;text-align:center;border-top:1px solid #eee}.actions{background:#fff;border-radius:12px;padding:14px 18px;display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.abtn{flex:1;min-width:100px;padding:11px 8px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:5px}.add-area{background:#fff;border-radius:12px;padding:14px 18px;display:flex;gap:8px;margin-bottom:14px;align-items:flex-end}.add-area input{border:1.5px solid #d4e4e4;border-radius:7px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:13px;background:#f0f5f5;outline:none}.edit-inp{width:82px;border:1.5px solid #d4e4e4;border-radius:5px;padding:4px 7px;font-size:13px;text-align:right;font-family:'DM Mono',monospace;background:#f0f5f5}.del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:15px;padding:2px 6px;border-radius:4px}.del-btn:hover{background:#fdf0ee;color:#C41A1A}@media print{body{background:#fff;padding:0}.no-print{display:none}.inv{box-shadow:none;border-radius:0}}</style></head><body><div class="wrap">
-<div class="inv"><div class="ih"><div><div class="ib">Janete's Cleaners Inc.</div><div class="ib-sub">${esc(c.name)} — ${new Date().toLocaleDateString()}</div></div><div class="inv-num">INV #${invNum}</div></div>
-<div class="ibody">${c.address||c.email||c.phone?`<div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #eee">${c.address?`<div style="font-size:12px;color:#7a9a9a">${esc(c.address)}</div>`:''}${c.email?`<div style="font-size:12px;color:#7a9a9a;margin-top:2px">${esc(c.email)}</div>`:''}${c.phone?`<div style="font-size:12px;color:#7a9a9a;margin-top:2px">${esc(c.phone)}</div>`:''}</div>`:''}<table><thead><tr><th>Description</th><th class="no-print"></th><th style="text-align:right">Amount</th></tr></thead><tbody id="tbody"></tbody></table><div class="tot"><span>Total Due</span><span id="total-display">$0.00</span></div></div><div class="ft">Thank you for choosing Janete's Cleaners! · (781) 964-5682</div></div>
-<div class="add-area no-print"><input id="add-desc" placeholder="Add item description" style="flex:1"><input id="add-amt" type="number" placeholder="$0" min="0" style="width:90px;text-align:right"><button onclick="addLine()" style="padding:8px 16px;background:#0d7377;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">+ Add</button></div>
-<div class="actions no-print"><a class="abtn" style="background:#008CFF;color:#fff" id="venmo-btn" href="#" target="_blank">Pay with Venmo</a>${(c.phone||'').replace(/\D/g,'')?`<a class="abtn" style="background:#E8F5E9;color:#1B5E20" id="wa-btn" href="#" target="_blank">WhatsApp</a>`:''} ${c.email?`<a class="abtn" style="background:#eaf5f0;color:#1a7a5a" id="email-btn" href="#">Email</a>`:''} ${(c.phone||'').replace(/\D/g,'')?`<a class="abtn" style="background:#E6F1FB;color:#185FA5" id="sms-btn" href="#">SMS</a>`:''}<button class="abtn" style="background:#5A2D82;color:#fff" id="share-inv-btn">Share Link</button><button class="abtn" style="background:#0d7377;color:#fff" id="save-inv-btn">💾 Save</button><button class="abtn" style="background:#1a2e2e;color:#fff" id="print-inv-btn">Print/PDF</button></div>
-</div></body></html>`);
-  w.document.close();
-  w.addEventListener('load',function(){
-    const d=w.invoiceData;let lines=d.lines.slice();
-
-    // ── Save current invoice state back to Firebase ──
-    function saveToFirebase(callback){
-      const t=lines.reduce((s,l)=>s+l.amt,0);
-      const saveBtn=w.document.getElementById('save-inv-btn');
-      if(saveBtn){saveBtn.textContent='Saving…';saveBtn.disabled=true;}
-      db.ref('invoices').orderByChild('invNum').equalTo(d.invNum).once('value',function(snap){
-        const updates={total:t.toFixed(2),lines:lines.map(l=>({desc:l.desc,amt:l.amt})),status:'unpaid'};
-        if(snap.val()){
-          const key=Object.keys(snap.val())[0];
-          db.ref('invoices/'+key).update(updates).then(function(){
-            if(saveBtn){saveBtn.textContent='✅ Saved!';saveBtn.disabled=false;setTimeout(function(){saveBtn.textContent='💾 Save';},2000);}
-            if(callback)callback();
-          }).catch(function(err){
-            if(saveBtn){saveBtn.textContent='💾 Save';saveBtn.disabled=false;}
-            w.alert('Save failed: '+err.message);
-          });
-        } else {
-          // Invoice not found by number — create it
-          db.ref('invoices').push(Object.assign({invNum:d.invNum,clientKey:d.clientKey||'',clientName:d.clientName,date:d.date,ts:Date.now()},updates)).then(function(){
-            if(saveBtn){saveBtn.textContent='✅ Saved!';saveBtn.disabled=false;setTimeout(function(){saveBtn.textContent='💾 Save';},2000);}
-            if(callback)callback();
-          }).catch(function(err){
-            if(saveBtn){saveBtn.textContent='💾 Save';saveBtn.disabled=false;}
-            w.alert('Save failed: '+err.message);
-          });
-        }
-      });
-    }
-
-    function recalc(){
-      const t=lines.reduce((s,l)=>s+l.amt,0);
-      w.document.getElementById('total-display').textContent='$'+t.toFixed(2);
-      const vBtn=w.document.getElementById('venmo-btn');if(vBtn)vBtn.href='https://venmo.com/'+d.venmoUser+'?txn=pay&amount='+t.toFixed(2)+'&note='+encodeURIComponent('Janetes Cleaners Invoice #'+d.invNum);
-      const waBtn=w.document.getElementById('wa-btn');if(waBtn)waBtn.href='https://wa.me/1'+d.phone+'?text='+encodeURIComponent('Hi '+d.clientName.split(' ')[0]+', your invoice #'+d.invNum+' from Janetes Cleaners is $'+t.toFixed(2)+'. Pay via Venmo @'+d.venmoUser+'. Thank you!');
-      const eBtn=w.document.getElementById('email-btn');if(eBtn)eBtn.href='mailto:'+d.email+'?subject='+encodeURIComponent('Invoice #'+d.invNum+' - Janetes Cleaners')+'&body='+encodeURIComponent('Hi '+d.clientName.split(' ')[0]+',\n\nYour invoice #'+d.invNum+' total is $'+t.toFixed(2)+'.\n\nPay via Venmo @'+d.venmoUser+'\n\nThank you!\nJanetes Cleaners (781) 964-5682');
-      const sBtn=w.document.getElementById('sms-btn');if(sBtn)sBtn.href='sms:+1'+d.phone+'?body='+encodeURIComponent('Hi '+d.clientName.split(' ')[0]+', invoice #'+d.invNum+' is $'+t.toFixed(2)+'. Pay via Venmo @'+d.venmoUser);
-    }
-
-    function renderLines(){
-      const tbody=w.document.getElementById('tbody');tbody.innerHTML='';
-      lines.forEach(function(l,i){
-        const tr=w.document.createElement('tr');
-        // oninput fires immediately as you type — fixes live total update
-        tr.innerHTML=
-          '<td style="padding:8px 0;border-bottom:1px solid #eee">'+
-            '<input type="text" value="'+l.desc.replace(/"/g,'&quot;')+'" '+
-            'style="width:100%;border:1.5px solid #d4e4e4;border-radius:5px;padding:5px 8px;font-size:13px;font-family:DM Sans,sans-serif;background:#f0f5f5;outline:none" '+
-            'oninput="updateDesc('+i+',this.value)"></td>'+
-          '<td style="padding:8px 0;border-bottom:1px solid #eee;width:32px" class="no-print">'+
-            '<button class="del-btn" onclick="delLine('+i+')">×</button></td>'+
-          '<td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;width:100px">'+
-            '<input type="number" class="edit-inp" value="'+l.amt.toFixed(2)+'" min="0" step="0.01" '+
-            'oninput="updateAmt('+i+',this.value)"></td>';
-        tbody.appendChild(tr);
-      });recalc();
-    }
-
-    // Wire up Save button
-    const saveBtn=w.document.getElementById('save-inv-btn');
-    if(saveBtn)saveBtn.onclick=function(){saveToFirebase(null);};
-
-    // Wire up Print button — saves first, then prints
-    const printBtn=w.document.getElementById('print-inv-btn');
-    if(printBtn)printBtn.onclick=function(){saveToFirebase(function(){w.print();});};
-
-    w.document.getElementById('share-inv-btn').onclick=function(){
-      const t=lines.reduce((s,l)=>s+l.amt,0);
-      const payload=btoa(unescape(encodeURIComponent(JSON.stringify({invNum:d.invNum,clientName:d.clientName,total:t.toFixed(2),lines,venmoUser:d.venmoUser,date:d.date}))));
-      const url='https://jdp10658.github.io/janetes-cleaners/#invoice='+payload;
-      navigator.clipboard.writeText(url).then(function(){w.alert('Invoice link copied!');}).catch(function(){w.prompt('Copy this link:',url);});
-    };
-
-    w.updateDesc=function(i,v){lines[i].desc=v;};
-    w.updateAmt=function(i,v){lines[i].amt=parseFloat(v)||0;recalc();};
-    w.delLine=function(i){lines.splice(i,1);renderLines();};
-    w.addLine=function(){
-      const desc=w.document.getElementById('add-desc').value.trim();
-      const amt=parseFloat(w.document.getElementById('add-amt').value)||0;
-      if(!desc){w.alert('Enter a description.');return;}
-      lines.push({desc,amt});renderLines();
-      w.document.getElementById('add-desc').value='';w.document.getElementById('add-amt').value='';
-    };
-    renderLines();
+function saveBooking() {
+  const cId = parseInt(document.getElementById('bkClient').value);
+  const date = document.getElementById('bkDate').value;
+  if (!cId || !date) { showToast('Please fill in client and date.'); return; }
+  const client = clients.find(c=>c.id===cId);
+  bookings.push({
+    id: newId(),
+    clientId: cId,
+    service:  document.getElementById('bkService').value,
+    date,
+    time:     document.getElementById('bkTime').value,
+    address:  document.getElementById('bkAddress').value || (client ? client.address : ''),
+    amount:   parseFloat(document.getElementById('bkAmount').value)||0,
+    status:   document.getElementById('bkStatus').value,
+    notes:    document.getElementById('bkNotes').value,
   });
+  save('bookings', bookings);
+  closeModal('bookingModal');
+  renderSchedule();
+  showToast('Booking saved!');
 }
 
-// ══ BILLING HISTORY ══
-function renderBillingHistory(){
-  const clientFilter=document.getElementById('billing-client-filter')?.value||'';
-  const statusFilter=document.getElementById('billing-status-filter')?.value||'';
-  const yearFilter=document.getElementById('billing-year-filter')?.value||'';
-
-  // Populate year dropdown from invoice dates
-  const yearSel=document.getElementById('billing-year-filter');
-  if(yearSel){
-    const years=[...new Set(Object.values(invoices).map(i=>{
-      const d=i.date||'';
-      const m=d.match(/(20\d{2})/);return m?m[1]:null;
-    }).filter(Boolean))].sort((a,b)=>b-a);
-    const cur=yearSel.value;
-    yearSel.innerHTML='<option value="">All Years</option>'+years.map(y=>'<option value="'+y+'"'+(cur===y?' selected':'')+'>'+y+'</option>').join('');
-  }
-
-  let arr=Object.entries(invoices).map(([k,v])=>({key:k,...v}))
-    .filter(i=>!clientFilter||i.clientName===clientFilter)
-    .filter(i=>!statusFilter||i.status===statusFilter)
-    .filter(i=>{if(!yearFilter)return true;const d=i.date||'';return d.includes(yearFilter);})
-    .sort((a,b)=>b.ts-a.ts);
-
-  // Totals
-  const totalAll=arr.reduce((s,i)=>s+parseFloat(i.total||0),0);
-  const totalPaid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+parseFloat(i.total||0),0);
-  const totalUnpaid=arr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+parseFloat(i.total||0),0);
-
-  document.getElementById('billing-total-badge').textContent=arr.length+' invoices · $'+totalUnpaid.toFixed(2)+' unpaid';
-
-  const tb=document.getElementById('billing-tbody');if(!tb)return;
-  if(!arr.length){
-    tb.innerHTML='<tr><td class="empty-td" colspan="6">No invoices found.</td></tr>';
-    document.getElementById('billing-tfoot').innerHTML='';
-    document.getElementById('billing-tax-summary').style.display='none';
-    return;
-  }
-
-  tb.innerHTML=arr.map(inv=>`<tr>
-    <td style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600">#${inv.invNum||'—'}</td>
-    <td>${esc(inv.clientName||'')}</td>
-    <td style="color:var(--text3);font-size:11px">${esc(inv.date||'')}</td>
-    <td style="font-family:'DM Mono',monospace;font-weight:600;color:var(--teal-dark)">$${parseFloat(inv.total||0).toFixed(2)}</td>
-    <td><span class="badge ${inv.status==='unpaid'?'badge-red':'badge-green'}">${inv.status||'unpaid'}</span></td>
-    <td class="act-cell">
-      ${inv.status==='unpaid'?`<button class="btn-xs btn-bill" onclick="markInvPaid('${inv.key}')">✓ Paid</button>`:''}
-      <button class="btn-xs btn-rem" onclick="reOpenInvoice('${inv.key}')">View</button>
-      <button class="btn-xs btn-del" onclick="deleteInvoice('${inv.key}')">🗑</button>
-    </td>
-  </tr>`).join('');
-
-  // Totals footer row
-  document.getElementById('billing-tfoot').innerHTML=`
-    <tr style="background:var(--teal-pale);font-weight:600">
-      <td colspan="3" style="padding:9px;font-size:12px;color:var(--teal-dark)">TOTALS (${arr.length} invoices${yearFilter?' — '+yearFilter:''})</td>
-      <td style="padding:9px;font-family:'DM Mono',monospace;font-size:13px;color:var(--teal-dark)">$${totalAll.toFixed(2)}</td>
-      <td colspan="2" style="padding:9px;font-size:11px;color:var(--text2)">
-        <span style="color:var(--green);margin-right:10px">✅ Paid: $${totalPaid.toFixed(2)}</span>
-        <span style="color:var(--red)">⏳ Unpaid: $${totalUnpaid.toFixed(2)}</span>
+// ══ CLIENTS ══
+function renderClients() {
+  populateSelect('msgClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  const q = (document.getElementById('clientSearch')?.value||'').toLowerCase();
+  const filtered = q ? clients.filter(c=>(c.first+' '+c.last+c.phone+c.email).toLowerCase().includes(q)) : clients;
+  document.getElementById('clientsTbl').innerHTML = filtered.map(c=>`
+    <tr>
+      <td><b>${c.first} ${c.last}</b></td>
+      <td><a href="tel:${c.phone}" style="color:var(--teal)">${c.phone}</a></td>
+      <td>${c.email}</td>
+      <td>${c.address}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes}</td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="editClient(${c.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteClient(${c.id})" style="margin-left:4px">Del</button>
       </td>
-    </tr>`;
-
-  // Tax summary panel
-  const taxSummary=document.getElementById('billing-tax-summary');
-  const taxGrid=document.getElementById('billing-tax-grid');
-  if(taxSummary&&taxGrid){
-    taxSummary.style.display='block';
-    const label=yearFilter?yearFilter:'All Time';
-    taxGrid.innerHTML=`
-      <div style="background:#fff;border-radius:8px;padding:12px;border:1px solid var(--border);text-align:center">
-        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Total Revenue (${label})</div>
-        <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--teal-dark)">$${totalAll.toFixed(2)}</div>
-      </div>
-      <div style="background:#fff;border-radius:8px;padding:12px;border:1px solid var(--border);text-align:center">
-        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Collected (${label})</div>
-        <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--green)">$${totalPaid.toFixed(2)}</div>
-      </div>
-      <div style="background:#fff;border-radius:8px;padding:12px;border:1px solid var(--border);text-align:center">
-        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Outstanding (${label})</div>
-        <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--red)">$${totalUnpaid.toFixed(2)}</div>
-      </div>
-      <div style="background:#fff;border-radius:8px;padding:12px;border:1px solid var(--border);text-align:center">
-        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Invoice Count</div>
-        <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--teal-dark)">${arr.length}</div>
-      </div>`;
-  }
+    </tr>
+  `).join('') || '<tr><td colspan="6" class="empty">No clients found.</td></tr>';
 }
 
-function markInvPaid(key){db.ref('invoices/'+key).update({status:'paid'});showToast('✅ Invoice marked as paid.');}
-function deleteInvoice(key){if(confirm('Delete this invoice?'))db.ref('invoices/'+key).remove();}
-function reOpenInvoice(key){
-  const inv=invoices[key];if(!inv)return;
-  billTargetKey=inv.clientKey;
-  billLines=(inv.lines||[]).map(l=>({desc:l.desc,amt:parseFloat(l.amt)||0}));
-  openInvoicePage(inv.clientKey,inv.invNum);
+function saveClient() {
+  const id = document.getElementById('clientId').value;
+  const obj = {
+    id: id ? parseInt(id) : newId(),
+    first:   document.getElementById('cFirst').value.trim(),
+    last:    document.getElementById('cLast').value.trim(),
+    phone:   document.getElementById('cPhone').value.trim(),
+    email:   document.getElementById('cEmail').value.trim(),
+    address: document.getElementById('cAddress').value.trim(),
+    notes:   document.getElementById('cNotes').value.trim(),
+  };
+  if (!obj.first) { showToast('First name is required.'); return; }
+  if (id) { const i = clients.findIndex(c=>c.id==id); if(i>=0) clients[i]=obj; }
+  else clients.push(obj);
+  save('clients', clients);
+  closeModal('clientModal');
+  renderClients();
+  showToast(id ? 'Client updated!' : 'Client added!');
 }
 
-function exportBillingCSV(){
-  const clientFilter=document.getElementById('billing-client-filter')?.value||'';
-  const statusFilter=document.getElementById('billing-status-filter')?.value||'';
-  const yearFilter=document.getElementById('billing-year-filter')?.value||'';
-  let arr=Object.entries(invoices).map(([k,v])=>({key:k,...v}))
-    .filter(i=>!clientFilter||i.clientName===clientFilter)
-    .filter(i=>!statusFilter||i.status===statusFilter)
-    .filter(i=>{if(!yearFilter)return true;const d=i.date||'';return d.includes(yearFilter);})
-    .sort((a,b)=>b.ts-a.ts);
-  if(!arr.length){showToast('No invoices to export.');return;}
-  const totalPaid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+parseFloat(i.total||0),0);
-  const totalAll=arr.reduce((s,i)=>s+parseFloat(i.total||0),0);
-  let csv='Invoice #,Client,Date,Amount,Status
-';
-  arr.forEach(i=>{csv+=`${i.invNum||''},"${(i.clientName||'').replace(/"/g,"'")}",${i.date||''},${parseFloat(i.total||0).toFixed(2)},${i.status||''}
-`;});
-  csv+='
-,,,Total Revenue:,$'+totalAll.toFixed(2)+'
-';
-  csv+=',,, Total Paid:,$'+totalPaid.toFixed(2)+'
-';
-  csv+=',,,Total Unpaid:,$'+(totalAll-totalPaid).toFixed(2)+'
-';
-  const blob=new Blob([csv],{type:'text/csv'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download='JanetesCleaners_Invoices'+(yearFilter?'_'+yearFilter:'')+'.csv';
-  a.click();URL.revokeObjectURL(url);
-  showToast('📥 CSV exported!');
+function editClient(id) {
+  const c = clients.find(c=>c.id===id);
+  if (!c) return;
+  document.getElementById('clientId').value = c.id;
+  document.getElementById('cFirst').value   = c.first;
+  document.getElementById('cLast').value    = c.last;
+  document.getElementById('cPhone').value   = c.phone;
+  document.getElementById('cEmail').value   = c.email;
+  document.getElementById('cAddress').value = c.address;
+  document.getElementById('cNotes').value   = c.notes;
+  openModal('clientModal');
 }
 
-// ══ SKIP TRACKER ══
-function quickSkip(key){
-  const c=clients[key];if(!c)return;
-  db.ref('skips').push({client:c.name,date:new Date().toISOString().split('T')[0],notice:'under-24',fee:50,feeStatus:'unpaid'});
-  showToast('⚠️ Skip logged for '+c.name+' — $50 fee added.');
-}
-function logSkip(){
-  const key=document.getElementById('skip-client').value;
-  const date=document.getElementById('skip-date').value;
-  const notice=document.getElementById('skip-notice').value;
-  if(!key){showToast('Select a client.');return;}
-  if(!date){showToast('Pick a date.');return;}
-  const c=clients[key];
-  const fee=notice==='over-24'?0:50;
-  db.ref('skips').push({client:c?c.name:key,date,notice,fee,feeStatus:fee>0?'unpaid':'n/a'});
-  showToast('Skip logged'+(fee>0?' — $50 fee':' — no fee'));
-}
-function renderSkipTable(){
-  const arr=skipsArr();
-  const tf=arr.reduce((a,s)=>a+s.fee,0);
-  const col=arr.filter(s=>s.feeStatus==='paid').reduce((a,s)=>a+s.fee,0);
-  document.getElementById('skip-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Total Skips</div><div class="stat-value">${arr.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Fees Issued</div><div class="stat-value red">$${tf}</div></div>
-    <div class="stat-card"><div class="stat-label">Collected</div><div class="stat-value">$${col}</div></div>
-    <div class="stat-card"><div class="stat-label">Outstanding</div><div class="stat-value red">$${tf-col}</div></div>`;
-  document.getElementById('skip-total-badge').textContent='$'+(tf-col)+' outstanding';
-  const tb=document.getElementById('skip-tbody');if(!tb)return;
-  if(!arr.length){tb.innerHTML='<tr><td class="empty-td" colspan="6">No skips recorded yet.</td></tr>';return;}
-  const nl={none:'No notice','same-day':'Same day','under-24':'< 24hr','over-24':'> 24hr'};
-  tb.innerHTML=arr.map(s=>`<tr>
-    <td>${esc(s.client)}</td><td>${esc(s.date)}</td><td>${nl[s.notice]||s.notice}</td>
-    <td style="font-weight:600;color:${s.fee>0?'var(--red)':'var(--text3)'}">${s.fee>0?'$'+s.fee:'—'}</td>
-    <td><span class="badge ${s.feeStatus==='unpaid'?'badge-red':s.feeStatus==='paid'?'badge-green':''}">${s.feeStatus}</span></td>
-    <td class="act-cell">
-      ${s.feeStatus==='unpaid'?`<button class="btn-xs btn-bill" onclick="markPaid('${s.key}')">✓ Paid</button><button class="btn-xs btn-rem" onclick="remindSkip('${s.key}')">Remind</button>`:''}
-      <button class="btn-xs btn-del" onclick="removeSkip('${s.key}')">✕</button>
-    </td>
-  </tr>`).join('');
-}
-function markPaid(k){db.ref('skips/'+k).update({feeStatus:'paid'});showToast('✅ Fee marked as paid.');}
-function removeSkip(k){db.ref('skips/'+k).remove();}
-function remindSkip(k){
-  const s=skips[k];if(!s)return;
-  const c=Object.values(clients).find(cl=>cl.name===s.client);if(!c)return;
-  const phone=(c.phone||'').replace(/\D/g,'');
-  if(!phone){showToast('No phone for '+c.name);return;}
-  const msg=`Hi ${c.name.split(' ')[0]}, a $50 cancellation fee from ${s.date} is outstanding. Please contact us. Thank you — Janete's Cleaners`;
-  window.open(`https://wa.me/1${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+function deleteClient(id) {
+  if (!confirm('Delete this client?')) return;
+  clients = clients.filter(c=>c.id!==id); save('clients',clients); renderClients(); showToast('Client removed.');
 }
 
-// ══ CALENDAR ══
-function renderCalendar(){
-  document.getElementById('cal-month-name').textContent=MONTHS[calMonth]+' '+calYear;
-  const grid=document.getElementById('cal-grid');
-  const today=new Date();
-  const first=new Date(calYear,calMonth,1).getDay();
-  const days=new Date(calYear,calMonth+1,0).getDate();
-  let html=DAYS.map(d=>`<div class="cal-day-head">${d}</div>`).join('');
-  for(let i=0;i<first;i++)html+=`<div class="cal-day empty"></div>`;
-  for(let d=1;d<=days;d++){
-    const k=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const hasBook=bookingsArr().some(b=>b.date===k);
-    const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
-    html+=`<div class="cal-day${isToday?' today':''}${selectedDay===k?' sel':''}" onclick="selectDay('${k}')">
-      <div class="cal-dnum">${d}</div>${hasBook?'<div class="cal-dot"></div>':''}
-    </div>`;
-  }
-  grid.innerHTML=html;
-  renderSlotList();
-  document.getElementById('slot-count').textContent=bookingsArr().length+' booking'+(bookingsArr().length!==1?'s':'');
+// ══ SKIPS ══
+function renderSkips() {
+  populateSelect('skipClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  document.getElementById('skipDate').value = today();
+  const total = skips.length;
+  const unpaid = skips.filter(s=>s.paid==='unpaid').length;
+  const revenue = skips.filter(s=>s.paid==='paid').reduce((s,k)=>s+Number(k.fee),0);
+  document.getElementById('skipStats').innerHTML = `
+    <div class="stat-card red"><div class="stat-num">${total}</div><div class="stat-label">Total Skips</div></div>
+    <div class="stat-card gold"><div class="stat-num">${unpaid}</div><div class="stat-label">Unpaid Fees</div></div>
+    <div class="stat-card green"><div class="stat-num">$${revenue}</div><div class="stat-label">Collected</div></div>
+  `;
+  document.getElementById('skipsTbl').innerHTML = [...skips].sort((a,b)=>b.id-a.id).map(s=>`
+    <tr>
+      <td>${fmt(s.date)}</td>
+      <td>${clientName(s.clientId)}</td>
+      <td>${s.reason}</td>
+      <td>$${s.fee}</td>
+      <td><span class="badge badge-${s.paid==='paid'?'green':s.paid==='waived'?'gray':'red'}">${s.paid}</span></td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="markSkipPaid(${s.id})">Mark Paid</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteSkip(${s.id})" style="margin-left:4px">Del</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" class="empty">No skips recorded.</td></tr>';
 }
-function selectDay(k){selectedDay=k;document.getElementById('book-date').value=k;renderCalendar();}
-function changeMonth(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}else if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
-function renderSlotList(){
-  const list=document.getElementById('slot-list');
-  const f=selectedDay?bookingsArr().filter(b=>b.date===selectedDay):bookingsArr().sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
-  if(!f.length){list.innerHTML=selectedDay?'<div style="font-size:11px;color:var(--text3);margin-top:6px">No bookings on this day.</div>':'';return;}
-  list.innerHTML=f.map(b=>`<div class="slot-item">
-    <div><div class="slot-client">${esc(b.client)}</div><div class="slot-time">${esc(b.date)} · ${esc(b.time)} · ${esc(b.service)}</div></div>
-    <button class="btn-remove" onclick="db.ref('bookings/${b.key}').remove()">✕</button>
-  </div>`).join('');
+
+function saveSkip() {
+  skips.push({
+    id: newId(),
+    clientId: parseInt(document.getElementById('skipClient').value),
+    date:     document.getElementById('skipDate').value,
+    reason:   document.getElementById('skipReason').value,
+    fee:      parseFloat(document.getElementById('skipFee').value)||50,
+    paid:     document.getElementById('skipPaid').value,
+  });
+  save('skips', skips);
+  closeModal('skipModal');
+  renderSkips();
+  showToast('Skip recorded!');
 }
-function renderTimeslots(){
-  const ts=document.getElementById('time-slots');if(!ts)return;
-  ts.innerHTML=TIMES.map(t=>`<div class="time-slot${t===selectedTime?' sel':''}" onclick="selectTime('${t}',this)">${t}</div>`).join('');
+
+function markSkipPaid(id) {
+  const s = skips.find(s=>s.id===id);
+  if (s) { s.paid='paid'; save('skips',skips); renderSkips(); showToast('Marked as paid!'); }
 }
-function selectTime(t,el){
-  selectedTime=t;
-  document.querySelectorAll('.time-slot').forEach(x=>x.classList.remove('sel'));
-  el.classList.add('sel');
-}
-function bookSlot(){
-  const key=document.getElementById('book-client').value;
-  const date=document.getElementById('book-date').value;
-  if(!key){showToast('Select a client.');return;}
-  if(!date){showToast('Pick a date.');return;}
-  const c=clients[key];
-  db.ref('bookings').push({client:c?c.name:key,date,time:selectedTime,service:document.getElementById('book-service').value});
-  showToast('✅ Booked '+(c?c.name:key)+' on '+date);
+
+function deleteSkip(id) {
+  skips = skips.filter(s=>s.id!==id); save('skips',skips); renderSkips(); showToast('Record deleted.');
 }
 
 // ══ SERVICES ══
-function renderServiceList(){
-  const container=document.getElementById('svc-list');if(!container)return;
-  if(!Object.keys(servicePrices).length){container.innerHTML='<div class="empty-td">No services yet.</div>';return;}
-  container.innerHTML=Object.entries(servicePrices).map(([name,price])=>{
-    const k=btoa(unescape(encodeURIComponent(name)));
-    return `<div class="service-item">
-      <span class="service-name">${esc(name)}</span>
-      <span class="service-price" id="sd-${k}">${fmtMoney(price)}</span>
-      <input type="number" id="si-${k}" value="${price}" min="0" style="display:none;width:72px;border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:12px;text-align:right;font-family:'DM Mono',monospace">
-      <button id="seb-${k}" onclick="toggleSvcEdit('${esc(name)}','${k}')" style="padding:3px 9px;border-radius:5px;font-size:10px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2)">Edit</button>
-      <button id="ssb-${k}" onclick="saveSvcPrice('${esc(name)}','${k}')" style="display:none;padding:3px 9px;border-radius:5px;font-size:10px;cursor:pointer;border:none;background:var(--green-pale);color:var(--green)">Save</button>
-      <button onclick="deleteSvc('${esc(name)}')" style="padding:3px 7px;border-radius:5px;font-size:10px;cursor:pointer;border:none;background:var(--red-pale);color:var(--red)">🗑</button>
-    </div>`;
-  }).join('');
-}
-function toggleSvcEdit(name,k){
-  document.getElementById('sd-'+k).style.display='none';document.getElementById('si-'+k).style.display='inline-block';
-  document.getElementById('seb-'+k).style.display='none';document.getElementById('ssb-'+k).style.display='inline-block';
-  document.getElementById('si-'+k).focus();
-}
-function saveSvcPrice(name,k){
-  const val=parseFloat(document.getElementById('si-'+k).value)||0;
-  servicePrices[name]=val;db.ref('servicePrices').set(servicePrices);
-  document.getElementById('sd-'+k).textContent=fmtMoney(val);document.getElementById('sd-'+k).style.display='inline';
-  document.getElementById('si-'+k).style.display='none';document.getElementById('seb-'+k).style.display='inline-block';document.getElementById('ssb-'+k).style.display='none';
-  showToast('✅ '+name+' → '+fmtMoney(val));refreshServiceDropdowns();
-}
-function addService(){
-  const name=document.getElementById('new-svc-name').value.trim();
-  const price=parseFloat(document.getElementById('new-svc-price').value)||0;
-  if(!name){showToast('Enter a service name.');return;}
-  if(servicePrices[name]!==undefined){showToast('Service already exists.');return;}
-  servicePrices[name]=price;db.ref('servicePrices').set(servicePrices);
-  document.getElementById('new-svc-name').value='';document.getElementById('new-svc-price').value='';
-  renderServiceList();refreshServiceDropdowns();showToast('✅ Added: '+name);
-}
-function deleteSvc(name){
-  if(!confirm('Remove "'+name+'"?'))return;
-  delete servicePrices[name];db.ref('servicePrices').set(servicePrices);
-  renderServiceList();refreshServiceDropdowns();showToast('🗑 Removed: '+name);
+function renderServices() {
+  document.getElementById('servicesGrid').innerHTML = services.map(s=>`
+    <div class="card" style="border-top:3px solid var(--teal)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="font-size:16px;font-weight:700;color:var(--teal-dark)">${s.name}</div>
+        <div style="font-size:20px;font-weight:700;color:var(--gold)">$${s.price}</div>
+      </div>
+      <div style="color:var(--text3);font-size:12px;margin-bottom:6px">⏱ ${s.duration}</div>
+      <div style="color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5">${s.desc}</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm btn-outline" onclick="editService(${s.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteService(${s.id})">Delete</button>
+      </div>
+    </div>
+  `).join('');
 }
 
-// ══ CLIENT PORTAL ══
-function renderPortal(){
-  const key=document.getElementById('portal-client').value;
-  const pc=document.getElementById('portal-content');if(!pc)return;
-  if(!key){pc.innerHTML='';return;}
-  const c=clients[key];if(!c)return;
-  const myBook=bookingsArr().filter(b=>b.client===c.name).sort((a,b)=>a.date.localeCompare(b.date));
-  const phone=(c.phone||'').replace(/\D/g,'');
-  const schedHTML=myBook.length?myBook.map(b=>{
-    const dt=new Date(b.date+'T12:00:00');
-    return `<div class="sched-item">
-      <div class="sched-date"><div class="sday">${dt.getDate()}</div><div class="smon">${MONTHS[dt.getMonth()].slice(0,3)}</div></div>
-      <div class="sched-info"><div class="stime">${esc(b.time)} — ${esc(b.service)}</div><div class="sadd">${esc(c.address||'')}</div></div>
-    </div>`;
-  }).join(''):`<div style="font-size:12px;color:var(--text3);padding:14px 0;text-align:center">No upcoming appointments.</div>`;
-  const smsBtn=phone?`<a class="btn-contact btn-sms-c" href="sms:+1${phone}?body=${encodeURIComponent('Hi '+c.name.split(' ')[0]+', this is Janete\'s Cleaners!')}" target="_blank">💬 SMS</a>`:`<span class="btn-contact" style="background:var(--surface2);color:var(--text3);cursor:not-allowed">💬 No phone</span>`;
-  const waBtn=phone?`<a class="btn-contact" style="background:#25D366;color:#fff" href="https://wa.me/1${phone}?text=${encodeURIComponent('Hi '+c.name.split(' ')[0]+', this is Janete\'s Cleaners!')}" target="_blank">🟢 WA</a>`:'';
-  const emailBtn=c.email?`<a class="btn-contact btn-email-c" href="mailto:${esc(c.email)}?subject=${encodeURIComponent('Message from Janete\'s Cleaners')}" target="_blank">✉ Email</a>`:`<span class="btn-contact" style="background:var(--surface2);color:var(--text3);cursor:not-allowed">✉ No email</span>`;
-  const shareBtn=`<button class="btn-contact" style="background:#EEF4FF;color:#2244AA" onclick="openShareModal('${key}')">🔗 Share Link</button>`;
-  pc.innerHTML=`
-    <div class="portal-header"><div class="ph-name">${esc(c.name)}</div><div class="ph-sub">Cleaning Schedule</div></div>
-    <div class="portal-sched">${schedHTML}</div>
-    <div class="portal-contact">${smsBtn}${waBtn}${emailBtn}${shareBtn}</div>`;
+function saveService() {
+  const id = document.getElementById('serviceId').value;
+  const obj = {
+    id: id ? parseInt(id) : newId(),
+    name:     document.getElementById('svcName').value.trim(),
+    price:    parseFloat(document.getElementById('svcPrice').value)||0,
+    duration: document.getElementById('svcDuration').value.trim(),
+    desc:     document.getElementById('svcDesc').value.trim(),
+  };
+  if (!obj.name) { showToast('Service name required.'); return; }
+  if (id) { const i = services.findIndex(s=>s.id==id); if(i>=0) services[i]=obj; }
+  else services.push(obj);
+  save('services', services);
+  closeModal('serviceModal');
+  renderServices();
+  showToast('Service saved!');
 }
 
-// ══ VENMO ══
-function initVenmoPage(){
-  populateDropdown('venmo-client-sel');
-  const base='https://jdp10658.github.io/janetes-cleaners/#venmo=1';
-  document.getElementById('venmo-page-url').textContent=base;
-  updateVenmoURL();
+function editService(id) {
+  const s = services.find(s=>s.id===id);
+  if (!s) return;
+  document.getElementById('serviceId').value    = s.id;
+  document.getElementById('svcName').value      = s.name;
+  document.getElementById('svcPrice').value     = s.price;
+  document.getElementById('svcDuration').value  = s.duration;
+  document.getElementById('svcDesc').value      = s.desc;
+  openModal('serviceModal');
 }
-function updateVenmoURL(){
-  const amt=document.getElementById('venmo-custom-amount')?.value||'';
-  const note=document.getElementById('venmo-custom-note')?.value||'Cleaning Service';
-  let url='https://venmo.com/janete-pereira-1';
-  if(amt)url+='?txn=pay&amount='+parseFloat(amt).toFixed(2)+'&note='+encodeURIComponent(note);
-  const btn=document.getElementById('venmo-direct-btn');if(btn)btn.href=url;
-}
-function updateVenmoClientLink(){
-  const key=document.getElementById('venmo-client-sel').value;
-  const amt=document.getElementById('venmo-client-amt').value;
-  const note=document.getElementById('venmo-client-note').value||'Cleaning Service';
-  const linksDiv=document.getElementById('venmo-client-links');if(!linksDiv)return;
-  if(!key){linksDiv.innerHTML='';return;}
-  const c=clients[key];if(!c)return;
-  const phone=(c.phone||'').replace(/\D/g,'');
-  const venmoURL='https://venmo.com/janete-pereira-1'+(amt?'?txn=pay&amount='+parseFloat(amt).toFixed(2)+'&note='+encodeURIComponent(note):'');
-  let html=`<a href="${venmoURL}" target="_blank" class="btn-link btn-bill" style="text-decoration:none">Open Venmo</a>`;
-  if(phone)html+=`<a href="https://wa.me/1${phone}?text=${encodeURIComponent('Hi '+c.name.split(' ')[0]+', please pay via Venmo: '+venmoURL)}" target="_blank" class="btn-link btn-wa-link" style="text-decoration:none">WhatsApp</a>`;
-  if(phone)html+=`<a href="sms:+1${phone}?body=${encodeURIComponent('Hi '+c.name.split(' ')[0]+', pay via Venmo: '+venmoURL)}" class="btn-link btn-sms-link" style="text-decoration:none">SMS</a>`;
-  if(c.email)html+=`<a href="mailto:${c.email}?subject=${encodeURIComponent('Payment — Janetes Cleaners')}&body=${encodeURIComponent('Hi '+c.name.split(' ')[0]+',\n\nPlease pay via Venmo: '+venmoURL+'\n\nThank you!\nJanetes Cleaners')}" class="btn-link btn-email-link" style="text-decoration:none">Email</a>`;
-  linksDiv.innerHTML=html;
-}
-function copyVenmoPageLink(){
-  const url='https://jdp10658.github.io/janetes-cleaners/#venmo=1';
-  navigator.clipboard.writeText(url).then(()=>showToast('📋 Venmo page link copied!')).catch(()=>prompt('Copy:',url));
-}
-function openVenmoPage(){window.open('https://jdp10658.github.io/janetes-cleaners/#venmo=1','_blank');}
 
-// ══ SEED CLIENTS ══
-function seedClientsIfEmpty(){
-  db.ref('clients').once('value',snap=>{
-    if(snap.val())return;
-    const seed=[
-      {name:"Karen Webster",phone:"",email:"julie@findsbyjulie.com",address:"95 Pinckney St, Boston, MA 02114",comm:"Email",notes:"Alt: 95 Pic Nick St."},
-      {name:"Ann West",phone:"",email:"",address:"31 Lee St., Marblehead, MA 01945",comm:"Phone Call",notes:""},
-      {name:"Bill Fuller",phone:"",email:"",address:"Marblehead, MA 01906",comm:"Phone Call",notes:""},
-      {name:"Bob Hansen",phone:"",email:"",address:"119 Water St. Unit 64, Salem, MA 01906",comm:"Phone Call",notes:""},
-      {name:"Corman Bags Co.",phone:"",email:"",address:"36 Arlington Street, Chelsea, MA 02150",comm:"Phone Call",notes:"Commercial"},
-      {name:"Crest Pizzeria",phone:"",email:"",address:"35 Crest Ave, Winthrop, MA 02152",comm:"Phone Call",notes:"Contact: Peter"},
-      {name:"Dan Deven",phone:"",email:"",address:"Marblehead, MA",comm:"Phone Call",notes:""},
-      {name:"Deborah Wetmore",phone:"",email:"",address:"886 West Hill Road, Warren, VT 05674",comm:"Phone Call",notes:""},
-      {name:"Eric Appel",phone:"",email:"",address:"8 George Street, Cambridge, MA 02140",comm:"Phone Call",notes:""},
-      {name:"Erica Pelaccia",phone:"",email:"",address:"81 Prindle Ave, Ansonia, CT 06401",comm:"Phone Call",notes:""},
-      {name:"Fay Ginsberg",phone:"",email:"",address:"65 East India Row #20G, Boston, MA 02110",comm:"Phone Call",notes:""},
-      {name:"Faye Hinsley",phone:"",email:"",address:"65 East India Row #20G, Boston, MA 02110",comm:"Phone Call",notes:""},
-      {name:"Fiory's Variatie",phone:"",email:"",address:"",comm:"Phone Call",notes:""},
-      {name:"Gordon College",phone:"",email:"",address:"Grapevine Rd., Wenham, MA",comm:"Phone Call",notes:"Commercial"},
-      {name:"Hansen Marine",phone:"(781) 631-3282",email:"",address:"32 Tioga Way, Marblehead, MA 01945",comm:"SMS",notes:"Contact: Robert Hansen"},
-      {name:"Jacquelyn Hawkson",phone:"",email:"",address:"91 Grant St., Lexington, MA 02420",comm:"Phone Call",notes:""},
-      {name:"Jim Lavelle",phone:"",email:"",address:"211 Mason Terrace, Brookline, MA 02446",comm:"Phone Call",notes:""},
-      {name:"Joanne Ferris",phone:"",email:"jferris@eliotchs.org",address:"95 Pleasant St., Lynn, MA 01901",comm:"Email",notes:""},
-      {name:"Jode Livingston",phone:"",email:"mlivingston0012@gmail.com",address:"28 Myrtle St. Unit 1, Boston, MA 02114",comm:"Email",notes:""},
-      {name:"Josmar D. Pereira",phone:"7819645682",email:"",address:"Lynn, MA 01904",comm:"SMS",notes:""},
-      {name:"Kenn Mark",phone:"",email:"",address:"26 Washington Sq., Marblehead, MA 01906",comm:"Phone Call",notes:""},
-      {name:"Kenneth Martin",phone:"",email:"",address:"24 Harbor Ave., Marblehead, MA 01945",comm:"Phone Call",notes:""},
-      {name:"Lee Oestreicher",phone:"",email:"",address:"45 Longwood Ave. #103, Brookline, MA 02446",comm:"Phone Call",notes:""},
-      {name:"Lion River Properties",phone:"",email:"",address:"45 Longwood Ave. #103, Brookline, MA 02446",comm:"Phone Call",notes:"Commercial"},
-      {name:"Lisa (Dyacme Prop. Mgmt.)",phone:"",email:"",address:"Goodwins Court, Marblehead, MA",comm:"Phone Call",notes:"Dyacme Property Management"},
-      {name:"Nicholas Erpelding",phone:"",email:"",address:"Attn: Lisa Gallager",comm:"Phone Call",notes:""},
-      {name:"Pauline Donnelly",phone:"",email:"Pauline@donnellyandco.com",address:"12 Darling St. #3, Marblehead, MA 01945",comm:"Email",notes:""},
-      {name:"Peter Calakoutis",phone:"",email:"",address:"LynnFells Pkwy, Saugus, MA 01907",comm:"Phone Call",notes:""},
-      {name:"Phil Fuller (Londonderry)",phone:"",email:"",address:"17 S Parrish Drive, Londonderry, NH 03053",comm:"Phone Call",notes:""},
-      {name:"Phil Fuller (The Villages)",phone:"",email:"",address:"1325 Gaston Loop, The Villages, FL 32162",comm:"Phone Call",notes:""},
-      {name:"Robert Mattson",phone:"818-414-7513",email:"valleyspaservices@yahoo.com",address:"13825 Victory Blvd #1, Valley Glen, CA 91401",comm:"Email",notes:""},
-      {name:"Scott Stilianos",phone:"",email:"sstili@icloud.com",address:"1 Bengal Lane, Salem, MA 01906",comm:"Email",notes:""},
-      {name:"Socs' Ice Cream",phone:"",email:"",address:"67 Lynnfells Pkwy, Saugus, MA 01906",comm:"Phone Call",notes:"Commercial"},
-      {name:"Trevor Parsons",phone:"",email:"",address:"106 Galloupes Road, Swampscott, MA 01907",comm:"Phone Call",notes:""},
-      {name:"Victoria Fitzgerald",phone:"",email:"ilsognoinchianti@gmail.com",address:"",comm:"Email",notes:""},
-      {name:"Nadir Vieira",phone:"",email:"",address:"58 Atkins Ave. Basement, Lynn, MA 01904",comm:"Phone Call",notes:""}
-    ];
-    const updates={};
-    seed.forEach(c=>{const k=db.ref('clients').push().key;updates[k]=c;});
-    db.ref('clients').update(updates);
+function deleteService(id) {
+  if (!confirm('Delete this service?')) return;
+  services = services.filter(s=>s.id!==id); save('services',services); renderServices(); showToast('Service deleted.');
+}
+
+// ══ BILLING ══
+function renderBilling() {
+  populateSelect('invClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  document.getElementById('invDate').value = today();
+  const total   = invoices.reduce((s,i)=>s+Number(i.amount),0);
+  const paid    = invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
+  const unpaid  = invoices.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
+  document.getElementById('billingStats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">$${total}</div><div class="stat-label">Total Invoiced</div></div>
+    <div class="stat-card green"><div class="stat-num">$${paid}</div><div class="stat-label">Collected</div></div>
+    <div class="stat-card red"><div class="stat-num">$${unpaid}</div><div class="stat-label">Outstanding</div></div>
+  `;
+  document.getElementById('invoicesTbl').innerHTML = [...invoices].sort((a,b)=>b.id-a.id).map(inv=>`
+    <tr>
+      <td>#${inv.id}</td>
+      <td>${clientName(inv.clientId)}</td>
+      <td>${fmt(inv.date)}</td>
+      <td>$${inv.amount}</td>
+      <td><span class="badge badge-${inv.status==='paid'?'green':inv.status==='partial'?'gold':'red'}">${inv.status}</span></td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="markInvPaid(${inv.id})">Mark Paid</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${inv.id})" style="margin-left:4px">Del</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" class="empty">No invoices yet.</td></tr>';
+}
+
+function saveInvoice() {
+  invoices.push({
+    id: newId(),
+    clientId: parseInt(document.getElementById('invClient').value),
+    date:     document.getElementById('invDate').value,
+    amount:   parseFloat(document.getElementById('invAmount').value)||0,
+    desc:     document.getElementById('invDesc').value.trim(),
+    status:   document.getElementById('invStatus').value,
   });
+  save('invoices', invoices);
+  closeModal('invoiceModal');
+  renderBilling();
+  showToast('Invoice created!');
+}
+
+function markInvPaid(id) {
+  const inv = invoices.find(i=>i.id===id);
+  if (inv) { inv.status='paid'; save('invoices',invoices); renderBilling(); showToast('Marked as paid!'); }
+}
+
+function deleteInvoice(id) {
+  invoices = invoices.filter(i=>i.id!==id); save('invoices',invoices); renderBilling(); showToast('Invoice deleted.');
+}
+
+// ══ MESSAGES ══
+const TEMPLATES = [
+  { label:'Appointment Reminder', text:'Hi {name}! This is a reminder that your cleaning is scheduled for {date} at {time}. Please make sure the team has access. Thank you! — Janete\'s Cleaners'},
+  { label:'Payment Due',          text:'Hi {name}, your balance of ${amount} is due. You can pay via Venmo @JaneteCleaners or cash. Thank you! — Janete\'s Cleaners'},
+  { label:'Skip Policy Notice',   text:'Hi {name}, as per our Skip Policy, a $50 fee applies for cancellations under 24 hours. Your fee is currently {status}. Please contact us with any questions. — Janete\'s Cleaners'},
+  { label:'Welcome New Client',   text:'Welcome to Janete\'s Cleaners, {name}! We\'re excited to serve you. Your first appointment is scheduled. Please reach out anytime. — Janete\'s Cleaners 📞 781-392-4246'},
+];
+
+function renderMessages() {
+  populateSelect('msgClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  document.getElementById('templatesBox').innerHTML = TEMPLATES.map((t,i)=>`
+    <div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer"
+         onclick="useTemplate(${i})">
+      <div style="font-weight:600;color:var(--teal);font-size:13px">${t.label}</div>
+      <div style="color:var(--text3);font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.text.substring(0,60)}...</div>
+    </div>
+  `).join('');
+
+  const logEl = document.getElementById('msgLog');
+  logEl.innerHTML = msgLog.length ? [...msgLog].reverse().map(m=>`
+    <div style="padding:10px;border-bottom:1px solid #eef4f4;font-size:13px">
+      <div style="display:flex;justify-content:space-between">
+        <b>${m.client}</b>
+        <span style="color:var(--text3);font-size:11px">${m.date}</span>
+      </div>
+      <div style="color:var(--text2);margin-top:4px">${m.text}</div>
+    </div>
+  `).join('') : '<div class="empty"><div class="empty-icon">💬</div>No messages logged yet.</div>';
+}
+
+function useTemplate(i) {
+  const cId = document.getElementById('msgClient').value;
+  const c = clients.find(c=>c.id==cId);
+  let text = TEMPLATES[i].text;
+  if (c) text = text.replace(/{name}/g, c.first);
+  document.getElementById('msgText').value = text;
+}
+
+function generateMsg() {
+  const cId = document.getElementById('msgClient').value;
+  const type = document.getElementById('msgType').value;
+  const c = clients.find(c=>c.id==cId);
+  if (!c) { showToast('Select a client first.'); return; }
+  const tmpl = TEMPLATES.find(t=>t.label.toLowerCase().includes(type)) || TEMPLATES[0];
+  let text = tmpl.text.replace(/{name}/g, c.first);
+  document.getElementById('msgText').value = text;
+}
+
+function copyMsg() {
+  const txt = document.getElementById('msgText').value;
+  if (!txt) { showToast('Nothing to copy.'); return; }
+  navigator.clipboard.writeText(txt).then(()=>showToast('Copied to clipboard!'));
+  // log it
+  const cId = document.getElementById('msgClient').value;
+  const c = clients.find(c=>c.id==cId);
+  msgLog.push({ client: c ? c.first+' '+c.last : 'Unknown', text: txt, date: new Date().toLocaleDateString() });
+  save('msgLog', msgLog);
+  renderMessages();
+}
+
+// ══ UTILS ══
+function populateSelect(id, items, mapper) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const cur = el.value;
+  el.innerHTML = items.map(i=>{ const m=mapper(i); return `<option value="${m.val}">${m.lbl}</option>`; }).join('');
+  if (cur) el.value = cur;
+}
+
+function openModal(id) {
+  // clear service edit id on open
+  if (id==='serviceModal') document.getElementById('serviceId').value='';
+  if (id==='clientModal')  { document.getElementById('clientId').value=''; ['cFirst','cLast','cPhone','cEmail','cAddress','cNotes'].forEach(f=>document.getElementById(f).value=''); }
+  document.getElementById(id).classList.remove('hidden');
+  // populate selects inside modals
+  populateSelect('bkClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  populateSelect('bkService', services, s=>({val:s.name,lbl:s.name+' ($'+s.price+')'}));
+  populateSelect('skipClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+  populateSelect('invClient', clients, c=>({val:c.id,lbl:c.first+' '+c.last}));
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click', e=>{ if(e.target===o) o.classList.add('hidden'); });
+});
+
+// ══ INIT ══
+function initApp() {
+  renderDashboard();
+  // Set today's date defaults
+  const d = today();
+  const el = document.getElementById('bkDate');
+  if (el) el.value = d;
+  const sd = document.getElementById('skipDate');
+  if (sd) sd.value = d;
+}
+
+// Auto-login check
+if (sessionStorage.getItem('jc_auth')) {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  initApp();
 }
 </script>
 </body>
