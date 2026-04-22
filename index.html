@@ -495,10 +495,19 @@ tbody tr.editing-row{background:var(--red-light)}
         <option value="unpaid">Unpaid</option>
         <option value="paid">Paid</option>
       </select>
+      <select class="finput" id="billing-year-filter" style="max-width:110px;font-size:12px" onchange="renderBillingHistory()">
+        <option value="">All Years</option>
+      </select>
+      <button onclick="exportBillingCSV()" style="padding:6px 12px;background:var(--green-pale);color:var(--green);border:1px solid #a3d5bb;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap">📥 Export CSV</button>
     </div>
     <div class="table-wrap">
       <table><thead><tr><th>Invoice #</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="billing-tbody"></tbody></table>
+      <tbody id="billing-tbody"></tbody>
+      <tfoot id="billing-tfoot"></tfoot></table>
+    </div>
+    <div id="billing-tax-summary" style="padding:14px 16px;border-top:2px solid var(--border);background:var(--surface2);display:none">
+      <div style="font-family:'Playfair Display',serif;font-size:13px;color:var(--teal-dark);font-weight:600;margin-bottom:10px">📊 Tax Summary</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px" id="billing-tax-grid"></div>
     </div>
   </div>
 </div>
@@ -1145,11 +1154,41 @@ function openInvoicePage(key,existingInvNum){
 <div class="inv"><div class="ih"><div><div class="ib">Janete's Cleaners Inc.</div><div class="ib-sub">${esc(c.name)} — ${new Date().toLocaleDateString()}</div></div><div class="inv-num">INV #${invNum}</div></div>
 <div class="ibody">${c.address||c.email||c.phone?`<div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #eee">${c.address?`<div style="font-size:12px;color:#7a9a9a">${esc(c.address)}</div>`:''}${c.email?`<div style="font-size:12px;color:#7a9a9a;margin-top:2px">${esc(c.email)}</div>`:''}${c.phone?`<div style="font-size:12px;color:#7a9a9a;margin-top:2px">${esc(c.phone)}</div>`:''}</div>`:''}<table><thead><tr><th>Description</th><th class="no-print"></th><th style="text-align:right">Amount</th></tr></thead><tbody id="tbody"></tbody></table><div class="tot"><span>Total Due</span><span id="total-display">$0.00</span></div></div><div class="ft">Thank you for choosing Janete's Cleaners! · (781) 964-5682</div></div>
 <div class="add-area no-print"><input id="add-desc" placeholder="Add item description" style="flex:1"><input id="add-amt" type="number" placeholder="$0" min="0" style="width:90px;text-align:right"><button onclick="addLine()" style="padding:8px 16px;background:#0d7377;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">+ Add</button></div>
-<div class="actions no-print"><a class="abtn" style="background:#008CFF;color:#fff" id="venmo-btn" href="#" target="_blank">Pay with Venmo</a>${(c.phone||'').replace(/\D/g,'')?`<a class="abtn" style="background:#E8F5E9;color:#1B5E20" id="wa-btn" href="#" target="_blank">WhatsApp</a>`:''} ${c.email?`<a class="abtn" style="background:#eaf5f0;color:#1a7a5a" id="email-btn" href="#">Email</a>`:''} ${(c.phone||'').replace(/\D/g,'')?`<a class="abtn" style="background:#E6F1FB;color:#185FA5" id="sms-btn" href="#">SMS</a>`:''}<button class="abtn" style="background:#5A2D82;color:#fff" id="share-inv-btn">Share Link</button><button class="abtn" style="background:#1a2e2e;color:#fff" onclick="window.print()">Print/PDF</button></div>
+<div class="actions no-print"><a class="abtn" style="background:#008CFF;color:#fff" id="venmo-btn" href="#" target="_blank">Pay with Venmo</a>${(c.phone||'').replace(/\D/g,'')?`<a class="abtn" style="background:#E8F5E9;color:#1B5E20" id="wa-btn" href="#" target="_blank">WhatsApp</a>`:''} ${c.email?`<a class="abtn" style="background:#eaf5f0;color:#1a7a5a" id="email-btn" href="#">Email</a>`:''} ${(c.phone||'').replace(/\D/g,'')?`<a class="abtn" style="background:#E6F1FB;color:#185FA5" id="sms-btn" href="#">SMS</a>`:''}<button class="abtn" style="background:#5A2D82;color:#fff" id="share-inv-btn">Share Link</button><button class="abtn" style="background:#0d7377;color:#fff" id="save-inv-btn">💾 Save</button><button class="abtn" style="background:#1a2e2e;color:#fff" id="print-inv-btn">Print/PDF</button></div>
 </div></body></html>`);
   w.document.close();
   w.addEventListener('load',function(){
     const d=w.invoiceData;let lines=d.lines.slice();
+
+    // ── Save current invoice state back to Firebase ──
+    function saveToFirebase(callback){
+      const t=lines.reduce((s,l)=>s+l.amt,0);
+      const saveBtn=w.document.getElementById('save-inv-btn');
+      if(saveBtn){saveBtn.textContent='Saving…';saveBtn.disabled=true;}
+      db.ref('invoices').orderByChild('invNum').equalTo(d.invNum).once('value',function(snap){
+        const updates={total:t.toFixed(2),lines:lines.map(l=>({desc:l.desc,amt:l.amt})),status:'unpaid'};
+        if(snap.val()){
+          const key=Object.keys(snap.val())[0];
+          db.ref('invoices/'+key).update(updates).then(function(){
+            if(saveBtn){saveBtn.textContent='✅ Saved!';saveBtn.disabled=false;setTimeout(function(){saveBtn.textContent='💾 Save';},2000);}
+            if(callback)callback();
+          }).catch(function(err){
+            if(saveBtn){saveBtn.textContent='💾 Save';saveBtn.disabled=false;}
+            w.alert('Save failed: '+err.message);
+          });
+        } else {
+          // Invoice not found by number — create it
+          db.ref('invoices').push(Object.assign({invNum:d.invNum,clientKey:d.clientKey||'',clientName:d.clientName,date:d.date,ts:Date.now()},updates)).then(function(){
+            if(saveBtn){saveBtn.textContent='✅ Saved!';saveBtn.disabled=false;setTimeout(function(){saveBtn.textContent='💾 Save';},2000);}
+            if(callback)callback();
+          }).catch(function(err){
+            if(saveBtn){saveBtn.textContent='💾 Save';saveBtn.disabled=false;}
+            w.alert('Save failed: '+err.message);
+          });
+        }
+      });
+    }
+
     function recalc(){
       const t=lines.reduce((s,l)=>s+l.amt,0);
       w.document.getElementById('total-display').textContent='$'+t.toFixed(2);
@@ -1158,20 +1197,41 @@ function openInvoicePage(key,existingInvNum){
       const eBtn=w.document.getElementById('email-btn');if(eBtn)eBtn.href='mailto:'+d.email+'?subject='+encodeURIComponent('Invoice #'+d.invNum+' - Janetes Cleaners')+'&body='+encodeURIComponent('Hi '+d.clientName.split(' ')[0]+',\n\nYour invoice #'+d.invNum+' total is $'+t.toFixed(2)+'.\n\nPay via Venmo @'+d.venmoUser+'\n\nThank you!\nJanetes Cleaners (781) 964-5682');
       const sBtn=w.document.getElementById('sms-btn');if(sBtn)sBtn.href='sms:+1'+d.phone+'?body='+encodeURIComponent('Hi '+d.clientName.split(' ')[0]+', invoice #'+d.invNum+' is $'+t.toFixed(2)+'. Pay via Venmo @'+d.venmoUser);
     }
+
     function renderLines(){
       const tbody=w.document.getElementById('tbody');tbody.innerHTML='';
       lines.forEach(function(l,i){
         const tr=w.document.createElement('tr');
-        tr.innerHTML='<td style="padding:8px 0;border-bottom:1px solid #eee"><input type="text" value="'+l.desc.replace(/"/g,'&quot;')+'" style="width:100%;border:1.5px solid #d4e4e4;border-radius:5px;padding:5px 8px;font-size:13px;font-family:DM Sans,sans-serif;background:#f0f5f5;outline:none" onchange="updateDesc('+i+',this.value)"></td><td style="padding:8px 0;border-bottom:1px solid #eee;width:32px" class="no-print"><button class="del-btn" onclick="delLine('+i+')">×</button></td><td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;width:100px"><input type="number" class="edit-inp" value="'+l.amt.toFixed(2)+'" min="0" step="0.01" onchange="updateAmt('+i+',this.value)"></td>';
+        // oninput fires immediately as you type — fixes live total update
+        tr.innerHTML=
+          '<td style="padding:8px 0;border-bottom:1px solid #eee">'+
+            '<input type="text" value="'+l.desc.replace(/"/g,'&quot;')+'" '+
+            'style="width:100%;border:1.5px solid #d4e4e4;border-radius:5px;padding:5px 8px;font-size:13px;font-family:DM Sans,sans-serif;background:#f0f5f5;outline:none" '+
+            'oninput="updateDesc('+i+',this.value)"></td>'+
+          '<td style="padding:8px 0;border-bottom:1px solid #eee;width:32px" class="no-print">'+
+            '<button class="del-btn" onclick="delLine('+i+')">×</button></td>'+
+          '<td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;width:100px">'+
+            '<input type="number" class="edit-inp" value="'+l.amt.toFixed(2)+'" min="0" step="0.01" '+
+            'oninput="updateAmt('+i+',this.value)"></td>';
         tbody.appendChild(tr);
       });recalc();
     }
+
+    // Wire up Save button
+    const saveBtn=w.document.getElementById('save-inv-btn');
+    if(saveBtn)saveBtn.onclick=function(){saveToFirebase(null);};
+
+    // Wire up Print button — saves first, then prints
+    const printBtn=w.document.getElementById('print-inv-btn');
+    if(printBtn)printBtn.onclick=function(){saveToFirebase(function(){w.print();});};
+
     w.document.getElementById('share-inv-btn').onclick=function(){
       const t=lines.reduce((s,l)=>s+l.amt,0);
       const payload=btoa(unescape(encodeURIComponent(JSON.stringify({invNum:d.invNum,clientName:d.clientName,total:t.toFixed(2),lines,venmoUser:d.venmoUser,date:d.date}))));
       const url='https://jdp10658.github.io/janetes-cleaners/#invoice='+payload;
       navigator.clipboard.writeText(url).then(function(){w.alert('Invoice link copied!');}).catch(function(){w.prompt('Copy this link:',url);});
     };
+
     w.updateDesc=function(i,v){lines[i].desc=v;};
     w.updateAmt=function(i,v){lines[i].amt=parseFloat(v)||0;recalc();};
     w.delLine=function(i){lines.splice(i,1);renderLines();};
@@ -1190,11 +1250,40 @@ function openInvoicePage(key,existingInvNum){
 function renderBillingHistory(){
   const clientFilter=document.getElementById('billing-client-filter')?.value||'';
   const statusFilter=document.getElementById('billing-status-filter')?.value||'';
-  let arr=Object.entries(invoices).map(([k,v])=>({key:k,...v})).filter(i=>!clientFilter||i.clientName===clientFilter).filter(i=>!statusFilter||i.status===statusFilter).sort((a,b)=>b.ts-a.ts);
+  const yearFilter=document.getElementById('billing-year-filter')?.value||'';
+
+  // Populate year dropdown from invoice dates
+  const yearSel=document.getElementById('billing-year-filter');
+  if(yearSel){
+    const years=[...new Set(Object.values(invoices).map(i=>{
+      const d=i.date||'';
+      const m=d.match(/(20\d{2})/);return m?m[1]:null;
+    }).filter(Boolean))].sort((a,b)=>b-a);
+    const cur=yearSel.value;
+    yearSel.innerHTML='<option value="">All Years</option>'+years.map(y=>'<option value="'+y+'"'+(cur===y?' selected':'')+'>'+y+'</option>').join('');
+  }
+
+  let arr=Object.entries(invoices).map(([k,v])=>({key:k,...v}))
+    .filter(i=>!clientFilter||i.clientName===clientFilter)
+    .filter(i=>!statusFilter||i.status===statusFilter)
+    .filter(i=>{if(!yearFilter)return true;const d=i.date||'';return d.includes(yearFilter);})
+    .sort((a,b)=>b.ts-a.ts);
+
+  // Totals
+  const totalAll=arr.reduce((s,i)=>s+parseFloat(i.total||0),0);
+  const totalPaid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+parseFloat(i.total||0),0);
   const totalUnpaid=arr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+parseFloat(i.total||0),0);
+
   document.getElementById('billing-total-badge').textContent=arr.length+' invoices · $'+totalUnpaid.toFixed(2)+' unpaid';
+
   const tb=document.getElementById('billing-tbody');if(!tb)return;
-  if(!arr.length){tb.innerHTML='<tr><td class="empty-td" colspan="6">No invoices yet.</td></tr>';return;}
+  if(!arr.length){
+    tb.innerHTML='<tr><td class="empty-td" colspan="6">No invoices found.</td></tr>';
+    document.getElementById('billing-tfoot').innerHTML='';
+    document.getElementById('billing-tax-summary').style.display='none';
+    return;
+  }
+
   tb.innerHTML=arr.map(inv=>`<tr>
     <td style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600">#${inv.invNum||'—'}</td>
     <td>${esc(inv.clientName||'')}</td>
@@ -1207,6 +1296,42 @@ function renderBillingHistory(){
       <button class="btn-xs btn-del" onclick="deleteInvoice('${inv.key}')">🗑</button>
     </td>
   </tr>`).join('');
+
+  // Totals footer row
+  document.getElementById('billing-tfoot').innerHTML=`
+    <tr style="background:var(--teal-pale);font-weight:600">
+      <td colspan="3" style="padding:9px;font-size:12px;color:var(--teal-dark)">TOTALS (${arr.length} invoices${yearFilter?' — '+yearFilter:''})</td>
+      <td style="padding:9px;font-family:'DM Mono',monospace;font-size:13px;color:var(--teal-dark)">$${totalAll.toFixed(2)}</td>
+      <td colspan="2" style="padding:9px;font-size:11px;color:var(--text2)">
+        <span style="color:var(--green);margin-right:10px">✅ Paid: $${totalPaid.toFixed(2)}</span>
+        <span style="color:var(--red)">⏳ Unpaid: $${totalUnpaid.toFixed(2)}</span>
+      </td>
+    </tr>`;
+
+  // Tax summary panel
+  const taxSummary=document.getElementById('billing-tax-summary');
+  const taxGrid=document.getElementById('billing-tax-grid');
+  if(taxSummary&&taxGrid){
+    taxSummary.style.display='block';
+    const label=yearFilter?yearFilter:'All Time';
+    taxGrid.innerHTML=`
+      <div style="background:#fff;border-radius:8px;padding:12px;border:1px solid var(--border);text-align:center">
+        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Total Revenue (${label})</div>
+        <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--teal-dark)">$${totalAll.toFixed(2)}</div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:12px;border:1px solid var(--border);text-align:center">
+        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Collected (${label})</div>
+        <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--green)">$${totalPaid.toFixed(2)}</div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:12px;border:1px solid var(--border);text-align:center">
+        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Outstanding (${label})</div>
+        <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--red)">$${totalUnpaid.toFixed(2)}</div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:12px;border:1px solid var(--border);text-align:center">
+        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Invoice Count</div>
+        <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--teal-dark)">${arr.length}</div>
+      </div>`;
+  }
 }
 
 function markInvPaid(key){db.ref('invoices/'+key).update({status:'paid'});showToast('✅ Invoice marked as paid.');}
@@ -1216,6 +1341,38 @@ function reOpenInvoice(key){
   billTargetKey=inv.clientKey;
   billLines=(inv.lines||[]).map(l=>({desc:l.desc,amt:parseFloat(l.amt)||0}));
   openInvoicePage(inv.clientKey,inv.invNum);
+}
+
+function exportBillingCSV(){
+  const clientFilter=document.getElementById('billing-client-filter')?.value||'';
+  const statusFilter=document.getElementById('billing-status-filter')?.value||'';
+  const yearFilter=document.getElementById('billing-year-filter')?.value||'';
+  let arr=Object.entries(invoices).map(([k,v])=>({key:k,...v}))
+    .filter(i=>!clientFilter||i.clientName===clientFilter)
+    .filter(i=>!statusFilter||i.status===statusFilter)
+    .filter(i=>{if(!yearFilter)return true;const d=i.date||'';return d.includes(yearFilter);})
+    .sort((a,b)=>b.ts-a.ts);
+  if(!arr.length){showToast('No invoices to export.');return;}
+  const totalPaid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+parseFloat(i.total||0),0);
+  const totalAll=arr.reduce((s,i)=>s+parseFloat(i.total||0),0);
+  let csv='Invoice #,Client,Date,Amount,Status
+';
+  arr.forEach(i=>{csv+=`${i.invNum||''},"${(i.clientName||'').replace(/"/g,"'")}",${i.date||''},${parseFloat(i.total||0).toFixed(2)},${i.status||''}
+`;});
+  csv+='
+,,,Total Revenue:,$'+totalAll.toFixed(2)+'
+';
+  csv+=',,, Total Paid:,$'+totalPaid.toFixed(2)+'
+';
+  csv+=',,,Total Unpaid:,$'+(totalAll-totalPaid).toFixed(2)+'
+';
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='JanetesCleaners_Invoices'+(yearFilter?'_'+yearFilter:'')+'.csv';
+  a.click();URL.revokeObjectURL(url);
+  showToast('📥 CSV exported!');
 }
 
 // ══ SKIP TRACKER ══
