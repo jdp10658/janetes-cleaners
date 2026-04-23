@@ -735,8 +735,8 @@ function renderDashboard(){
   const bArr=Object.values(bookings);
   const todayBks=bArr.filter(b=>b.date===t);
   const iArr=Object.values(invoices);
-  const unpaid=iArr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
-  const collected=iArr.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
+  const unpaid=iArr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+  const collected=iArr.filter(i=>i.status==='paid').reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
   const unread=totalUnread();
   document.getElementById('dashStats').innerHTML=`
     <div class="stat-card"><div class="stat-num">${Object.keys(clients).length}</div><div class="stat-label">Total Clients</div></div>
@@ -746,6 +746,21 @@ function renderDashboard(){
   const todayEl=document.getElementById('todayJobs');
   if(!todayBks.length){todayEl.innerHTML='<div class="empty"><div class="empty-icon">☀️</div>No jobs today.</div>';}
   else{todayEl.innerHTML=todayBks.map(b=>`<div style="padding:10px;border-bottom:1px solid #eef4f4;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">${b.clientName||''}</div><div style="color:var(--text3);font-size:12px">${b.time} — ${b.service}</div></div><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':'gold'}">${b.status}</span></div>`).join('');}
+  // Recent messages — use client name from message.from if client not found
+  const recentEl=document.getElementById('recentMsgs');
+  const allMsgs=[];
+  Object.entries(messages).forEach(([cKey,thread])=>{
+    const c=clients[cKey];
+    const fallbackName=c?(c.first+' '+c.last):null;
+    Object.values(thread||{}).filter(m=>m.dir==='in').forEach(m=>{
+      const name=fallbackName||(m.from&&m.from!=='undefined undefined'?m.from:null)||'Client';
+      allMsgs.push({...m,clientName:name,cKey});
+    });
+  });
+  allMsgs.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const recent=allMsgs.slice(0,4);
+  recentEl.innerHTML=recent.length?recent.map(m=>`<div style="padding:8px 0;border-bottom:1px solid #eef4f4;font-size:13px;cursor:pointer" onclick="openChatForClient('${m.cKey}')"><div style="display:flex;justify-content:space-between"><b style="color:var(--teal)">${esc(m.clientName)}</b><span style="font-size:11px;color:var(--text3)">${m.time||''}</span></div><div style="color:var(--text2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.text||'')}</div></div>`).join(''):'<div class="empty" style="padding:16px">No messages yet.</div>';
+}
   // Recent messages
   const recentEl=document.getElementById('recentMsgs');
   const allMsgs=[];
@@ -876,9 +891,9 @@ function renderBilling(){
   populateSelect('invClient',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
   const stFilter=document.getElementById('billStatusFilter').value;
   const arr=Object.entries(invoices).map(([k,v])=>({key:k,...v})).filter(i=>!stFilter||i.status===stFilter).sort((a,b)=>b.invNum-a.invNum);
-  const total=arr.reduce((s,i)=>s+Number(i.amount||0),0);
-  const paid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount||0),0);
-  const unpaid=arr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount||0),0);
+  const total=arr.reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+  const paid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+  const unpaid=arr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
   document.getElementById('billingStats').innerHTML=`
     <div class="stat-card"><div class="stat-num">$${total.toFixed(0)}</div><div class="stat-label">Total Invoiced</div></div>
     <div class="stat-card green"><div class="stat-num">$${paid.toFixed(0)}</div><div class="stat-label">Collected</div></div>
