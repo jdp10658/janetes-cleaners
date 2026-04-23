@@ -620,9 +620,16 @@ function doLogin(){
   const e=document.getElementById('loginEmail').value.trim();
   const p=document.getElementById('loginPass').value;
   const err=document.getElementById('loginErr');
-  err.textContent='';
+  const btn=document.querySelector('.btn-login');
+  if(!e||!p){err.textContent='Please enter email and password.';return;}
+  err.textContent='Signing in...';
+  if(btn)btn.disabled=true;
   auth.signInWithEmailAndPassword(e,p)
-    .catch(er=>err.textContent='Incorrect email or password.');
+    .then(()=>{err.textContent='';})
+    .catch(er=>{
+      err.textContent=er.code==='auth/wrong-password'||er.code==='auth/user-not-found'?'Incorrect email or password.':'Error: '+er.message;
+      if(btn)btn.disabled=false;
+    });
 }
 function doLogout(){auth.signOut();}
 auth.onAuthStateChanged(user=>{
