@@ -435,6 +435,26 @@ firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth();
 const db=firebase.database();
 
+// Define doLogin immediately so button always works
+function doLogin(){
+  const e=document.getElementById('loginEmail').value.trim();
+  const p=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginErr');
+  const btn=document.querySelector('.btn-login');
+  if(!e||!p){err.textContent='Please enter email and password.';return;}
+  err.textContent='Signing in...';
+  if(btn)btn.disabled=true;
+  auth.signInWithEmailAndPassword(e,p)
+    .then(()=>{err.textContent='';})
+    .catch(er=>{
+      err.textContent='Error: '+er.message;
+      if(btn)btn.disabled=false;
+    });
+}
+function doLogout(){auth.signOut();}
+
+// ══ REST OF APP ══
+
 // ══ CLIENT PAGE DETECTION (runs before auth) ══
 (function(){
   const hash=window.location.hash;
@@ -616,22 +636,6 @@ function sendClientReply(clientKey){
 }
 
 // ══ AUTH ══
-function doLogin(){
-  const e=document.getElementById('loginEmail').value.trim();
-  const p=document.getElementById('loginPass').value;
-  const err=document.getElementById('loginErr');
-  const btn=document.querySelector('.btn-login');
-  if(!e||!p){err.textContent='Please enter email and password.';return;}
-  err.textContent='Signing in...';
-  if(btn)btn.disabled=true;
-  auth.signInWithEmailAndPassword(e,p)
-    .then(()=>{err.textContent='';})
-    .catch(er=>{
-      err.textContent=er.code==='auth/wrong-password'||er.code==='auth/user-not-found'?'Incorrect email or password.':'Error: '+er.message;
-      if(btn)btn.disabled=false;
-    });
-}
-function doLogout(){auth.signOut();}
 auth.onAuthStateChanged(user=>{
   const h=window.location.hash;
   if(h.startsWith('#schedule=')||h.startsWith('#venmo=')||h.startsWith('#inv='))return;
