@@ -930,10 +930,22 @@ function openInvoicePage(invKey){
   w.document.write('<a class="abtn" style="background:#008CFF;color:#fff" href="'+venmoURL+'" target="_blank">Pay with Venmo<\/a>');
   if(phone)w.document.write('<a class="abtn" style="background:#e8f5e9;color:#1a7a5a;border:1px solid #a3d5bb" href="https://wa.me/1'+phone+'?text='+encodeURIComponent('Hi '+c.first+', your invoice #'+inv.invNum+' is $'+inv.amount+'. Pay via Venmo @'+VENMO+'. Thank you!')+'" target="_blank">WhatsApp<\/a>');
   if(c.email)w.document.write('<a class="abtn" style="background:#eaf5f0;color:#1a7a5a;border:1px solid #a3d5bb" href="mailto:'+c.email+'?subject='+encodeURIComponent('Invoice #'+inv.invNum+' - Janetes Cleaners')+'&body='+encodeURIComponent('Hi '+c.first+',\n\nYour invoice #'+inv.invNum+' is $'+inv.amount+'.\n\nPay via Venmo @'+VENMO+'\n\nThank you!\nJanetes Cleaners (781) 964-5682')+'" target="_blank">Email<\/a>');
-  w.document.write('<button class="abtn" style="background:#5a2d82;color:#fff" onclick="navigator.clipboard.writeText(\''+shareURL.replace(/'/g,"\\'")+'\'||\'').then(()=>alert(\'Link copied!\'))">Share Link<\/button>');
+  const safeURL=shareURL.replace(/'/g,'&#39;');
+  w.document.write('<button class="abtn" style="background:#5a2d82;color:#fff" id="shareInvBtn">Share Link<\/button>');
   w.document.write('<button class="abtn" style="background:#1a2e2e;color:#fff" onclick="window.print()">Print\/PDF<\/button>');
   w.document.write('<\/div><\/div><\/body><\/html>');
   w.document.close();
+  // Set up share link button after page loads
+  w.addEventListener('load',function(){
+    const shareBtn=w.document.getElementById('shareInvBtn');
+    if(shareBtn){
+      shareBtn.onclick=function(){
+        w.navigator.clipboard.writeText(shareURL)
+          .then(()=>w.alert('Invoice link copied! Send it to your client.'))
+          .catch(()=>w.prompt('Copy this link:',shareURL));
+      };
+    }
+  });
 }
 function exportCSV(){
   const arr=Object.values(invoices).sort((a,b)=>b.invNum-a.invNum);
