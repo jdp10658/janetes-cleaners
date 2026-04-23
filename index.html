@@ -4,115 +4,108 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Janete's Cleaners — Management Suite</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --teal: #0d7377;
-  --teal-light: #14a085;
-  --teal-dark: #095c60;
-  --teal-pale: #e6f4f4;
-  --gold: #c9a84c;
-  --bg: #f0f6f6;
-  --surface: #ffffff;
-  --border: #cce0e0;
-  --text: #1a2e2e;
-  --text2: #4a6a6a;
-  --text3: #7a9a9a;
-  --red: #c0392b;
-  --red-pale: #fdf0ee;
-  --green: #1a7a5a;
-  --green-pale: #eaf5f0;
-  --yellow-pale: #fefce8;
-  --shadow: 0 2px 12px rgba(13,115,119,0.10);
-  --radius: 12px;
+:root{
+  --teal:#0d7377;--teal-light:#14a085;--teal-dark:#095c60;--teal-pale:#e6f4f4;
+  --gold:#c9a84c;--bg:#f0f6f6;--border:#cce0e0;--text:#1a2e2e;--text2:#4a6a6a;--text3:#7a9a9a;
+  --red:#c0392b;--red-pale:#fdf0ee;--green:#1a7a5a;--green-pale:#eaf5f0;
+  --yellow-pale:#fefce8;--shadow:0 2px 12px rgba(13,115,119,0.10);--radius:12px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
 .hidden{display:none!important}
-#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 60%,var(--teal-light) 100%);padding:20px;}
-.login-card{background:#fff;border-radius:20px;padding:44px 36px;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(0,0,0,0.22);text-align:center;}
-.login-logo{width:68px;height:68px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border-radius:18px;display:inline-flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:18px;box-shadow:0 4px 16px rgba(13,115,119,0.35);}
+
+/* LOGIN */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 60%,var(--teal-light) 100%);padding:20px}
+.login-card{background:#fff;border-radius:20px;padding:44px 36px;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(0,0,0,0.22);text-align:center}
+.login-logo{width:68px;height:68px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border-radius:18px;display:inline-flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:18px}
 .login-title{font-size:26px;font-weight:700;color:var(--teal-dark);margin-bottom:4px}
-.login-sub{color:var(--text3);font-size:13px;margin-bottom:28px;letter-spacing:0.5px}
-.login-card input{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s;color:var(--text);background:#f7fbfb;}
+.login-sub{color:var(--text3);font-size:13px;margin-bottom:28px}
+.login-card input{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s;color:var(--text);background:#f7fbfb;font-family:'Inter',sans-serif}
 .login-card input:focus{border-color:var(--teal)}
-.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;transition:opacity .2s;letter-spacing:0.3px;}
+.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s;font-family:'Inter',sans-serif}
 .btn-login:hover{opacity:0.9}
-#loginErr{color:var(--red);font-size:13px;margin-top:10px;min-height:18px}
-.skip-note{margin-top:20px;padding:10px 14px;background:var(--yellow-pale);border:1px solid #f0d060;border-radius:8px;font-size:12px;color:#7a6010;line-height:1.4;}
+#loginErr{color:var(--red);font-size:12px;margin-top:10px;min-height:18px}
+
+/* APP */
 #app{display:flex;flex-direction:column;min-height:100vh}
-.header{background:linear-gradient(135deg,var(--teal-dark),var(--teal));padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.15);flex-shrink:0;}
+.header{background:linear-gradient(135deg,var(--teal-dark),var(--teal));padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.15);flex-shrink:0}
 .header-brand{display:flex;align-items:center;gap:10px}
-.header-icon{font-size:22px}
-.header-name{color:#fff;font-size:16px;font-weight:700;letter-spacing:0.3px}
+.header-name{color:#fff;font-size:16px;font-weight:700}
 .header-right{display:flex;align-items:center;gap:8px}
-.wa-btn{background:#25d366;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px;}
-.signout-btn{background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
-.skip-banner{background:#fef3cd;border-bottom:1px solid #f0d060;padding:8px 20px;font-size:12px;color:#7a5c00;text-align:center;}
-.nav{background:#fff;border-bottom:1.5px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.wa-btn{background:#25d366;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px}
+.signout-btn{background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif}
+.skip-banner{background:#fef3cd;border-bottom:1px solid #f0d060;padding:8px 20px;font-size:12px;color:#7a5c00;text-align:center}
+.nav{background:#fff;border-bottom:1.5px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 .nav::-webkit-scrollbar{display:none}
-.nav-btn{padding:12px 16px;border:none;background:none;color:var(--text2);font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;border-bottom:2.5px solid transparent;transition:all .2s;}
+.nav-btn{padding:12px 16px;border:none;background:none;color:var(--text2);font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;border-bottom:2.5px solid transparent;transition:all .2s;font-family:'Inter',sans-serif}
 .nav-btn.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
 .nav-btn:hover:not(.active){background:var(--teal-pale);color:var(--teal)}
 .main{flex:1;padding:20px;overflow-y:auto}
 .panel{display:none}.panel.active{display:block}
 .page-title{font-size:20px;font-weight:700;color:var(--teal-dark);margin-bottom:20px}
 .card{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
-.card-title{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px}
+.card-title{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.stat-card{background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid var(--teal);}
+.stat-card{background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid var(--teal)}
 .stat-card.red{border-left-color:var(--red)}.stat-card.gold{border-left-color:var(--gold)}.stat-card.green{border-left-color:var(--green)}
 .stat-num{font-size:28px;font-weight:700;color:var(--teal-dark)}
 .stat-card.red .stat-num{color:var(--red)}.stat-card.gold .stat-num{color:var(--gold)}.stat-card.green .stat-num{color:var(--green)}
 .stat-label{font-size:12px;color:var(--text3);margin-top:2px;font-weight:500}
-.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:opacity .2s;}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:opacity .2s;font-family:'Inter',sans-serif}
 .btn:hover{opacity:0.85}
-.btn-primary{background:var(--teal);color:#fff}.btn-danger{background:var(--red);color:#fff}.btn-outline{background:transparent;border:1.5px solid var(--teal);color:var(--teal)}
+.btn-primary{background:var(--teal);color:#fff}.btn-danger{background:var(--red);color:#fff}
+.btn-outline{background:transparent;border:1.5px solid var(--teal);color:var(--teal)}
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .form-group{margin-bottom:14px}
 .form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;transition:border .2s;background:#fafcfc;color:var(--text);}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;transition:border .2s;background:#fafcfc;color:var(--text);font-family:'Inter',sans-serif}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
 .form-group textarea{resize:vertical;min-height:80px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-thead th{background:var(--teal-pale);color:var(--teal-dark);font-size:11px;font-weight:700;padding:10px 12px;text-align:left;text-transform:uppercase;letter-spacing:0.5px;}
+thead th{background:var(--teal-pale);color:var(--teal-dark);font-size:11px;font-weight:700;padding:10px 12px;text-align:left;text-transform:uppercase;letter-spacing:0.5px}
 tbody tr{border-bottom:1px solid #eef4f4}
 tbody tr:hover{background:#f7fbfb}
 tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
 .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
 .badge-green{background:var(--green-pale);color:var(--green)}.badge-red{background:var(--red-pale);color:var(--red)}
 .badge-gold{background:#fef3cd;color:#8a6010}.badge-blue{background:#e8f0fe;color:#1a56aa}.badge-gray{background:#f0f0f0;color:#555}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;}
-.modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.unread-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-left:5px;vertical-align:middle;cursor:pointer}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
 .modal-title{font-size:18px;font-weight:700;color:var(--teal-dark);margin-bottom:20px}
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
 .empty{text-align:center;padding:32px;color:var(--text3);font-size:13px}
 .empty-icon{font-size:36px;margin-bottom:8px}
-#toast{position:fixed;bottom:20px;right:20px;background:var(--teal-dark);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999;max-width:300px;box-shadow:var(--shadow);}
-#toast.show{opacity:1;transform:translateY(0)}
-/* ── CHAT (Messages panel) ── */
+/* CHAT */
 .chat-box{border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
-.chat-messages{height:260px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#fafcfc;}
+.chat-messages{height:260px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#fafcfc}
 .chat-msg{max-width:80%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.4}
 .chat-msg.out{background:var(--teal);color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
 .chat-msg.in{background:#e6f4f4;color:var(--text);align-self:flex-start;border-bottom-left-radius:3px}
 .chat-msg.in.unread{background:#d0ede0;border-left:3px solid var(--green)}
 .chat-meta{font-size:9px;opacity:0.65;margin-top:3px}
 .chat-input-row{display:flex;gap:8px;padding:10px;border-top:1px solid var(--border);background:#fff}
-.chat-input-row input{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;outline:none}
+.chat-input-row input{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;outline:none;font-family:'Inter',sans-serif}
 .chat-input-row input:focus{border-color:var(--teal)}
-/* ── UNREAD DOT ── */
-.unread-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-left:5px;vertical-align:middle;cursor:pointer}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--teal-dark);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999;max-width:300px;box-shadow:var(--shadow)}
+#toast.show{opacity:1;transform:translateY(0)}
 @media(max-width:768px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}.form-row{grid-template-columns:1fr}.main{padding:12px}}
 @media(max-width:480px){.grid4{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-card">
     <div class="login-logo">🧺</div>
@@ -122,13 +115,13 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
     <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="btn-login" onclick="doLogin()">Sign In</button>
     <div id="loginErr"></div>
-    <div class="skip-note">⚠️ Skip Policy: $50 fee for cancellations under 24 hours notice.</div>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app" class="hidden">
   <div class="header">
-    <div class="header-brand"><span class="header-icon">🧺</span><span class="header-name">Janete's Cleaners</span></div>
+    <div class="header-brand"><span style="font-size:22px">🧺</span><span class="header-name">Janete's Cleaners</span></div>
     <div class="header-right">
       <a href="https://wa.me/17819645682" target="_blank" class="wa-btn">🟢 WhatsApp</a>
       <button class="signout-btn" onclick="doLogout()">Sign Out</button>
@@ -139,7 +132,7 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
     <button class="nav-btn active" onclick="showPanel('dashboard',this)">📊 Dashboard</button>
     <button class="nav-btn" onclick="showPanel('schedule',this)">📅 Schedule</button>
     <button class="nav-btn" onclick="showPanel('clients',this)">👥 Clients</button>
-    <button class="nav-btn" onclick="showPanel('skips',this)">⚠️ Skip Tracker</button>
+    <button class="nav-btn" onclick="showPanel('skips',this)">⚠️ Skips</button>
     <button class="nav-btn" onclick="showPanel('services',this)">✂️ Services</button>
     <button class="nav-btn" onclick="showPanel('billing',this)">🧾 Billing</button>
     <button class="nav-btn" id="msgNavBtn" onclick="showPanel('messages',this)">💬 Messages</button>
@@ -153,14 +146,7 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
       <div class="grid4" id="dashStats"></div>
       <div class="grid2">
         <div class="card"><div class="card-title">Today's Jobs</div><div id="todayJobs"></div></div>
-        <div class="card"><div class="card-title">Recent Activity</div><div id="recentActivity"></div></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Upcoming This Week</div>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Date</th><th>Client</th><th>Service</th><th>Amount</th><th>Status</th></tr></thead>
-          <tbody id="upcomingTbl"></tbody>
-        </table></div>
+        <div class="card"><div class="card-title">Recent Messages</div><div id="recentMsgs"></div></div>
       </div>
     </div>
 
@@ -191,15 +177,14 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
       </div>
     </div>
 
-    <!-- SKIP TRACKER -->
+    <!-- SKIPS -->
     <div class="panel" id="panel-skips">
       <div class="page-title">Skip Tracker</div>
       <div class="grid3" id="skipStats"></div>
       <div class="card">
-        <div class="card-title">Skip Policy — $50 Fee for cancellations under 24 hours</div>
-        <div class="btn-row" style="margin-top:8px"><button class="btn btn-danger" onclick="openModal('skipModal')">+ Record Skip</button></div>
+        <div class="btn-row"><button class="btn btn-danger" onclick="openModal('skipModal')">+ Record Skip</button></div>
         <div class="table-wrap"><table>
-          <thead><tr><th>Date</th><th>Client</th><th>Reason</th><th>Fee</th><th>Paid</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Date</th><th>Client</th><th>Reason</th><th>Fee</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="skipsTbl"></tbody>
         </table></div>
       </div>
@@ -219,31 +204,21 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
       <div class="card">
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
           <button class="btn btn-primary" onclick="openModal('invoiceModal')">+ Create Invoice</button>
-          <select id="billYearFilter" onchange="renderBilling()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fafcfc;color:var(--text);outline:none">
-            <option value="">All Years</option>
-          </select>
-          <select id="billStatusFilter" onchange="renderBilling()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fafcfc;color:var(--text);outline:none">
-            <option value="">All Statuses</option>
-            <option value="unpaid">Unpaid</option>
-            <option value="paid">Paid</option>
+          <select id="billStatusFilter" onchange="renderBilling()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fafcfc;outline:none;font-family:'Inter',sans-serif">
+            <option value="">All Statuses</option><option value="unpaid">Unpaid</option><option value="paid">Paid</option>
           </select>
           <button onclick="exportCSV()" style="padding:7px 14px;background:var(--green-pale);color:var(--green);border:1px solid #a3d5bb;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">📥 Export CSV</button>
         </div>
         <div class="table-wrap"><table>
           <thead><tr><th>Invoice #</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="invoicesTbl"></tbody>
-          <tfoot id="invoicesFoot"></tfoot>
         </table></div>
-        <div id="taxSummary" style="display:none;padding:16px;border-top:2px solid var(--border);background:var(--teal-pale);border-radius:0 0 var(--radius) var(--radius)">
-          <div style="font-size:13px;font-weight:700;color:var(--teal-dark);margin-bottom:10px">📊 Tax Summary</div>
-          <div class="grid4" id="taxGrid"></div>
-        </div>
       </div>
     </div>
 
-    <!-- MESSAGES (with 2-way chat) -->
+    <!-- MESSAGES -->
     <div class="panel" id="panel-messages">
-      <div class="page-title">Messages &amp; Reminders</div>
+      <div class="page-title">Messages</div>
       <div class="grid2">
         <div class="card">
           <div class="card-title">Conversation</div>
@@ -253,7 +228,7 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
           </div>
           <div class="chat-box">
             <div class="chat-messages" id="chatMessages">
-              <div class="empty"><div class="empty-icon">💬</div>Select a client to view messages.</div>
+              <div class="empty"><div class="empty-icon">💬</div>Select a client above.</div>
             </div>
             <div class="chat-input-row">
               <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()" disabled>
@@ -261,29 +236,23 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
             </div>
           </div>
           <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-outline btn-sm" onclick="shareScheduleLink()" id="shareLinkBtn" style="display:none">🔗 Share Schedule Link</button>
-            <button class="btn btn-sm" style="background:#25d366;color:#fff" onclick="openWAChat()" id="waChatBtn" style="display:none">🟢 WhatsApp</button>
+            <button class="btn btn-outline btn-sm" id="shareLinkBtn" onclick="shareScheduleLink()" style="display:none">🔗 Share Schedule</button>
+            <button class="btn btn-sm" style="background:#25d366;color:#fff;display:none" id="waChatBtn" onclick="openWAChat()">🟢 WhatsApp</button>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Send Reminder</div>
-          <div class="form-group"><label>Client</label><select id="msgClient"></select></div>
-          <div class="form-group"><label>Message Type</label>
-            <select id="msgType">
-              <option value="appointment">Appointment Reminder</option>
-              <option value="payment">Payment Due</option>
-              <option value="skip">Skip Policy Notice</option>
-              <option value="custom">Custom Message</option>
-            </select>
-          </div>
-          <div class="form-group"><label>Message</label><textarea id="msgText" rows="4" placeholder="Type your message..."></textarea></div>
-          <div class="btn-row">
-            <button class="btn btn-primary" onclick="generateMsg()">Generate Message</button>
-            <button class="btn btn-outline" onclick="copyMsg()">Copy Text</button>
+          <div class="card-title">Quick Templates</div>
+          <div id="templatesBox"></div>
+          <div style="margin-top:14px">
+            <div class="form-group"><label>Send To</label><select id="msgClient"></select></div>
+            <div class="form-group"><label>Message</label><textarea id="msgText" rows="3" placeholder="Message..."></textarea></div>
+            <div class="btn-row">
+              <button class="btn btn-primary btn-sm" onclick="generateMsg()">Generate</button>
+              <button class="btn btn-outline btn-sm" onclick="copyMsg()">Copy</button>
+            </div>
           </div>
         </div>
       </div>
-      <div class="card"><div class="card-title">Quick Templates</div><div id="templatesBox"></div></div>
     </div>
 
     <!-- VENMO -->
@@ -298,16 +267,16 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
             <div style="font-size:12px;color:var(--text3);margin-top:4px">Venmo handle</div>
           </div>
           <div style="background:var(--teal-pale);border-radius:8px;padding:12px;margin-bottom:14px">
-            <div style="font-size:11px;font-weight:600;color:var(--teal-dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Share this link with any client</div>
+            <div style="font-size:11px;font-weight:600;color:var(--teal-dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Shareable Link</div>
             <div id="venmoPageURL" style="font-size:11px;color:var(--teal);word-break:break-all;cursor:pointer" onclick="copyVenmoLink()"></div>
           </div>
           <div class="btn-row">
             <button class="btn btn-primary" onclick="copyVenmoLink()">📋 Copy Link</button>
-            <button class="btn btn-outline" onclick="previewVenmoPage()">Preview Page</button>
+            <button class="btn btn-outline" onclick="openVenmoPage()">Preview</button>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Send to Specific Client</div>
+          <div class="card-title">Send to Client</div>
           <div class="form-group"><label>Client</label><select id="venmoClientSel" onchange="updateVenmoClientLinks()"></select></div>
           <div class="form-group"><label>Amount ($)</label><input type="number" id="venmoAmt" placeholder="0.00" min="0" step="0.01" oninput="updateVenmoClientLinks()"></div>
           <div class="form-group"><label>Note</label><input type="text" id="venmoNote" placeholder="e.g. March cleaning" oninput="updateVenmoClientLinks()"></div>
@@ -335,13 +304,10 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
     <div class="form-row">
       <div class="form-group"><label>Amount ($)</label><input type="number" id="bkAmount" placeholder="0.00"></div>
       <div class="form-group"><label>Status</label>
-        <select id="bkStatus">
-          <option value="scheduled">Scheduled</option><option value="confirmed">Confirmed</option>
-          <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
-        </select>
+        <select id="bkStatus"><option value="scheduled">Scheduled</option><option value="confirmed">Confirmed</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select>
       </div>
     </div>
-    <div class="form-group"><label>Notes</label><textarea id="bkNotes" placeholder="Any special instructions..."></textarea></div>
+    <div class="form-group"><label>Notes</label><textarea id="bkNotes" placeholder="Special instructions..."></textarea></div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('bookingModal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveBooking()">Save Booking</button>
@@ -352,7 +318,7 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
 <div class="modal-overlay hidden" id="clientModal">
   <div class="modal">
     <div class="modal-title">👥 Add / Edit Client</div>
-    <input type="hidden" id="clientId">
+    <input type="hidden" id="clientKey">
     <div class="form-row">
       <div class="form-group"><label>First Name</label><input type="text" id="cFirst" placeholder="First name"></div>
       <div class="form-group"><label>Last Name</label><input type="text" id="cLast" placeholder="Last name"></div>
@@ -372,7 +338,7 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
 
 <div class="modal-overlay hidden" id="skipModal">
   <div class="modal">
-    <div class="modal-title">⚠️ Record Skip / Cancellation</div>
+    <div class="modal-title">⚠️ Record Skip</div>
     <div class="form-group"><label>Client</label><select id="skipClient"></select></div>
     <div class="form-row">
       <div class="form-group"><label>Date</label><input type="date" id="skipDate"></div>
@@ -386,10 +352,8 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
         <option value="Other">Other</option>
       </select>
     </div>
-    <div class="form-group"><label>Fee Paid?</label>
-      <select id="skipPaid">
-        <option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="waived">Waived</option>
-      </select>
+    <div class="form-group"><label>Status</label>
+      <select id="skipPaid"><option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="waived">Waived</option></select>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('skipModal')">Cancel</button>
@@ -401,7 +365,7 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
 <div class="modal-overlay hidden" id="serviceModal">
   <div class="modal">
     <div class="modal-title">✂️ Add / Edit Service</div>
-    <input type="hidden" id="serviceId">
+    <input type="hidden" id="serviceKey">
     <div class="form-group"><label>Service Name</label><input type="text" id="svcName" placeholder="e.g. Deep Cleaning"></div>
     <div class="form-row">
       <div class="form-group"><label>Price ($)</label><input type="number" id="svcPrice" placeholder="0.00"></div>
@@ -425,9 +389,7 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
     </div>
     <div class="form-group"><label>Description</label><textarea id="invDesc" placeholder="Services provided..."></textarea></div>
     <div class="form-group"><label>Status</label>
-      <select id="invStatus">
-        <option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="partial">Partial</option>
-      </select>
+      <select id="invStatus"><option value="unpaid">Unpaid</option><option value="paid">Paid</option></select>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('invoiceModal')">Cancel</button>
@@ -436,24 +398,24 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
   </div>
 </div>
 
-<!-- SHARE SCHEDULE MODAL -->
+<!-- SHARE MODAL -->
 <div class="modal-overlay hidden" id="shareModal">
   <div class="modal" style="max-width:420px">
     <div class="modal-title">🔗 Client Schedule Link</div>
     <div style="font-size:13px;color:var(--text2);margin-bottom:12px" id="shareModalSub"></div>
     <div style="background:var(--teal-pale);border-radius:8px;padding:12px;margin-bottom:12px">
       <div style="font-size:11px;font-weight:600;color:var(--teal-dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Shareable Link</div>
-      <div id="shareURL" style="font-size:11px;color:var(--teal);word-break:break-all;cursor:pointer;margin-bottom:8px" onclick="copyShareURL()"></div>
-      <div style="font-size:11px;color:var(--text3);line-height:1.5">Client opens this link → sees their appointments → can <strong>reply directly</strong> — no WhatsApp needed.</div>
+      <div id="shareURLDisplay" style="font-size:11px;color:var(--teal);word-break:break-all;cursor:pointer;margin-bottom:8px" onclick="copyScheduleURL()"></div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.5">Client opens this → sees appointments → can <strong>reply directly</strong> — no app needed.</div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-      <button class="btn btn-primary btn-sm" onclick="copyShareURL()">📋 Copy Link</button>
-      <button class="btn btn-outline btn-sm" onclick="openSharePreview()">Preview</button>
+      <button class="btn btn-primary btn-sm" onclick="copyScheduleURL()">📋 Copy Link</button>
+      <button class="btn btn-outline btn-sm" onclick="openSchedulePreview()">Preview</button>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-sm" style="background:#25d366;color:#fff" id="shareWABtn" onclick="sendShareWA()">🟢 WhatsApp</button>
-      <button class="btn btn-sm" style="background:var(--green-pale);color:var(--green);border:1px solid #a3d5bb" id="shareEmailBtn" onclick="sendShareEmail()">✉ Email</button>
-      <button class="btn btn-sm" style="background:#e8f0fe;color:#1a56aa;border:1px solid #b3c6f5" id="shareSMSBtn" onclick="sendShareSMS()">💬 SMS</button>
+      <button class="btn btn-sm" style="background:#25d366;color:#fff" id="shareWABtn" onclick="sendScheduleWA()">🟢 WhatsApp</button>
+      <button class="btn btn-sm" style="background:var(--green-pale);color:var(--green);border:1px solid #a3d5bb" id="shareEmailBtn" onclick="sendScheduleEmail()">✉ Email</button>
+      <button class="btn btn-sm" style="background:#e8f0fe;color:#1a56aa;border:1px solid #b3c6f5" id="shareSMSBtn" onclick="sendScheduleSMS()">💬 SMS</button>
     </div>
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('shareModal')">Close</button></div>
   </div>
@@ -462,852 +424,731 @@ tbody td{padding:11px 12px;font-size:13px;color:var(--text)}
 <div id="toast"></div>
 
 <script>
-// ══════════════════════════════════════
-//  AUTH
-// ══════════════════════════════════════
-const USERS = [
-  { email: 'janete@janetecleaners.com', password: 'Yeshua33' },
-  { email: 'jdp10658@gmail.com',        password: 'Yeshua33' },
-  { email: 'jdpl0658@gmail.com',        password: 'Yeshua33' },
-];
-function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  const pass  = document.getElementById('loginPass').value;
-  const err   = document.getElementById('loginErr');
-  const valid = USERS.find(u => u.email.toLowerCase() === email && u.password === pass);
-  if (valid) {
-    sessionStorage.setItem('jc_auth', '1');
+// ══ FIREBASE ══
+const firebaseConfig={
+  apiKey:"AIzaSyBFBm8_E8BW2yPOLSmTCuD93Yiy3I5_XcY",
+  authDomain:"janete-s-cleaners.firebaseapp.com",
+  databaseURL:"https://janete-s-cleaners-default-rtdb.firebaseio.com",
+  projectId:"janete-s-cleaners"
+};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.database();
+
+// ══ CLIENT PAGE DETECTION (runs before auth) ══
+(function(){
+  const hash=window.location.hash;
+  if(!hash)return;
+
+  function hideAll(){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.add('hidden');
+    document.body.style.background='#f0f6f6';
+  }
+
+  // ── SCHEDULE PAGE ──
+  if(hash.startsWith('#schedule=')){
+    const clientKey=decodeURIComponent(hash.slice(10));
+    hideAll();
+    const wrap=document.createElement('div');
+    document.body.appendChild(wrap);
+    wrap.innerHTML='<div style="text-align:center;padding:60px;font-family:Inter,sans-serif;color:#7a9a9a">Loading your schedule...</div>';
+
+    // Load client + bookings from Firebase
+    Promise.all([
+      db.ref('clients/'+clientKey).once('value'),
+      db.ref('bookings').once('value')
+    ]).then(([cSnap,bSnap])=>{
+      const c=cSnap.val();
+      if(!c){wrap.innerHTML='<div style="text-align:center;padding:60px;font-family:Inter,sans-serif;color:#7a9a9a">Schedule not found. Contact us at (781) 964-5682.</div>';return;}
+      const allBooks=bSnap.val()||{};
+      const myBooks=Object.values(allBooks).filter(b=>b.clientKey===clientKey||b.clientName===(c.first+' '+c.last)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+      const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const apptRows=myBooks.length?myBooks.map(b=>{
+        const dt=new Date((b.date||'')+'T12:00:00');
+        return `<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #eef4f4">
+          <div style="text-align:center;min-width:48px;background:#e6f4f4;border-radius:8px;padding:7px 4px">
+            <div style="font-size:22px;font-weight:700;color:#095c60;line-height:1">${dt.getDate()}</div>
+            <div style="font-size:10px;text-transform:uppercase;color:#0d7377">${MONTHS[dt.getMonth()]}</div>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:14px;color:#1a2e2e">${b.time||''} — ${b.service||''}</div>
+            <div style="font-size:12px;color:#7a9a9a;margin-top:2px">${b.address||c.address||''}</div>
+          </div>
+        </div>`;
+      }).join(''):'<div style="text-align:center;padding:24px;color:#7a9a9a;font-size:13px">No upcoming appointments scheduled.</div>';
+
+      // Load existing messages for this client
+      db.ref('messages/'+clientKey).once('value').then(mSnap=>{
+        const msgs=mSnap.val()?Object.values(mSnap.val()).sort((a,b)=>(a.ts||0)-(b.ts||0)):[];
+        const threadHTML=msgs.length?msgs.map(m=>`
+          <div style="display:flex;flex-direction:column;align-items:${m.dir==='out'?'flex-start':'flex-end'}">
+            <div style="max-width:80%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.4;background:${m.dir==='out'?'#e6f4f4':'#0d7377'};color:${m.dir==='out'?'#1a2e2e':'#fff'};border-bottom-${m.dir==='out'?'left':'right'}-radius:3px">
+              ${(m.text||'').replace(/</g,'&lt;')}
+              <div style="font-size:9px;opacity:.6;margin-top:2px">${m.dir==='out'?"Janete's Cleaners":"You"} · ${m.time||''}</div>
+            </div>
+          </div>`).join(''):'<div style="text-align:center;color:#7a9a9a;font-size:12px;padding:12px 0">No messages yet.</div>';
+
+        wrap.innerHTML=`
+          <div style="font-family:Inter,sans-serif;background:#f0f6f6;min-height:100vh;padding-bottom:40px">
+            <div style="background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:20px;text-align:center;border-radius:0 0 12px 12px">
+              <div style="font-size:20px;font-weight:700">Janete's Cleaners Inc.</div>
+              <div style="font-size:13px;opacity:.8;margin-top:3px">Schedule for ${(c.first||'')+' '+(c.last||'')}</div>
+            </div>
+            <div style="max-width:480px;margin:0 auto;padding:16px">
+              <div style="background:#fefce8;border:1px solid #f0d060;border-radius:8px;padding:11px 14px;font-size:12px;color:#7a6010;margin-bottom:14px">
+                ⚠ <strong>Skip Policy:</strong> $50 fee for cancellations under 24 hours.
+              </div>
+              <div style="background:#fff;border-radius:12px;border:1px solid #cce0e0;overflow:hidden;margin-bottom:14px">
+                <div style="padding:12px 16px;border-bottom:1px solid #eef4f4;font-weight:700;font-size:13px;color:#095c60;text-transform:uppercase;letter-spacing:.5px">Your Appointments</div>
+                <div style="padding:0 16px">${apptRows}</div>
+              </div>
+              <div style="background:#fff;border-radius:12px;border:1px solid #cce0e0;overflow:hidden">
+                <div style="padding:12px 16px;border-bottom:1px solid #eef4f4;font-weight:700;font-size:13px;color:#095c60;text-transform:uppercase;letter-spacing:.5px">Messages</div>
+                <div style="padding:12px 16px">
+                  <div id="clientThread" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:200px;overflow-y:auto">${threadHTML}</div>
+                  <p style="font-size:12px;color:#7a9a9a;margin-bottom:10px">Your message goes straight to our dashboard.</p>
+                  <textarea id="clientReplyText" style="width:100%;border:1.5px solid #cce0e0;border-radius:8px;padding:10px 12px;font-size:13px;resize:vertical;min-height:70px;outline:none;background:#f7fbfb;margin-bottom:10px;font-family:Inter,sans-serif;box-sizing:border-box" placeholder="Type your message..."></textarea>
+                  <button id="clientReplyBtn" onclick="sendClientReply('${clientKey}')" style="width:100%;padding:12px;background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Send Message</button>
+                  <div id="clientSentOK" style="display:none;background:#eaf5f0;border:1px solid #a3d5bb;border-radius:8px;padding:12px;font-size:13px;color:#1a7a5a;margin-top:8px">✅ Message sent! We'll get back to you shortly.</div>
+                </div>
+              </div>
+              <div style="text-align:center;margin-top:18px;font-size:11px;color:#7a9a9a">Janete's Cleaners · Lynn, MA · (781) 964-5682</div>
+            </div>
+          </div>`;
+
+        // Real-time listener for new messages
+        db.ref('messages/'+clientKey).on('value',snap=>{
+          const thread=document.getElementById('clientThread');
+          if(!thread)return;
+          const all=snap.val()?Object.values(snap.val()).sort((a,b)=>(a.ts||0)-(b.ts||0)):[];
+          if(!all.length){thread.innerHTML='<div style="text-align:center;color:#7a9a9a;font-size:12px;padding:12px 0">No messages yet.</div>';return;}
+          thread.innerHTML=all.map(m=>`
+            <div style="display:flex;flex-direction:column;align-items:${m.dir==='out'?'flex-start':'flex-end'}">
+              <div style="max-width:80%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.4;background:${m.dir==='out'?'#e6f4f4':'#0d7377'};color:${m.dir==='out'?'#1a2e2e':'#fff'};border-bottom-${m.dir==='out'?'left':'right'}-radius:3px">
+                ${(m.text||'').replace(/</g,'&lt;')}
+                <div style="font-size:9px;opacity:.6;margin-top:2px">${m.dir==='out'?"Janete's Cleaners":"You"} · ${m.time||''}</div>
+              </div>
+            </div>`).join('');
+          thread.scrollTop=thread.scrollHeight;
+        });
+      });
+    }).catch(()=>{wrap.innerHTML='<div style="text-align:center;padding:60px;font-family:Inter,sans-serif;color:#c0392b">Error loading schedule. Contact us at (781) 964-5682.</div>';});
+    return;
+  }
+
+  // ── VENMO PAGE ──
+  if(hash.startsWith('#venmo=')){
+    hideAll();
+    document.body.style.cssText='margin:0;padding:20px;background:#f0f6f6;font-family:Inter,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center';
+    document.body.innerHTML=`
+      <div style="background:#fff;border-radius:16px;max-width:380px;width:100%;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.1)">
+        <div style="background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:28px;text-align:center">
+          <div style="font-size:32px;margin-bottom:8px">💙</div>
+          <div style="font-size:22px;font-weight:700">Janete's Cleaners Inc.</div>
+          <div style="font-size:12px;opacity:.8;margin-top:4px">Secure Payment via Venmo</div>
+        </div>
+        <div style="padding:24px">
+          <label style="display:block;font-size:11px;font-weight:600;color:#4a6a6a;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Amount ($)</label>
+          <input type="number" id="vamt" placeholder="0.00" min="0" step="0.01" oninput="updV()" style="width:100%;padding:11px 14px;border:1.5px solid #cce0e0;border-radius:8px;font-size:14px;outline:none;background:#f7fbfb;margin-bottom:14px;box-sizing:border-box;font-family:Inter,sans-serif">
+          <label style="display:block;font-size:11px;font-weight:600;color:#4a6a6a;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Note (optional)</label>
+          <input type="text" id="vnote" placeholder="e.g. March cleaning" oninput="updV()" style="width:100%;padding:11px 14px;border:1.5px solid #cce0e0;border-radius:8px;font-size:14px;outline:none;background:#f7fbfb;margin-bottom:18px;box-sizing:border-box;font-family:Inter,sans-serif">
+          <a id="vpay" href="https://venmo.com/janete-pereira-1" target="_blank" style="display:block;text-align:center;padding:14px;background:#008CFF;color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;margin-bottom:14px;font-family:Inter,sans-serif">Pay with Venmo</a>
+          <div style="text-align:center;font-size:12px;color:#7a9a9a;line-height:1.6">Venmo: <strong style="color:#1a2e2e">@janete-pereira-1</strong><br>Or search in the Venmo app<br><a href="tel:+17819645682" style="color:#0d7377">(781) 964-5682</a></div>
+        </div>
+      </div>`;
+    window.updV=function(){
+      const a=parseFloat(document.getElementById('vamt').value)||0;
+      const n=document.getElementById('vnote').value||'Cleaning Service';
+      const b=document.getElementById('vpay');
+      b.href=a>0?'https://venmo.com/janete-pereira-1?txn=pay&amount='+a.toFixed(2)+'&note='+encodeURIComponent(n):'https://venmo.com/janete-pereira-1';
+      b.textContent=a>0?'Pay $'+a.toFixed(2)+' with Venmo':'Pay with Venmo';
+    };
+    return;
+  }
+
+  // ── INVOICE LINK ──
+  if(hash.startsWith('#inv=')){
+    hideAll();
+    try{
+      const data=JSON.parse(decodeURIComponent(escape(atob(hash.slice(5)))));
+      const venmoURL='https://venmo.com/janete-pereira-1?txn=pay&amount='+data.amount+'&note='+encodeURIComponent("Janetes Cleaners Invoice #"+data.invId);
+      document.body.style.cssText='margin:0;padding:24px 16px;background:#f0f6f6;font-family:Inter,sans-serif;min-height:100vh';
+      document.body.innerHTML=`
+        <div style="max-width:520px;margin:0 auto">
+          <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);margin-bottom:16px">
+            <div style="background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:22px 26px;display:flex;justify-content:space-between;align-items:flex-end">
+              <div><div style="font-size:20px;font-weight:700">Janetes Cleaners Inc.</div><div style="font-size:11px;opacity:.75;margin-top:2px">${data.clientName} · ${data.date}</div></div>
+              <div style="font-size:16px;font-weight:600;opacity:.85">INV #${data.invId}</div>
+            </div>
+            <div style="padding:22px 26px">
+              <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+                <thead><tr><th style="background:#e6f4f4;color:#095c60;font-size:11px;padding:8px 10px;text-align:left;text-transform:uppercase">Description</th><th style="background:#e6f4f4;color:#095c60;font-size:11px;padding:8px 10px;text-align:right;text-transform:uppercase">Amount</th></tr></thead>
+                <tbody><tr><td style="padding:12px 10px;font-size:14px">${data.desc||'Cleaning Service'}</td><td style="padding:12px 10px;text-align:right;font-weight:600">$${Number(data.amount).toFixed(2)}</td></tr></tbody>
+              </table>
+              <div style="display:flex;justify-content:space-between;padding-top:14px;border-top:2px solid #cce0e0;font-weight:700;font-size:18px;color:#095c60"><span>Total Due</span><span>$${Number(data.amount).toFixed(2)}</span></div>
+            </div>
+            <div style="padding:12px 26px;font-size:11px;color:#7a9a9a;text-align:center;border-top:1px solid #eef4f4">Thank you for choosing Janetes Cleaners! · (781) 964-5682</div>
+          </div>
+          <a href="${venmoURL}" target="_blank" style="display:block;text-align:center;padding:16px;background:#008CFF;color:#fff;border-radius:12px;font-weight:700;font-size:16px;text-decoration:none;margin-bottom:12px;font-family:Inter,sans-serif">Pay $${Number(data.amount).toFixed(2)} with Venmo</a>
+          <div style="text-align:center;font-size:12px;color:#7a9a9a">Questions? <a href="tel:+17819645682" style="color:#0d7377">(781) 964-5682</a></div>
+        </div>`;
+    }catch(e){document.body.innerHTML='<div style="text-align:center;padding:60px;font-family:Inter,sans-serif;color:#c0392b">Invalid invoice link.</div>';}
+    return;
+  }
+})();
+
+// Client reply function (used by schedule page)
+function sendClientReply(clientKey){
+  const text=(document.getElementById('clientReplyText').value||'').trim();
+  if(!text){alert('Please type a message.');return;}
+  const btn=document.getElementById('clientReplyBtn');
+  btn.disabled=true;btn.textContent='Sending...';
+  db.ref('messages/'+clientKey).push({
+    dir:'in',text,
+    time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+    ts:Date.now(),unread:true
+  }).then(()=>{
+    document.getElementById('clientReplyText').style.display='none';
+    btn.style.display='none';
+    document.getElementById('clientSentOK').style.display='block';
+  }).catch(err=>{btn.disabled=false;btn.textContent='Send Message';alert('Error: '+err.message);});
+}
+
+// ══ AUTH ══
+function doLogin(){
+  const e=document.getElementById('loginEmail').value.trim();
+  const p=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginErr');
+  err.textContent='';
+  auth.signInWithEmailAndPassword(e,p)
+    .catch(er=>err.textContent='Incorrect email or password.');
+}
+function doLogout(){auth.signOut();}
+auth.onAuthStateChanged(user=>{
+  const h=window.location.hash;
+  if(h.startsWith('#schedule=')||h.startsWith('#venmo=')||h.startsWith('#inv='))return;
+  if(user){
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     initApp();
   } else {
-    err.textContent = 'Incorrect email or password.';
-    document.getElementById('loginPass').value = '';
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('app').classList.add('hidden');
   }
-}
-function doLogout() {
-  sessionStorage.removeItem('jc_auth');
-  document.getElementById('app').classList.add('hidden');
-  document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginPass').value = '';
-  document.getElementById('loginErr').textContent = '';
+});
+
+// ══ STATE ══
+let clients={},bookings={},skips={},services={},invoices={},messages={};
+let activeChatKey=null,shareTargetKey=null;
+const VENMO='janete-pereira-1';
+const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let nextInvNum=load('nextInvNum',4554);
+
+function load(k,d){try{const v=localStorage.getItem('jc_'+k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function save(k,v){try{localStorage.setItem('jc_'+k,JSON.stringify(v));}catch(e){}}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmt(d){if(!d)return'';const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function today(){return new Date().toISOString().split('T')[0];}
+function nowStr(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function clientsArr(){return Object.entries(clients).map(([k,v])=>({key:k,...v})).sort((a,b)=>(a.first||'').localeCompare(b.first||''));}
+function unreadCount(key){const t=messages[key]||{};return Object.values(t).filter(m=>m.dir==='in'&&m.unread).length;}
+function totalUnread(){return Object.keys(clients).reduce((s,k)=>s+unreadCount(k),0);}
+function updateMsgBadge(){const n=totalUnread();document.getElementById('msgNavBtn').textContent='💬 Messages'+(n>0?' ('+n+')':'');}
+
+// ══ INIT ══
+function initApp(){
+  // Clients
+  db.ref('clients').on('value',snap=>{clients=snap.val()||{};renderClients();populateAllDropdowns();renderDashboard();});
+  // Bookings
+  db.ref('bookings').on('value',snap=>{bookings=snap.val()||{};if(document.getElementById('panel-schedule').classList.contains('active'))renderSchedule();renderDashboard();});
+  // Skips
+  db.ref('skips').on('value',snap=>{skips=snap.val()||{};if(document.getElementById('panel-skips').classList.contains('active'))renderSkips();});
+  // Services
+  db.ref('services').once('value',snap=>{
+    if(snap.val()){services=snap.val();}
+    else{
+      // Seed default services
+      const def={
+        s1:{name:'Standard Cleaning',price:120,duration:'2-3 hours',desc:'Vacuuming, mopping, dusting, kitchen & bathroom'},
+        s2:{name:'Deep Cleaning',price:180,duration:'4-5 hours',desc:'Everything in standard + baseboards, inside appliances'},
+        s3:{name:'Move In/Out',price:250,duration:'5-6 hours',desc:'Full deep clean for moving transitions'},
+        s4:{name:'Post-Construction',price:300,duration:'6+ hours',desc:'Heavy-duty cleaning after renovation'},
+      };
+      db.ref('services').set(def);services=def;
+    }
+    renderServices();populateAllDropdowns();
+  });
+  db.ref('services').on('value',snap=>{services=snap.val()||{};renderServices();populateAllDropdowns();});
+  // Invoices
+  db.ref('invoices').on('value',snap=>{invoices=snap.val()||{};if(document.getElementById('panel-billing').classList.contains('active'))renderBilling();});
+  // Messages
+  db.ref('messages').on('value',snap=>{
+    messages=snap.val()||{};
+    updateMsgBadge();
+    renderClients();
+    if(activeChatKey)renderChatThread();
+    renderDashboard();
+  });
+  // Seed clients if empty
+  db.ref('clients').once('value',snap=>{if(!snap.val())seedClients();});
+  // Set today's date on forms
+  document.getElementById('bkDate').value=today();
+  document.getElementById('skipDate').value=today();
+  document.getElementById('invDate').value=today();
+  renderDashboard();
+  renderTemplates();
+  renderVenmo();
 }
 
-// ══════════════════════════════════════
-//  STORAGE
-// ══════════════════════════════════════
-function save(key, val) { try { localStorage.setItem('jc_' + key, JSON.stringify(val)); } catch(e){} }
-function load(key, def) { try { const d = localStorage.getItem('jc_' + key); return d ? JSON.parse(d) : def; } catch(e) { return def; } }
-
-// ══════════════════════════════════════
-//  DATA
-// ══════════════════════════════════════
-let clients = load('clients', [
-  {id:1,  first:'Karen',      last:'Webster',            phone:'',              email:'julie@findsbyjulie.com',      address:'95 Pinckney St, Boston, MA 02114',             notes:'Alt: 95 Pic Nick St.'},
-  {id:2,  first:'Ann',        last:'West',               phone:'',              email:'',                            address:'31 Lee St., Marblehead, MA 01945',             notes:''},
-  {id:3,  first:'Bill',       last:'Fuller',             phone:'',              email:'',                            address:'Marblehead, MA 01906',                         notes:''},
-  {id:4,  first:'Bob',        last:'Hansen',             phone:'',              email:'',                            address:'119 Water St. Unit 64, Salem, MA 01906',       notes:''},
-  {id:5,  first:'Corman Bags',last:'Co.',                phone:'',              email:'',                            address:'36 Arlington Street, Chelsea, MA 02150',       notes:'Commercial'},
-  {id:6,  first:'Crest',      last:'Pizzeria',           phone:'',              email:'',                            address:'35 Crest Ave, Winthrop, MA 02152',             notes:'Contact: Peter'},
-  {id:7,  first:'Dan',        last:'Deven',              phone:'',              email:'',                            address:'Marblehead, MA',                               notes:''},
-  {id:8,  first:'Deborah',    last:'Wetmore',            phone:'',              email:'',                            address:'886 West Hill Road, Warren, VT 05674',         notes:''},
-  {id:9,  first:'Eric',       last:'Appel',              phone:'',              email:'',                            address:'8 George Street, Cambridge, MA 02140',         notes:''},
-  {id:10, first:'Erica',      last:'Pelaccia',           phone:'',              email:'',                            address:'81 Prindle Ave, Ansonia, CT 06401',            notes:''},
-  {id:11, first:'Fay',        last:'Ginsberg',           phone:'',              email:'',                            address:'65 East India Row #20G, Boston, MA 02110',     notes:''},
-  {id:12, first:'Faye',       last:'Hinsley',            phone:'',              email:'',                            address:'65 East India Row #20G, Boston, MA 02110',     notes:''},
-  {id:13, first:'Fiorys',     last:'Variatie',           phone:'',              email:'',                            address:'',                                             notes:''},
-  {id:14, first:'Gordon',     last:'College',            phone:'',              email:'',                            address:'Grapevine Rd., Wenham, MA',                    notes:'Commercial'},
-  {id:15, first:'Hansen',     last:'Marine',             phone:'7816313282',    email:'',                            address:'32 Tioga Way, Marblehead, MA 01945',           notes:'Contact: Robert Hansen'},
-  {id:16, first:'Jacquelyn',  last:'Hawkson',            phone:'',              email:'',                            address:'91 Grant St., Lexington, MA 02420',            notes:''},
-  {id:17, first:'Jim',        last:'Lavelle',            phone:'',              email:'',                            address:'211 Mason Terrace, Brookline, MA 02446',       notes:''},
-  {id:18, first:'Joanne',     last:'Ferris',             phone:'',              email:'jferris@eliotchs.org',        address:'95 Pleasant St., Lynn, MA 01901',              notes:''},
-  {id:19, first:'Jode',       last:'Livingston',         phone:'',              email:'mlivingston0012@gmail.com',   address:'28 Myrtle St. Unit 1, Boston, MA 02114',       notes:''},
-  {id:20, first:'Josmar',     last:'D. Pereira',         phone:'7819645682',    email:'',                            address:'Lynn, MA 01904',                               notes:''},
-  {id:21, first:'Kenn',       last:'Mark',               phone:'',              email:'',                            address:'26 Washington Sq., Marblehead, MA 01906',      notes:''},
-  {id:22, first:'Kenneth',    last:'Martin',             phone:'',              email:'',                            address:'24 Harbor Ave., Marblehead, MA 01945',         notes:''},
-  {id:23, first:'Lee',        last:'Oestreicher',        phone:'',              email:'',                            address:'45 Longwood Ave. #103, Brookline, MA 02446',   notes:''},
-  {id:24, first:'Lion River', last:'Properties',         phone:'',              email:'',                            address:'45 Longwood Ave. #103, Brookline, MA 02446',   notes:'Commercial'},
-  {id:25, first:'Lisa',       last:'Dyacme Prop. Mgmt.', phone:'',              email:'',                            address:'Goodwins Court, Marblehead, MA',               notes:'Dyacme Property Management'},
-  {id:26, first:'Nicholas',   last:'Erpelding',          phone:'',              email:'',                            address:'Attn: Lisa Gallager',                          notes:''},
-  {id:27, first:'Pauline',    last:'Donnelly',           phone:'',              email:'Pauline@donnellyandco.com',   address:'12 Darling St. #3, Marblehead, MA 01945',      notes:''},
-  {id:28, first:'Peter',      last:'Calakoutis',         phone:'',              email:'',                            address:'LynnFells Pkwy, Saugus, MA 01907',             notes:''},
-  {id:29, first:'Phil Fuller',last:'Londonderry',        phone:'',              email:'',                            address:'17 S Parrish Drive, Londonderry, NH 03053',    notes:''},
-  {id:30, first:'Phil Fuller',last:'The Villages',       phone:'',              email:'',                            address:'1325 Gaston Loop, The Villages, FL 32162',     notes:''},
-  {id:31, first:'Robert',     last:'Mattson',            phone:'8184147513',    email:'valleyspaservices@yahoo.com', address:'13825 Victory Blvd #1, Valley Glen, CA 91401', notes:''},
-  {id:32, first:'Scott',      last:'Stilianos',          phone:'',              email:'sstili@icloud.com',           address:'1 Bengal Lane, Salem, MA 01906',               notes:''},
-  {id:33, first:'Socs',       last:'Ice Cream',          phone:'',              email:'',                            address:'67 Lynnfells Pkwy, Saugus, MA 01906',          notes:'Commercial'},
-  {id:34, first:'Trevor',     last:'Parsons',            phone:'',              email:'',                            address:'106 Galloupes Road, Swampscott, MA 01907',     notes:''},
-  {id:35, first:'Victoria',   last:'Fitzgerald',         phone:'',              email:'ilsognoinchianti@gmail.com',  address:'',                                             notes:''},
-  {id:36, first:'Nadir',      last:'Vieira',             phone:'',              email:'',                            address:'58 Atkins Ave. Basement, Lynn, MA 01904',      notes:''},
-]);
-let bookings = load('bookings', []);
-let skips    = load('skips', []);
-let services = load('services', [
-  {id:1, name:'Standard Cleaning', price:120, duration:'2-3 hours', desc:'Vacuuming, mopping, dusting, kitchen & bathroom cleaning'},
-  {id:2, name:'Deep Cleaning',     price:180, duration:'4-5 hours', desc:'Everything in standard + baseboards, inside appliances, windows'},
-  {id:3, name:'Move In/Out',       price:250, duration:'5-6 hours', desc:'Full deep clean for moving transitions'},
-  {id:4, name:'Post-Construction', price:300, duration:'6+ hours',  desc:'Heavy-duty cleaning after renovation or construction'},
-]);
-let invoices = load('invoices', []);
-let msgLog   = load('msgLog', []);
-// messages: { clientId: [ {dir:'in'/'out', text, time, unread?} ] }
-let messages = load('messages', {});
-let nextId   = load('nextId', 4554);
-function newId() { nextId++; save('nextId', nextId); return nextId; }
-
-// ══════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════
-function clientName(id) { const c=clients.find(c=>c.id==id); return c ? c.first+' '+c.last : 'Unknown'; }
-function today() { return new Date().toISOString().split('T')[0]; }
-function fmt(d) { if(!d)return''; const dt=new Date(d+'T12:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800); }
-function nowStr() { return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function unreadCount(clientId) {
-  const thread=messages[clientId]||[];
-  return thread.filter(m=>m.dir==='in'&&m.unread).length;
-}
-function totalUnread() {
-  return clients.reduce((s,c)=>s+unreadCount(c.id),0);
-}
-function updateMsgBadge() {
-  const n=totalUnread();
-  const btn=document.getElementById('msgNavBtn');
-  if(btn) btn.textContent='💬 Messages'+(n>0?' ('+n+')':'');
-}
-
-// ══════════════════════════════════════
-//  PANELS
-// ══════════════════════════════════════
-function showPanel(id, btn) {
+// ══ PANELS ══
+function showPanel(id,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   btn.classList.add('active');
-  renderPanel(id);
-}
-function renderPanel(id) {
-  if(id==='dashboard') renderDashboard();
-  if(id==='schedule')  renderSchedule();
-  if(id==='clients')   renderClients();
-  if(id==='skips')     renderSkips();
-  if(id==='services')  renderServices();
-  if(id==='billing')   renderBilling();
-  if(id==='messages')  renderMessages();
-  if(id==='venmo')     renderVenmo();
+  if(id==='dashboard')renderDashboard();
+  if(id==='schedule')renderSchedule();
+  if(id==='clients')renderClients();
+  if(id==='skips')renderSkips();
+  if(id==='services')renderServices();
+  if(id==='billing')renderBilling();
+  if(id==='messages')renderMessages();
+  if(id==='venmo')renderVenmo();
 }
 
-// ══════════════════════════════════════
-//  DASHBOARD
-// ══════════════════════════════════════
-function renderDashboard() {
+// ══ DASHBOARD ══
+function renderDashboard(){
   const t=today();
-  const todayBks=bookings.filter(b=>b.date===t);
-  const unpaidInv=invoices.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
-  const monthRev=invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
+  const bArr=Object.values(bookings);
+  const todayBks=bArr.filter(b=>b.date===t);
+  const iArr=Object.values(invoices);
+  const unpaid=iArr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
+  const collected=iArr.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
   const unread=totalUnread();
   document.getElementById('dashStats').innerHTML=`
-    <div class="stat-card"><div class="stat-num">${clients.length}</div><div class="stat-label">Total Clients</div></div>
+    <div class="stat-card"><div class="stat-num">${Object.keys(clients).length}</div><div class="stat-label">Total Clients</div></div>
     <div class="stat-card gold"><div class="stat-num">${todayBks.length}</div><div class="stat-label">Today's Jobs</div></div>
-    <div class="stat-card green"><div class="stat-num">$${monthRev}</div><div class="stat-label">Total Collected</div></div>
-    <div class="stat-card red"><div class="stat-num">$${unpaidInv.toFixed(0)}</div><div class="stat-label">Outstanding</div></div>
-  `;
+    <div class="stat-card green"><div class="stat-num">$${collected.toFixed(0)}</div><div class="stat-label">Collected</div></div>
+    <div class="stat-card red"><div class="stat-num">$${unpaid.toFixed(0)}</div><div class="stat-label">Outstanding</div></div>`;
   const todayEl=document.getElementById('todayJobs');
   if(!todayBks.length){todayEl.innerHTML='<div class="empty"><div class="empty-icon">☀️</div>No jobs today.</div>';}
-  else{todayEl.innerHTML=todayBks.map(b=>`<div style="padding:10px;border-bottom:1px solid #eef4f4;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">${clientName(b.clientId)}</div><div style="color:var(--text3);font-size:12px">${b.time} — ${b.service}</div></div><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':'gold'}">${b.status}</span></div>`).join('');}
-  const recent=[...invoices].sort((a,b)=>b.id-a.id).slice(0,5);
-  document.getElementById('recentActivity').innerHTML=recent.length?recent.map(i=>`<div style="padding:8px 0;border-bottom:1px solid #eef4f4;font-size:13px"><span style="color:var(--teal)">🧾</span> <b>${clientName(i.clientId)}</b> — $${i.amount}<div style="color:var(--text3);font-size:11px">${fmt(i.date)} · <span class="badge badge-${i.status==='paid'?'green':'red'}" style="font-size:10px">${i.status}</span></div></div>`).join(''):'<div class="empty">No recent activity.</div>';
-  const upcoming=bookings.filter(b=>b.date>=today()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
-  document.getElementById('upcomingTbl').innerHTML=upcoming.map(b=>`<tr><td>${fmt(b.date)}</td><td>${clientName(b.clientId)}</td><td>${b.service}</td><td>$${b.amount}</td><td><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':b.status==='cancelled'?'red':'gold'}">${b.status}</span></td></tr>`).join('')||'<tr><td colspan="5" class="empty">No upcoming bookings.</td></tr>';
+  else{todayEl.innerHTML=todayBks.map(b=>`<div style="padding:10px;border-bottom:1px solid #eef4f4;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">${b.clientName||''}</div><div style="color:var(--text3);font-size:12px">${b.time} — ${b.service}</div></div><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':'gold'}">${b.status}</span></div>`).join('');}
+  // Recent messages
+  const recentEl=document.getElementById('recentMsgs');
+  const allMsgs=[];
+  Object.entries(messages).forEach(([cKey,thread])=>{
+    const c=clients[cKey];
+    Object.values(thread||{}).filter(m=>m.dir==='in').forEach(m=>allMsgs.push({...m,clientName:c?(c.first+' '+c.last):'Client',cKey}));
+  });
+  allMsgs.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const recent=allMsgs.slice(0,4);
+  recentEl.innerHTML=recent.length?recent.map(m=>`<div style="padding:8px 0;border-bottom:1px solid #eef4f4;font-size:13px;cursor:pointer" onclick="openChatForClient('${m.cKey}')"><div style="display:flex;justify-content:space-between"><b style="color:var(--teal)">${m.clientName}</b><span style="font-size:11px;color:var(--text3)">${m.time||''}</span></div><div style="color:var(--text2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.text||'')}</div></div>`).join(''):'<div class="empty" style="padding:16px">No messages yet.</div>';
 }
 
-// ══════════════════════════════════════
-//  SCHEDULE
-// ══════════════════════════════════════
-function renderSchedule() {
-  populateSelect('bkClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  populateSelect('bkService',services,s=>({val:s.name,lbl:s.name+' ($'+s.price+')'}));
-  const sorted=[...bookings].sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('scheduleTbl').innerHTML=sorted.map(b=>`<tr><td>${fmt(b.date)}</td><td>${b.time}</td><td>${clientName(b.clientId)}</td><td>${b.service}</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.address}</td><td>$${b.amount}</td><td><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':b.status==='cancelled'?'red':'gold'}">${b.status}</span></td><td><button class="btn btn-sm btn-outline" onclick="markComplete(${b.id})">✓</button> <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.id})">✕</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">No bookings yet.</td></tr>';
+// ══ SCHEDULE ══
+function renderSchedule(){
+  const arr=Object.entries(bookings).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('scheduleTbl').innerHTML=arr.map(b=>`<tr>
+    <td>${fmt(b.date)}</td><td>${b.time||''}</td><td>${b.clientName||''}</td><td>${b.service||''}</td>
+    <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.address||''}</td>
+    <td>$${b.amount||0}</td>
+    <td><span class="badge badge-${b.status==='completed'?'green':b.status==='confirmed'?'blue':b.status==='cancelled'?'red':'gold'}">${b.status||''}</span></td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-sm btn-outline" onclick="markComplete('${b.key}')">✓</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteBooking('${b.key}')">✕</button>
+    </td></tr>`).join('')||'<tr><td colspan="8" class="empty">No bookings yet.</td></tr>';
 }
-function markComplete(id){const b=bookings.find(b=>b.id===id);if(b){b.status='completed';save('bookings',bookings);renderSchedule();showToast('Marked as completed!');}}
-function deleteBooking(id){if(!confirm('Delete this booking?'))return;bookings=bookings.filter(b=>b.id!==id);save('bookings',bookings);renderSchedule();showToast('Booking deleted.');}
-function fillBkAmount(){const svcName=document.getElementById('bkService').value;const svc=services.find(s=>s.name===svcName);if(svc)document.getElementById('bkAmount').value=svc.price;}
+function markComplete(key){db.ref('bookings/'+key).update({status:'completed'});showToast('Marked as completed!');}
+function deleteBooking(key){if(!confirm('Delete this booking?'))return;db.ref('bookings/'+key).remove();showToast('Booking deleted.');}
+function fillBkAmount(){const sel=document.getElementById('bkService').value;const svc=Object.values(services).find(s=>s.name===sel);if(svc)document.getElementById('bkAmount').value=svc.price;}
 function saveBooking(){
-  const cId=parseInt(document.getElementById('bkClient').value);
+  const cKey=document.getElementById('bkClient').value;
   const date=document.getElementById('bkDate').value;
-  if(!cId||!date){showToast('Please fill in client and date.');return;}
-  const client=clients.find(c=>c.id===cId);
-  bookings.push({id:newId(),clientId:cId,service:document.getElementById('bkService').value,date,time:document.getElementById('bkTime').value,address:document.getElementById('bkAddress').value||(client?client.address:''),amount:parseFloat(document.getElementById('bkAmount').value)||0,status:document.getElementById('bkStatus').value,notes:document.getElementById('bkNotes').value});
-  save('bookings',bookings);closeModal('bookingModal');renderSchedule();showToast('Booking saved!');
+  if(!cKey||!date){showToast('Select a client and date.');return;}
+  const c=clients[cKey];
+  db.ref('bookings').push({
+    clientKey:cKey,clientName:c?c.first+' '+c.last:'',
+    service:document.getElementById('bkService').value,date,time:document.getElementById('bkTime').value,
+    address:document.getElementById('bkAddress').value||(c?c.address:''),
+    amount:parseFloat(document.getElementById('bkAmount').value)||0,
+    status:document.getElementById('bkStatus').value,notes:document.getElementById('bkNotes').value
+  });
+  closeModal('bookingModal');showToast('Booking saved!');
 }
 
-// ══════════════════════════════════════
-//  CLIENTS
-// ══════════════════════════════════════
-function renderClients() {
-  populateSelect('msgClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
+// ══ CLIENTS ══
+function renderClients(){
   const q=(document.getElementById('clientSearch')?.value||'').toLowerCase();
-  const filtered=q?clients.filter(c=>(c.first+' '+c.last+c.phone+c.email).toLowerCase().includes(q)):clients;
-  document.getElementById('clientsTbl').innerHTML=filtered.map(c=>{
-    const u=unreadCount(c.id);
-    const dot=u?`<span class="unread-dot" onclick="openChatForClient(${c.id})" title="${u} new message(s)"></span>`:'';
-    return `<tr><td><b>${c.first} ${c.last}</b>${dot}</td><td>${c.phone?`<a href="tel:${c.phone}" style="color:var(--teal)">${c.phone}</a>`:''}</td><td>${c.email}</td><td>${c.address}</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes}</td><td style="white-space:nowrap">
-      <button class="btn btn-sm btn-outline" onclick="editClient(${c.id})">Edit</button>
-      <button class="btn btn-sm" style="background:var(--teal-pale);color:var(--teal);border:1px solid var(--border)" onclick="openScheduleShareFor(${c.id})" title="Share schedule link">🔗</button>
-      <button class="btn btn-sm" style="background:#fef3cd;color:#8a6010;border:1px solid #f0d060" onclick="openInvoiceFor(${c.id})" title="Create invoice">🧾</button>
-      <button class="btn btn-sm btn-danger" onclick="deleteClient(${c.id})">Del</button>
-    </td></tr>`;
+  const arr=clientsArr().filter(c=>!q||((c.first||'')+(c.last||'')+(c.phone||'')+(c.email||'')).toLowerCase().includes(q));
+  document.getElementById('clientsTbl').innerHTML=arr.map(c=>{
+    const u=unreadCount(c.key);
+    const dot=u?`<span class="unread-dot" onclick="event.stopPropagation();openChatForClient('${c.key}')" title="${u} new message(s)"></span>`:'';
+    return `<tr>
+      <td><b>${c.first||''} ${c.last||''}</b>${dot}</td>
+      <td>${c.phone?`<a href="tel:${c.phone}" style="color:var(--teal)">${c.phone}</a>`:''}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.email||''}</td>
+      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.address||''}</td>
+      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes||''}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm btn-outline" onclick="editClient('${c.key}')">Edit</button>
+        <button class="btn btn-sm" style="background:var(--teal-pale);color:var(--teal);border:1px solid var(--border)" onclick="openShareModal('${c.key}')" title="Share schedule">🔗</button>
+        <button class="btn btn-sm" style="background:#fef3cd;color:#8a6010;border:1px solid #f0d060" onclick="openInvoiceFor('${c.key}')" title="Invoice">🧾</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteClient('${c.key}')">Del</button>
+      </td></tr>`;
   }).join('')||'<tr><td colspan="6" class="empty">No clients found.</td></tr>';
 }
 function saveClient(){
-  const id=document.getElementById('clientId').value;
-  const obj={id:id?parseInt(id):newId(),first:document.getElementById('cFirst').value.trim(),last:document.getElementById('cLast').value.trim(),phone:document.getElementById('cPhone').value.trim(),email:document.getElementById('cEmail').value.trim(),address:document.getElementById('cAddress').value.trim(),notes:document.getElementById('cNotes').value.trim()};
-  if(!obj.first){showToast('First name is required.');return;}
-  if(id){const i=clients.findIndex(c=>c.id==id);if(i>=0)clients[i]=obj;}else clients.push(obj);
-  save('clients',clients);closeModal('clientModal');renderClients();showToast(id?'Client updated!':'Client added!');
+  const key=document.getElementById('clientKey').value;
+  const obj={first:document.getElementById('cFirst').value.trim(),last:document.getElementById('cLast').value.trim(),phone:document.getElementById('cPhone').value.trim(),email:document.getElementById('cEmail').value.trim(),address:document.getElementById('cAddress').value.trim(),notes:document.getElementById('cNotes').value.trim()};
+  if(!obj.first){showToast('First name required.');return;}
+  if(key){db.ref('clients/'+key).update(obj);showToast('Client updated!');}
+  else{db.ref('clients').push(obj);showToast('Client added!');}
+  closeModal('clientModal');
 }
-function editClient(id){
-  const c=clients.find(c=>c.id===id);if(!c)return;
-  document.getElementById('clientId').value=c.id;document.getElementById('cFirst').value=c.first;document.getElementById('cLast').value=c.last;document.getElementById('cPhone').value=c.phone;document.getElementById('cEmail').value=c.email;document.getElementById('cAddress').value=c.address;document.getElementById('cNotes').value=c.notes;
+function editClient(key){
+  const c=clients[key];if(!c)return;
+  document.getElementById('clientKey').value=key;
+  document.getElementById('cFirst').value=c.first||'';document.getElementById('cLast').value=c.last||'';
+  document.getElementById('cPhone').value=c.phone||'';document.getElementById('cEmail').value=c.email||'';
+  document.getElementById('cAddress').value=c.address||'';document.getElementById('cNotes').value=c.notes||'';
   openModal('clientModal');
 }
-function deleteClient(id){if(!confirm('Delete this client?'))return;clients=clients.filter(c=>c.id!==id);save('clients',clients);renderClients();showToast('Client removed.');}
+function deleteClient(key){if(!confirm('Delete this client?'))return;db.ref('clients/'+key).remove();showToast('Client removed.');}
 
-// ══════════════════════════════════════
-//  SKIPS
-// ══════════════════════════════════════
+// ══ SKIPS ══
 function renderSkips(){
-  populateSelect('skipClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  document.getElementById('skipDate').value=today();
-  const total=skips.length,unpaid=skips.filter(s=>s.paid==='unpaid').length,revenue=skips.filter(s=>s.paid==='paid').reduce((s,k)=>s+Number(k.fee),0);
-  document.getElementById('skipStats').innerHTML=`<div class="stat-card red"><div class="stat-num">${total}</div><div class="stat-label">Total Skips</div></div><div class="stat-card gold"><div class="stat-num">${unpaid}</div><div class="stat-label">Unpaid Fees</div></div><div class="stat-card green"><div class="stat-num">$${revenue}</div><div class="stat-label">Collected</div></div>`;
-  document.getElementById('skipsTbl').innerHTML=[...skips].sort((a,b)=>b.id-a.id).map(s=>`<tr><td>${fmt(s.date)}</td><td>${clientName(s.clientId)}</td><td>${s.reason}</td><td>$${s.fee}</td><td><span class="badge badge-${s.paid==='paid'?'green':s.paid==='waived'?'gray':'red'}">${s.paid}</span></td><td><button class="btn btn-sm btn-outline" onclick="markSkipPaid(${s.id})">Mark Paid</button> <button class="btn btn-sm btn-danger" onclick="deleteSkip(${s.id})">Del</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No skips recorded.</td></tr>';
+  const arr=Object.entries(skips).map(([k,v])=>({key:k,...v}));
+  const total=arr.length,unpaid=arr.filter(s=>s.paid==='unpaid').length,rev=arr.filter(s=>s.paid==='paid').reduce((s,k)=>s+Number(k.fee||0),0);
+  document.getElementById('skipStats').innerHTML=`<div class="stat-card red"><div class="stat-num">${total}</div><div class="stat-label">Total Skips</div></div><div class="stat-card gold"><div class="stat-num">${unpaid}</div><div class="stat-label">Unpaid Fees</div></div><div class="stat-card green"><div class="stat-num">$${rev}</div><div class="stat-label">Collected</div></div>`;
+  document.getElementById('skipsTbl').innerHTML=arr.sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(s=>`<tr>
+    <td>${fmt(s.date)}</td><td>${s.clientName||''}</td><td>${s.reason||''}</td><td>$${s.fee||50}</td>
+    <td><span class="badge badge-${s.paid==='paid'?'green':s.paid==='waived'?'gray':'red'}">${s.paid||'unpaid'}</span></td>
+    <td><button class="btn btn-sm btn-outline" onclick="markSkipPaid('${s.key}')">Mark Paid</button> <button class="btn btn-sm btn-danger" onclick="db.ref('skips/${s.key}').remove()">Del</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No skips recorded.</td></tr>';
 }
-function saveSkip(){skips.push({id:newId(),clientId:parseInt(document.getElementById('skipClient').value),date:document.getElementById('skipDate').value,reason:document.getElementById('skipReason').value,fee:parseFloat(document.getElementById('skipFee').value)||50,paid:document.getElementById('skipPaid').value});save('skips',skips);closeModal('skipModal');renderSkips();showToast('Skip recorded!');}
-function markSkipPaid(id){const s=skips.find(s=>s.id===id);if(s){s.paid='paid';save('skips',skips);renderSkips();showToast('Marked as paid!');}}
-function deleteSkip(id){skips=skips.filter(s=>s.id!==id);save('skips',skips);renderSkips();showToast('Record deleted.');}
+function saveSkip(){
+  const cKey=document.getElementById('skipClient').value;
+  const c=clients[cKey];
+  db.ref('skips').push({clientKey:cKey,clientName:c?c.first+' '+c.last:'',date:document.getElementById('skipDate').value,reason:document.getElementById('skipReason').value,fee:parseFloat(document.getElementById('skipFee').value)||50,paid:document.getElementById('skipPaid').value});
+  closeModal('skipModal');showToast('Skip recorded!');
+}
+function markSkipPaid(key){db.ref('skips/'+key).update({paid:'paid'});showToast('Marked as paid!');}
 
-// ══════════════════════════════════════
-//  SERVICES
-// ══════════════════════════════════════
+// ══ SERVICES ══
 function renderServices(){
-  document.getElementById('servicesGrid').innerHTML=services.map(s=>`<div class="card" style="border-top:3px solid var(--teal)"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div style="font-size:16px;font-weight:700;color:var(--teal-dark)">${s.name}</div><div style="font-size:20px;font-weight:700;color:var(--gold)">$${s.price}</div></div><div style="color:var(--text3);font-size:12px;margin-bottom:6px">⏱ ${s.duration}</div><div style="color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5">${s.desc}</div><div style="display:flex;gap:8px"><button class="btn btn-sm btn-outline" onclick="editService(${s.id})">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteService(${s.id})">Delete</button></div></div>`).join('');
+  const arr=Object.entries(services).map(([k,v])=>({key:k,...v}));
+  document.getElementById('servicesGrid').innerHTML=arr.map(s=>`<div class="card" style="border-top:3px solid var(--teal)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+      <div style="font-size:16px;font-weight:700;color:var(--teal-dark)">${s.name||''}</div>
+      <div style="font-size:20px;font-weight:700;color:var(--gold)">$${s.price||0}</div>
+    </div>
+    <div style="color:var(--text3);font-size:12px;margin-bottom:6px">⏱ ${s.duration||''}</div>
+    <div style="color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5">${s.desc||''}</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm btn-outline" onclick="editService('${s.key}')">Edit</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteService('${s.key}')">Delete</button>
+    </div></div>`).join('')||'<div class="empty">No services yet.</div>';
 }
 function saveService(){
-  const id=document.getElementById('serviceId').value;
-  const obj={id:id?parseInt(id):newId(),name:document.getElementById('svcName').value.trim(),price:parseFloat(document.getElementById('svcPrice').value)||0,duration:document.getElementById('svcDuration').value.trim(),desc:document.getElementById('svcDesc').value.trim()};
+  const key=document.getElementById('serviceKey').value;
+  const obj={name:document.getElementById('svcName').value.trim(),price:parseFloat(document.getElementById('svcPrice').value)||0,duration:document.getElementById('svcDuration').value.trim(),desc:document.getElementById('svcDesc').value.trim()};
   if(!obj.name){showToast('Service name required.');return;}
-  if(id){const i=services.findIndex(s=>s.id==id);if(i>=0)services[i]=obj;}else services.push(obj);
-  save('services',services);closeModal('serviceModal');renderServices();showToast('Service saved!');
+  if(key)db.ref('services/'+key).update(obj);else db.ref('services').push(obj);
+  closeModal('serviceModal');showToast('Service saved!');
 }
-function editService(id){const s=services.find(s=>s.id===id);if(!s)return;document.getElementById('serviceId').value=s.id;document.getElementById('svcName').value=s.name;document.getElementById('svcPrice').value=s.price;document.getElementById('svcDuration').value=s.duration;document.getElementById('svcDesc').value=s.desc;openModal('serviceModal');}
-function deleteService(id){if(!confirm('Delete this service?'))return;services=services.filter(s=>s.id!==id);save('services',services);renderServices();showToast('Service deleted.');}
+function editService(key){const s=services[key];if(!s)return;document.getElementById('serviceKey').value=key;document.getElementById('svcName').value=s.name||'';document.getElementById('svcPrice').value=s.price||'';document.getElementById('svcDuration').value=s.duration||'';document.getElementById('svcDesc').value=s.desc||'';openModal('serviceModal');}
+function deleteService(key){if(!confirm('Delete service?'))return;db.ref('services/'+key).remove();showToast('Deleted.');}
 
-// ══════════════════════════════════════
-//  BILLING
-// ══════════════════════════════════════
+// ══ BILLING ══
 function renderBilling(){
-  populateSelect('invClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  document.getElementById('invDate').value=today();
-  const yrSel=document.getElementById('billYearFilter');
-  const years=[...new Set(invoices.map(i=>{const m=(i.date||'').match(/\d{4}/);return m?m[0]:null}).filter(Boolean))].sort((a,b)=>b-a);
-  const curYr=yrSel.value;
-  yrSel.innerHTML='<option value="">All Years</option>'+years.map(y=>`<option value="${y}"${curYr===y?' selected':''}>${y}</option>`).join('');
-  const yrFilter=yrSel.value,stFilter=document.getElementById('billStatusFilter').value;
-  let arr=invoices.filter(i=>!yrFilter||(i.date||'').includes(yrFilter)).filter(i=>!stFilter||i.status===stFilter);
-  const totalAll=arr.reduce((s,i)=>s+Number(i.amount),0);
-  const totalPaid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
-  const totalUnpaid=arr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount),0);
+  populateSelect('invClient',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
+  const stFilter=document.getElementById('billStatusFilter').value;
+  const arr=Object.entries(invoices).map(([k,v])=>({key:k,...v})).filter(i=>!stFilter||i.status===stFilter).sort((a,b)=>b.invNum-a.invNum);
+  const total=arr.reduce((s,i)=>s+Number(i.amount||0),0);
+  const paid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount||0),0);
+  const unpaid=arr.filter(i=>i.status==='unpaid').reduce((s,i)=>s+Number(i.amount||0),0);
   document.getElementById('billingStats').innerHTML=`
-    <div class="stat-card"><div class="stat-num">$${totalAll.toFixed(0)}</div><div class="stat-label">Total Invoiced</div></div>
-    <div class="stat-card green"><div class="stat-num">$${totalPaid.toFixed(0)}</div><div class="stat-label">Collected</div></div>
-    <div class="stat-card red"><div class="stat-num">$${totalUnpaid.toFixed(0)}</div><div class="stat-label">Outstanding</div></div>`;
-  document.getElementById('invoicesTbl').innerHTML=[...arr].sort((a,b)=>b.id-a.id).map(inv=>`<tr>
-    <td>#${inv.id}</td><td>${clientName(inv.clientId)}</td><td>${fmt(inv.date)}</td><td>$${inv.amount}</td>
-    <td><span class="badge badge-${inv.status==='paid'?'green':inv.status==='partial'?'gold':'red'}">${inv.status}</span></td>
+    <div class="stat-card"><div class="stat-num">$${total.toFixed(0)}</div><div class="stat-label">Total Invoiced</div></div>
+    <div class="stat-card green"><div class="stat-num">$${paid.toFixed(0)}</div><div class="stat-label">Collected</div></div>
+    <div class="stat-card red"><div class="stat-num">$${unpaid.toFixed(0)}</div><div class="stat-label">Outstanding</div></div>`;
+  document.getElementById('invoicesTbl').innerHTML=arr.map(inv=>`<tr>
+    <td>#${inv.invNum||inv.key}</td><td>${inv.clientName||''}</td><td>${fmt(inv.date)}</td><td>$${inv.amount||0}</td>
+    <td><span class="badge badge-${inv.status==='paid'?'green':'red'}">${inv.status||'unpaid'}</span></td>
     <td style="white-space:nowrap">
-      <button class="btn btn-sm btn-outline" onclick="markInvPaid(${inv.id})">Mark Paid</button>
-      <button class="btn btn-sm" style="background:#008CFF;color:#fff" onclick="openInvoicePage(${inv.id})">Open</button>
-      <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${inv.id})">Del</button>
+      <button class="btn btn-sm btn-outline" onclick="markInvPaid('${inv.key}')">Mark Paid</button>
+      <button class="btn btn-sm" style="background:#008CFF;color:#fff" onclick="openInvoicePage('${inv.key}')">Open</button>
+      <button class="btn btn-sm btn-danger" onclick="db.ref('invoices/${inv.key}').remove();showToast('Deleted.')">Del</button>
     </td></tr>`).join('')||'<tr><td colspan="6" class="empty">No invoices yet.</td></tr>';
-  document.getElementById('invoicesFoot').innerHTML=arr.length?`<tr style="background:var(--teal-pale);font-weight:700"><td colspan="3" style="padding:10px 12px;color:var(--teal-dark)">TOTALS (${arr.length} invoices)</td><td style="padding:10px 12px;color:var(--teal-dark)">$${totalAll.toFixed(2)}</td><td colspan="2" style="padding:10px 12px;font-size:12px"><span style="color:var(--green);margin-right:12px">Paid: $${totalPaid.toFixed(2)}</span><span style="color:var(--red)">Unpaid: $${totalUnpaid.toFixed(2)}</span></td></tr>`:'';
-  const ts=document.getElementById('taxSummary');
-  if(arr.length){ts.style.display='block';document.getElementById('taxGrid').innerHTML=`<div class="stat-card"><div class="stat-num">$${totalAll.toFixed(2)}</div><div class="stat-label">Total Revenue</div></div><div class="stat-card green"><div class="stat-num">$${totalPaid.toFixed(2)}</div><div class="stat-label">Collected</div></div><div class="stat-card red"><div class="stat-num">$${totalUnpaid.toFixed(2)}</div><div class="stat-label">Outstanding</div></div><div class="stat-card gold"><div class="stat-num">${arr.length}</div><div class="stat-label">Invoice Count</div></div>`;}
-  else ts.style.display='none';
 }
 function saveInvoice(){
-  invoices.push({id:newId(),clientId:parseInt(document.getElementById('invClient').value),date:document.getElementById('invDate').value,amount:parseFloat(document.getElementById('invAmount').value)||0,desc:document.getElementById('invDesc').value.trim(),status:document.getElementById('invStatus').value});
-  save('invoices',invoices);closeModal('invoiceModal');renderBilling();showToast('Invoice created!');
+  const cKey=document.getElementById('invClient').value;
+  const c=clients[cKey];
+  nextInvNum++;save('nextInvNum',nextInvNum);
+  db.ref('invoices').push({invNum:nextInvNum,clientKey:cKey,clientName:c?c.first+' '+c.last:'',date:document.getElementById('invDate').value,amount:parseFloat(document.getElementById('invAmount').value)||0,desc:document.getElementById('invDesc').value.trim(),status:document.getElementById('invStatus').value});
+  closeModal('invoiceModal');showToast('Invoice #'+nextInvNum+' created!');
 }
-function markInvPaid(id){const inv=invoices.find(i=>i.id===id);if(inv){inv.status='paid';save('invoices',invoices);renderBilling();showToast('Marked as paid!');}}
-function deleteInvoice(id){invoices=invoices.filter(i=>i.id!==id);save('invoices',invoices);renderBilling();showToast('Invoice deleted.');}
-function exportCSV(){
-  const yrFilter=document.getElementById('billYearFilter').value,stFilter=document.getElementById('billStatusFilter').value;
-  let arr=invoices.filter(i=>!yrFilter||(i.date||'').includes(yrFilter)).filter(i=>!stFilter||i.status===stFilter).sort((a,b)=>b.id-a.id);
-  if(!arr.length){showToast('No invoices to export.');return;}
-  const paid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount),0);
-  const total=arr.reduce((s,i)=>s+Number(i.amount),0);
-  let csv='Invoice #,Client,Date,Amount,Status,Description\n';
-  arr.forEach(i=>{csv+=`${i.id},"${clientName(i.clientId)}",${i.date},${i.amount},${i.status},"${(i.desc||'').replace(/"/g,"'")}"\n`;});
-  csv+=`\n,,,Total Revenue:,$${total.toFixed(2)},\n,,,Total Paid:,$${paid.toFixed(2)},\n,,,Total Unpaid:,$${(total-paid).toFixed(2)},\n`;
-  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='JanetesCleaners'+(yrFilter?'_'+yrFilter:'')+'.csv';a.click();URL.revokeObjectURL(url);
-  showToast('CSV exported!');
-}
-
-// ── Open invoice as full page with Venmo button ──
-function openInvoicePage(invId) {
-  const inv=invoices.find(i=>i.id===invId);if(!inv)return;
-  const c=clients.find(c=>c.id===inv.clientId);
-  const cName=c?c.first+' '+c.last:'Client';
-  const phone=(c?.phone||'').replace(/\D/g,'');
-  const venmoURL='https://venmo.com/janete-pereira-1?txn=pay&amount='+inv.amount+'&note='+encodeURIComponent('Janetes Cleaners Invoice #'+inv.id);
-  // Build shareable invoice link
-  const payload=btoa(unescape(encodeURIComponent(JSON.stringify({invId:inv.id,clientName:cName,date:inv.date,amount:inv.amount,desc:inv.desc,venmoUser:'janete-pereira-1'}))));
-  const shareURL=window.location.href.split('#')[0]+'#inv='+payload;
-
-  const w=window.open('','_blank');
-  w.document.open();
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">');
-  w.document.write('<title>Invoice #'+inv.id+' - Janetes Cleaners<\/title>');
-  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Segoe UI,sans-serif;background:#f0f6f6;min-height:100vh;padding:24px 16px}.wrap{max-width:560px;margin:0 auto}.inv{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);margin-bottom:16px}.ih{background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:24px 28px;display:flex;justify-content:space-between;align-items:flex-end}.ib{font-size:22px;font-weight:700;letter-spacing:.5px}.inv-num{font-size:16px;opacity:.85}.ibody{padding:24px 28px}table{width:100%;border-collapse:collapse;margin-top:14px}th{background:#e6f4f4;color:#095c60;font-size:11px;padding:8px 10px;text-align:left;text-transform:uppercase;letter-spacing:.5px}td{padding:10px;border-bottom:1px solid #eef4f4;font-size:13px}.tot{display:flex;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:2px solid #cce0e0;font-weight:700;font-size:18px;color:#095c60}.ft{padding:14px 28px;font-size:11px;color:#7a9a9a;text-align:center;border-top:1px solid #eef4f4}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.abtn{flex:1;min-width:100px;padding:12px 8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:5px}@media print{body{background:#fff;padding:0}.actions{display:none}.inv{box-shadow:none;border-radius:0}}<\/style><\/head><body>');
-  w.document.write('<div class="wrap">');
-  w.document.write('<div class="inv"><div class="ih"><div><div class="ib">Janetes Cleaners Inc.<\/div><div style="font-size:11px;opacity:.75;margin-top:2px">'+fmt(inv.date)+'<\/div><\/div><div class="inv-num">INV #'+inv.id+'<\/div><\/div>');
-  w.document.write('<div class="ibody"><div style="margin-bottom:16px"><div style="font-weight:700;font-size:16px">'+esc(cName)+'<\/div>');
-  if(c&&c.address) w.document.write('<div style="font-size:12px;color:#7a9a9a;margin-top:3px">'+esc(c.address)+'<\/div>');
-  if(c&&c.email) w.document.write('<div style="font-size:12px;color:#7a9a9a;margin-top:2px">'+esc(c.email)+'<\/div>');
-  w.document.write('<\/div><table><thead><tr><th>Description<\/th><th>Amount<\/th><\/tr><\/thead><tbody>');
-  w.document.write('<tr><td>'+esc(inv.desc||'Cleaning Service')+'<\/td><td>$'+Number(inv.amount).toFixed(2)+'<\/td><\/tr>');
-  w.document.write('<\/tbody><\/table><div class="tot"><span>Total Due<\/span><span>$'+Number(inv.amount).toFixed(2)+'<\/span><\/div><\/div>');
-  w.document.write('<div class="ft">Thank you for choosing Janetes Cleaners! · (781) 964-5682<\/div><\/div>');
-  w.document.write('<div class="actions">');
-  w.document.write('<a class="abtn" style="background:#008CFF;color:#fff" href="'+venmoURL+'" target="_blank">Pay with Venmo<\/a>');
-  if(phone) w.document.write('<a class="abtn" style="background:#e8f5e9;color:#1a7a5a;border:1px solid #a3d5bb" href="https://wa.me/1'+phone+'?text='+encodeURIComponent('Hi '+c.first+', your invoice #'+inv.id+' from Janetes Cleaners is $'+inv.amount+'. Pay via Venmo @janete-pereira-1. Thank you!')+'" target="_blank">WhatsApp<\/a>');
-  if(c&&c.email) w.document.write('<a class="abtn" style="background:#eaf5f0;color:#1a7a5a;border:1px solid #a3d5bb" href="mailto:'+c.email+'?subject='+encodeURIComponent('Invoice #'+inv.id+' - Janetes Cleaners')+'&body='+encodeURIComponent('Hi '+c.first+',\n\nYour invoice #'+inv.id+' total is $'+inv.amount+'.\n\nPay via Venmo @janete-pereira-1\n\nThank you!\nJanetes Cleaners (781) 964-5682')+'" target="_blank">Email<\/a>');
-  w.document.write('<button class="abtn" style="background:#5a2d82;color:#fff" onclick="copyInvLink()">Share Link<\/button>');
-  w.document.write('<button class="abtn" style="background:#1a2e2e;color:#fff" onclick="window.print()">Print/PDF<\/button>');
-  w.document.write('<\/div><\/div>');
-  w.document.write('<scr'+'ipt>function copyInvLink(){navigator.clipboard.writeText("'+shareURL.replace(/"/g,'\\"')+'").then(()=>alert("Invoice link copied! Send it to your client.")).catch(()=>prompt("Copy this link:",\"'+shareURL.replace(/"/g,'\\"')+'\"));}<\/scr'+'ipt>');
-  w.document.write('<\/body><\/html>');
-  w.document.close();
-}
-
-// Open invoice modal pre-filled for a client
-function openInvoiceFor(clientId) {
-  populateSelect('invClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  document.getElementById('invClient').value=clientId;
+function markInvPaid(key){db.ref('invoices/'+key).update({status:'paid'});showToast('Marked as paid!');}
+function openInvoiceFor(clientKey){
+  populateSelect('invClient',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
+  document.getElementById('invClient').value=clientKey;
   document.getElementById('invDate').value=today();
   document.getElementById('invAmount').value='';
   document.getElementById('invDesc').value='';
   document.getElementById('invStatus').value='unpaid';
   openModal('invoiceModal');
 }
-
-// ══════════════════════════════════════
-//  MESSAGES (2-way chat)
-// ══════════════════════════════════════
-let activeChatClientId=null;
-
-function renderMessages() {
-  populateSelect('chatClientSel',clients,c=>({val:c.id,lbl:c.first+' '+c.last+(unreadCount(c.id)?' ('+unreadCount(c.id)+' new)':'')}));
-  populateSelect('msgClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  if(activeChatClientId){
-    document.getElementById('chatClientSel').value=activeChatClientId;
-    renderChatThread(activeChatClientId);
-  }
-  renderTemplates();
-  renderMsgLog();
-  updateMsgBadge();
+function openInvoicePage(invKey){
+  const inv=invoices[invKey];if(!inv)return;
+  const c=clients[inv.clientKey]||{};
+  const phone=(c.phone||'').replace(/\D/g,'');
+  const venmoURL='https://venmo.com/'+VENMO+'?txn=pay&amount='+inv.amount+'&note='+encodeURIComponent('Janetes Cleaners Invoice #'+inv.invNum);
+  const payload=btoa(unescape(encodeURIComponent(JSON.stringify({invId:inv.invNum,clientName:inv.clientName,date:inv.date,amount:inv.amount,desc:inv.desc}))));
+  const shareURL=window.location.href.split('#')[0]+'#inv='+payload;
+  const w=window.open('','_blank');
+  w.document.open();
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Invoice #'+inv.invNum+'<\/title>');
+  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,sans-serif;background:#f0f6f6;padding:24px 16px;min-height:100vh}.wrap{max-width:560px;margin:0 auto}.inv{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);margin-bottom:16px}.ih{background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:22px 26px;display:flex;justify-content:space-between;align-items:flex-end}.ibody{padding:22px 26px}table{width:100%;border-collapse:collapse}th{background:#e6f4f4;color:#095c60;font-size:11px;padding:8px 10px;text-align:left;text-transform:uppercase;letter-spacing:.5px}td{padding:12px 10px;border-bottom:1px solid #eef4f4;font-size:14px}.tot{display:flex;justify-content:space-between;padding-top:14px;border-top:2px solid #cce0e0;font-weight:700;font-size:18px;color:#095c60;margin-top:14px}.ft{padding:12px 26px;font-size:11px;color:#7a9a9a;text-align:center;border-top:1px solid #eef4f4}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.abtn{flex:1;min-width:100px;padding:12px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-family:Inter,sans-serif}@media print{body{background:#fff;padding:0}.actions{display:none}.inv{box-shadow:none}}<\/style><\/head><body>');
+  w.document.write('<div class="wrap"><div class="inv"><div class="ih"><div><div style="font-size:20px;font-weight:700">Janetes Cleaners Inc.<\/div><div style="font-size:11px;opacity:.75;margin-top:2px">'+esc(inv.clientName)+' · '+fmt(inv.date)+'<\/div><\/div><div style="font-size:16px;font-weight:600;opacity:.85">INV #'+inv.invNum+'<\/div><\/div>');
+  w.document.write('<div class="ibody">');
+  if(c.address)w.document.write('<div style="font-size:12px;color:#7a9a9a;margin-bottom:14px">'+esc(c.address)+'<\/div>');
+  w.document.write('<table><thead><tr><th>Description<\/th><th style="text-align:right">Amount<\/th><\/tr><\/thead><tbody><tr><td>'+esc(inv.desc||'Cleaning Service')+'<\/td><td style="text-align:right;font-weight:600">$'+Number(inv.amount).toFixed(2)+'<\/td><\/tr><\/tbody><\/table>');
+  w.document.write('<div class="tot"><span>Total Due<\/span><span>$'+Number(inv.amount).toFixed(2)+'<\/span><\/div><\/div>');
+  w.document.write('<div class="ft">Thank you for choosing Janetes Cleaners! · (781) 964-5682<\/div><\/div>');
+  w.document.write('<div class="actions">');
+  w.document.write('<a class="abtn" style="background:#008CFF;color:#fff" href="'+venmoURL+'" target="_blank">Pay with Venmo<\/a>');
+  if(phone)w.document.write('<a class="abtn" style="background:#e8f5e9;color:#1a7a5a;border:1px solid #a3d5bb" href="https://wa.me/1'+phone+'?text='+encodeURIComponent('Hi '+c.first+', your invoice #'+inv.invNum+' is $'+inv.amount+'. Pay via Venmo @'+VENMO+'. Thank you!')+'" target="_blank">WhatsApp<\/a>');
+  if(c.email)w.document.write('<a class="abtn" style="background:#eaf5f0;color:#1a7a5a;border:1px solid #a3d5bb" href="mailto:'+c.email+'?subject='+encodeURIComponent('Invoice #'+inv.invNum+' - Janetes Cleaners')+'&body='+encodeURIComponent('Hi '+c.first+',\n\nYour invoice #'+inv.invNum+' is $'+inv.amount+'.\n\nPay via Venmo @'+VENMO+'\n\nThank you!\nJanetes Cleaners (781) 964-5682')+'" target="_blank">Email<\/a>');
+  w.document.write('<button class="abtn" style="background:#5a2d82;color:#fff" onclick="navigator.clipboard.writeText(\''+shareURL.replace(/'/g,"\\'")+'\'||\'').then(()=>alert(\'Link copied!\'))">Share Link<\/button>');
+  w.document.write('<button class="abtn" style="background:#1a2e2e;color:#fff" onclick="window.print()">Print\/PDF<\/button>');
+  w.document.write('<\/div><\/div><\/body><\/html>');
+  w.document.close();
+}
+function exportCSV(){
+  const arr=Object.values(invoices).sort((a,b)=>b.invNum-a.invNum);
+  if(!arr.length){showToast('No invoices to export.');return;}
+  const total=arr.reduce((s,i)=>s+Number(i.amount||0),0);
+  const paid=arr.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount||0),0);
+  let csv='Invoice #,Client,Date,Amount,Status,Description\n';
+  arr.forEach(i=>{csv+=`${i.invNum},"${i.clientName||''}",${i.date},${i.amount},${i.status},"${(i.desc||'').replace(/"/g,"'")}"\n`;});
+  csv+=`\n,,,Total:,$${total.toFixed(2)},\n,,,Paid:,$${paid.toFixed(2)},\n,,,Unpaid:,$${(total-paid).toFixed(2)},\n`;
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='JanetesCleaners.csv';a.click();
+  showToast('CSV exported!');
 }
 
-function switchChat() {
-  const id=parseInt(document.getElementById('chatClientSel').value);
-  if(!id)return;
-  activeChatClientId=id;
-  // Mark all incoming as read
-  const thread=messages[id]||[];
-  thread.forEach(m=>{if(m.dir==='in')m.unread=false;});
-  messages[id]=thread;
-  save('messages',messages);
-  renderChatThread(id);
-  const c=clients.find(c=>c.id===id);
+// ══ MESSAGES ══
+function renderMessages(){
+  populateSelect('chatClientSel',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last+(unreadCount(c.key)?' ('+unreadCount(c.key)+' new)':'')}));
+  populateSelect('msgClient',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
+  if(activeChatKey){document.getElementById('chatClientSel').value=activeChatKey;renderChatThread();}
+  renderTemplates();
+}
+function switchChat(){
+  const key=document.getElementById('chatClientSel').value;
+  if(!key)return;
+  activeChatKey=key;
+  // Mark as read
+  const thread=messages[key]||{};
+  Object.entries(thread).forEach(([mk,m])=>{if(m.dir==='in'&&m.unread)db.ref(`messages/${key}/${mk}/unread`).set(false);});
+  renderChatThread();
+  const c=clients[key];
   const phone=(c?.phone||'').replace(/\D/g,'');
   document.getElementById('chatInput').disabled=false;
   document.getElementById('chatSendBtn').disabled=false;
   document.getElementById('shareLinkBtn').style.display='inline-flex';
   document.getElementById('waChatBtn').style.display=phone?'inline-flex':'none';
   updateMsgBadge();
-  renderClients(); // refresh unread dots
 }
-
-function renderChatThread(clientId) {
+function renderChatThread(){
   const box=document.getElementById('chatMessages');
-  const thread=messages[clientId]||[];
-  if(!thread.length){
-    box.innerHTML='<div class="empty" style="padding:20px"><div class="empty-icon">💬</div>No messages yet. Send one or share the schedule link.</div>';
-    return;
-  }
-  box.innerHTML=thread.map(m=>`<div class="chat-msg ${m.dir}${m.dir==='in'&&m.unread?' unread':''}">
-    ${esc(m.text)}<div class="chat-meta">${m.dir==='out'?'You':'Client'} · ${m.time||''}</div>
+  if(!activeChatKey){return;}
+  const thread=messages[activeChatKey]||{};
+  const arr=Object.values(thread).sort((a,b)=>(a.ts||0)-(b.ts||0));
+  if(!arr.length){box.innerHTML='<div class="empty" style="padding:20px"><div class="empty-icon">💬</div>No messages yet. Send one or share the schedule link.</div>';return;}
+  box.innerHTML=arr.map(m=>`<div class="chat-msg ${m.dir}${m.dir==='in'&&m.unread?' unread':''}">
+    ${esc(m.text||'')}<div class="chat-meta">${m.dir==='out'?'You':'Client'} · ${m.time||''}</div>
   </div>`).join('');
   box.scrollTop=box.scrollHeight;
 }
-
-function sendChat() {
+function sendChat(){
   const inp=document.getElementById('chatInput');
   const text=inp.value.trim();
-  if(!text||!activeChatClientId)return;
-  const thread=messages[activeChatClientId]||[];
-  thread.push({dir:'out',text,time:nowStr()});
-  messages[activeChatClientId]=thread;
-  save('messages',messages);
-  inp.value='';
-  renderChatThread(activeChatClientId);
-  showToast('Message saved.');
+  if(!text||!activeChatKey)return;
+  db.ref('messages/'+activeChatKey).push({dir:'out',text,time:nowStr(),ts:Date.now()});
+  inp.value='';showToast('Message sent.');
 }
-
-function openChatForClient(clientId) {
-  // Switch to messages panel and select client
+function openChatForClient(key){
   const btn=document.querySelector('.nav-btn[onclick*="messages"]');
   showPanel('messages',btn);
-  activeChatClientId=clientId;
-  document.getElementById('chatClientSel').value=clientId;
+  activeChatKey=key;
+  document.getElementById('chatClientSel').value=key;
   switchChat();
 }
-
-function openWAChat() {
-  const c=clients.find(c=>c.id===activeChatClientId);if(!c)return;
+function openWAChat(){
+  const c=clients[activeChatKey];if(!c)return;
   const phone=(c.phone||'').replace(/\D/g,'');
-  if(!phone){showToast('No phone on file for '+c.first);return;}
-  const text=document.getElementById('chatInput').value||'Hi '+c.first+', this is Janetes Cleaners!';
-  window.open('https://wa.me/1'+phone+'?text='+encodeURIComponent(text),'_blank');
+  if(!phone){showToast('No phone on file.');return;}
+  window.open('https://wa.me/1'+phone,'_blank');
 }
 
-// ══════════════════════════════════════
-//  SCHEDULE SHARE LINK
-// ══════════════════════════════════════
-let shareTargetId=null;
-
-function openScheduleShareFor(clientId) {
-  shareTargetId=clientId;
-  const c=clients.find(c=>c.id===clientId);if(!c)return;
-  document.getElementById('shareModalSub').textContent='Schedule page for: '+c.first+' '+c.last;
-  const url=getScheduleURL(clientId);
-  document.getElementById('shareURL').textContent=url;
-  // dim buttons if no contact info
+// ══ SCHEDULE SHARE ══
+function shareScheduleLink(){if(activeChatKey)openShareModal(activeChatKey);}
+function openShareModal(key){
+  shareTargetKey=key;
+  const c=clients[key];if(!c)return;
+  document.getElementById('shareModalSub').textContent='For: '+c.first+' '+c.last;
+  const url=getScheduleURL(key);
+  document.getElementById('shareURLDisplay').textContent=url;
   const phone=(c.phone||'').replace(/\D/g,'');
   document.getElementById('shareWABtn').style.opacity=phone?'1':'0.4';
   document.getElementById('shareSMSBtn').style.opacity=phone?'1':'0.4';
   document.getElementById('shareEmailBtn').style.opacity=c.email?'1':'0.4';
-  openModal('shareModal');
+  document.getElementById('shareModal').classList.remove('hidden');
 }
-
-function shareScheduleLink() {
-  if(activeChatClientId) openScheduleShareFor(activeChatClientId);
+function getScheduleURL(key){return window.location.href.split('#')[0]+'#schedule='+encodeURIComponent(key);}
+function copyScheduleURL(){
+  navigator.clipboard.writeText(document.getElementById('shareURLDisplay').textContent)
+    .then(()=>showToast('Link copied!'))
+    .catch(()=>prompt('Copy this link:',document.getElementById('shareURLDisplay').textContent));
 }
-
-function getScheduleURL(clientId) {
-  const c=clients.find(c=>c.id===clientId);
-  if(!c)return window.location.href.split('#')[0]+'#schedule='+clientId;
-  // Encode client name so it works regardless of ID
-  const encoded=btoa(unescape(encodeURIComponent(c.first+' '+c.last+'|'+clientId)));
-  return window.location.href.split('#')[0]+'#schedule='+encoded;
+function openSchedulePreview(){
+  const key=shareTargetKey;
+  window.open(getScheduleURL(key),'_blank');
 }
-
-function copyShareURL() {
-  const url=document.getElementById('shareURL').textContent;
-  navigator.clipboard.writeText(url)
-    .then(()=>showToast('Link copied! Send it to your client.'))
-    .catch(()=>prompt('Copy this link:',url));
-}
-
-function openSharePreview() {
-  if(shareTargetId) buildClientSchedulePage(shareTargetId);
-}
-
-function sendShareWA() {
-  const c=clients.find(c=>c.id===shareTargetId);if(!c)return;
+function sendScheduleWA(){
+  const c=clients[shareTargetKey];if(!c)return;
   const phone=(c.phone||'').replace(/\D/g,'');
-  if(!phone){showToast('No phone on file for '+c.first);return;}
-  const url=getScheduleURL(shareTargetId);
-  const msg='Hi '+c.first+', here is your cleaning schedule from Janetes Cleaners! View your appointments and message us directly from the page:\n\n'+url;
-  window.open('https://wa.me/1'+phone+'?text='+encodeURIComponent(msg),'_blank');
-  closeModal('shareModal');
-  showToast('WhatsApp opened with the link!');
+  if(!phone){showToast('No phone for '+c.first);return;}
+  const url=getScheduleURL(shareTargetKey);
+  window.open('https://wa.me/1'+phone+'?text='+encodeURIComponent('Hi '+c.first+', here is your cleaning schedule from Janetes Cleaners. You can view your appointments and message us directly from the page:\n\n'+url),'_blank');
+  closeModal('shareModal');showToast('WhatsApp opened with the link!');
 }
-
-function sendShareEmail() {
-  const c=clients.find(c=>c.id===shareTargetId);if(!c)return;
-  if(!c.email){showToast('No email on file for '+c.first);return;}
-  const url=getScheduleURL(shareTargetId);
-  window.open('mailto:'+c.email+'?subject='+encodeURIComponent('Your Cleaning Schedule - Janetes Cleaners')+'&body='+encodeURIComponent('Hi '+c.first+',\n\nHere is your upcoming cleaning schedule:\n\n'+url+'\n\nYou can view appointments and message us directly.\n\nThank you!\nJanetes Cleaners (781) 964-5682'),'_blank');
-  closeModal('shareModal');
-  showToast('Email draft opened with the link!');
+function sendScheduleEmail(){
+  const c=clients[shareTargetKey];if(!c)return;
+  if(!c.email){showToast('No email for '+c.first);return;}
+  const url=getScheduleURL(shareTargetKey);
+  window.open('mailto:'+c.email+'?subject='+encodeURIComponent('Your Cleaning Schedule - Janetes Cleaners')+'&body='+encodeURIComponent('Hi '+c.first+',\n\nHere is your schedule:\n\n'+url+'\n\nThank you!\nJanetes Cleaners (781) 964-5682'),'_blank');
+  closeModal('shareModal');showToast('Email draft opened!');
 }
-
-function sendShareSMS() {
-  const c=clients.find(c=>c.id===shareTargetId);if(!c)return;
+function sendScheduleSMS(){
+  const c=clients[shareTargetKey];if(!c)return;
   const phone=(c.phone||'').replace(/\D/g,'');
-  if(!phone){showToast('No phone on file for '+c.first);return;}
-  const url=getScheduleURL(shareTargetId);
-  window.open('sms:+1'+phone+'?body='+encodeURIComponent('Hi '+c.first+', your cleaning schedule from Janetes Cleaners: '+url),'_blank');
-  closeModal('shareModal');
-  showToast('SMS draft opened with the link!');
+  if(!phone){showToast('No phone for '+c.first);return;}
+  const url=getScheduleURL(shareTargetKey);
+  window.open('sms:+1'+phone+'?body='+encodeURIComponent('Hi '+c.first+', your cleaning schedule: '+url),'_blank');
+  closeModal('shareModal');showToast('SMS draft opened!');
 }
 
-// ══ Build client-facing schedule page ══
-function buildClientSchedulePage(clientId) {
-  const c=clients.find(c=>c.id===clientId);if(!c)return;
-  const myBook=bookings.filter(b=>b.clientId===clientId).sort((a,b)=>a.date.localeCompare(b.date));
-  const apptRows=myBook.length?myBook.map(b=>{
-    const dt=new Date(b.date+'T12:00:00');
-    return `<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #eef4f4">
-      <div style="text-align:center;min-width:48px;background:#e6f4f4;border-radius:8px;padding:7px 4px">
-        <div style="font-size:22px;font-weight:700;color:#095c60;line-height:1">${dt.getDate()}</div>
-        <div style="font-size:10px;text-transform:uppercase;color:#0d7377;letter-spacing:.7px">${dt.toLocaleDateString('en-US',{month:'short'})}</div>
-      </div>
-      <div>
-        <div style="font-weight:600;font-size:14px;color:#1a2e2e">${b.time} — ${b.service}</div>
-        <div style="font-size:12px;color:#7a9a9a;margin-top:2px">${b.address||c.address||''}</div>
-      </div>
-    </div>`;
-  }).join(''):`<div style="text-align:center;padding:24px;color:#7a9a9a;font-size:13px">No upcoming appointments scheduled.</div>`;
-
-  // Encode existing messages for the page
-  const existingThread=JSON.stringify(messages[clientId]||[]);
-  const safeThread=existingThread.replace(/\\/g,'\\\\').replace(/`/g,'\\`');
-
-  const w=window.open('','_blank');
-  w.document.open();
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">');
-  w.document.write('<title>Your Schedule - Janetes Cleaners<\/title>');
-  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Segoe UI,sans-serif;background:#f0f6f6;min-height:100vh;padding-bottom:40px}.header{background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:20px;text-align:center;border-radius:0 0 12px 12px}.hbrand{font-size:20px;font-weight:700}.hname{font-size:13px;opacity:.8;margin-top:3px}.wrap{max-width:480px;margin:0 auto;padding:16px}.card{background:#fff;border-radius:12px;border:1px solid #cce0e0;overflow:hidden;margin-bottom:14px}.card-head{padding:12px 16px;border-bottom:1px solid #eef4f4;font-weight:700;font-size:14px;color:#095c60;text-transform:uppercase;letter-spacing:.5px}.card-body{padding:14px 16px}.policy{background:#fefce8;border:1px solid #f0d060;border-radius:8px;padding:11px 14px;font-size:12px;color:#7a6010;margin-bottom:14px}.chat-thread{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}.msg{max-width:80%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.4}.msg.out{background:#0d7377;color:#fff;align-self:flex-end;border-bottom-right-radius:3px}.msg.in{background:#e6f4f4;color:#1a2e2e;align-self:flex-start;border-bottom-left-radius:3px}.msg-meta{font-size:9px;opacity:.6;margin-top:2px}.reply-area{width:100%;border:1.5px solid #cce0e0;border-radius:8px;padding:10px 12px;font-size:13px;resize:vertical;min-height:70px;outline:none;background:#f7fbfb;margin-bottom:10px;font-family:Segoe UI,sans-serif}.reply-area:focus{border-color:#0d7377}.reply-btn{width:100%;padding:12px;background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}.footer{text-align:center;margin-top:18px;font-size:11px;color:#7a9a9a}<\/style><\/head><body>');
-  w.document.write('<div class="header"><div class="hbrand">Janetes Cleaners Inc.<\/div><div class="hname">Schedule for '+esc(c.first+' '+c.last)+'<\/div><\/div>');
-  w.document.write('<div class="wrap">');
-  w.document.write('<div class="policy">⚠ <strong>Skip Policy:<\/strong> A $50 fee applies to cancellations with less than 24 hours notice.<\/div>');
-  w.document.write('<div class="card"><div class="card-head">Your Upcoming Appointments<\/div><div class="card-body">'+apptRows+'<\/div><\/div>');
-  w.document.write('<div class="card"><div class="card-head">Messages<\/div><div class="card-body">');
-  w.document.write('<div class="chat-thread" id="chatThread"><\/div>');
-  w.document.write('<p style="font-size:12px;color:#7a9a9a;margin-bottom:10px">Send us a message — it appears in our dashboard instantly.<\/p>');
-  w.document.write('<textarea class="reply-area" id="replyText" placeholder="Type your message here..."><\/textarea>');
-  w.document.write('<button class="reply-btn" id="replyBtn" onclick="sendReply()">Send Message<\/button>');
-  w.document.write('<div id="sentOK" style="display:none;background:#eaf5f0;border:1px solid #a3d5bb;border-radius:8px;padding:12px;font-size:13px;color:#1a7a5a;margin-top:8px">✅ Message sent! We will get back to you shortly.<\/div>');
-  w.document.write('<\/div><\/div>');
-  w.document.write('<div class="footer">Janetes Cleaners · Lynn, MA · (781) 964-5682<\/div>');
-  w.document.write('<\/div>');
-  // Script: load existing thread + handle reply via localStorage
-  const storageKey='jc_msg_'+clientId;
-  w.document.write('<scr'+'ipt>');
-  w.document.write('const clientId='+clientId+';');
-  w.document.write('const storageKey="'+storageKey+'";');
-  w.document.write('function loadThread(){try{const d=localStorage.getItem(storageKey);return d?JSON.parse(d):'+safeThread+';}catch(e){return[];}}');
-  w.document.write('function saveThread(t){try{localStorage.setItem(storageKey,JSON.stringify(t));}catch(e){}}');
-  w.document.write('function renderThread(){const t=loadThread();const box=document.getElementById("chatThread");if(!t.length){box.innerHTML=\'<div style="text-align:center;color:#7a9a9a;font-size:12px;padding:12px 0">No messages yet.<\/div>\';return;}box.innerHTML=t.map(m=>\'<div class="msg \'+m.dir+\'"><\/div>\'+m.text+\'<div class="msg-meta">\'+( m.dir==="out"?"Janetes Cleaners":"You")+\' · \'+m.time+\'<\/div><\/div>\').join(\'\');box.scrollTop=box.scrollHeight;}');
-  w.document.write('function sendReply(){const text=document.getElementById("replyText").value.trim();if(!text){alert("Please type a message.");return;}const btn=document.getElementById("replyBtn");btn.disabled=true;btn.textContent="Sending...";const t=loadThread();const msg={dir:"in",text,time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}),unread:true,from:"'+esc(c.first+' '+c.last)+'"};t.push(msg);saveThread(t);setTimeout(()=>{document.getElementById("replyText").style.display="none";btn.style.display="none";document.getElementById("sentOK").style.display="block";renderThread();},400);}');
-  w.document.write('renderThread();');
-  w.document.write('<\/scr'+'ipt>');
-  w.document.write('<\/body><\/html>');
-  w.document.close();
-  return w;
-}
-
-// Poll localStorage for client replies every 10 seconds
-function pollClientReplies() {
-  clients.forEach(c=>{
-    const key='jc_msg_'+c.id;
-    try {
-      const stored=localStorage.getItem(key);
-      if(!stored)return;
-      const storedThread=JSON.parse(stored);
-      // Find new inbound messages not in our messages store
-      const current=messages[c.id]||[];
-      const currentTexts=new Set(current.filter(m=>m.dir==='in').map(m=>m.text+'|'+m.time));
-      const newMsgs=storedThread.filter(m=>m.dir==='in'&&!currentTexts.has(m.text+'|'+m.time));
-      if(newMsgs.length){
-        const merged=[...current,...newMsgs];
-        messages[c.id]=merged;
-        save('messages',messages);
-        updateMsgBadge();
-        renderClients();
-        if(activeChatClientId===c.id) renderChatThread(c.id);
-      }
-    } catch(e){}
-  });
-}
-setInterval(pollClientReplies, 5000);
-
-// ══════════════════════════════════════
-//  VENMO
-// ══════════════════════════════════════
-function renderVenmo() {
+// ══ VENMO ══
+function renderVenmo(){
   const url=window.location.href.split('#')[0]+'#venmo=1';
-  document.getElementById('venmoPageURL').textContent=url;
-  populateSelect('venmoClientSel',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
+  const el=document.getElementById('venmoPageURL');
+  if(el)el.textContent=url;
+  populateSelect('venmoClientSel',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
   updateVenmoClientLinks();
 }
-function copyVenmoLink() {
+function copyVenmoLink(){
   const url=window.location.href.split('#')[0]+'#venmo=1';
-  navigator.clipboard.writeText(url).then(()=>showToast('Venmo page link copied!')).catch(()=>prompt('Copy this link:',url));
+  navigator.clipboard.writeText(url).then(()=>showToast('Venmo link copied!')).catch(()=>prompt('Copy:',url));
 }
-function previewVenmoPage() { buildVenmoPage(0,0,''); }
-function updateVenmoClientLinks() {
-  const id=parseInt(document.getElementById('venmoClientSel').value);
+function openVenmoPage(){window.open(window.location.href.split('#')[0]+'#venmo=1','_blank');}
+function updateVenmoClientLinks(){
+  const key=document.getElementById('venmoClientSel').value;
   const amt=parseFloat(document.getElementById('venmoAmt').value)||0;
   const note=document.getElementById('venmoNote').value||'Cleaning Service';
   const div=document.getElementById('venmoClientBtns');
-  if(!id){div.innerHTML='';return;}
-  const c=clients.find(c=>c.id===id);if(!c)return;
+  if(!key){div.innerHTML='';return;}
+  const c=clients[key];if(!c)return;
   const phone=(c.phone||'').replace(/\D/g,'');
-  const venmoURL='https://venmo.com/janete-pereira-1'+(amt?'?txn=pay&amount='+amt.toFixed(2)+'&note='+encodeURIComponent(note):'');
-  let html=`<a href="${venmoURL}" target="_blank" class="btn" style="background:#008CFF;color:#fff;text-decoration:none">Open Venmo</a>`;
-  if(phone) html+=`<a href="https://wa.me/1${phone}?text=${encodeURIComponent('Hi '+c.first+', please use this link to pay via Venmo: '+venmoURL)}" target="_blank" class="btn" style="background:#25d366;color:#fff;text-decoration:none">WhatsApp</a>`;
-  if(phone) html+=`<a href="sms:+1${phone}?body=${encodeURIComponent('Hi '+c.first+', pay via Venmo: '+venmoURL)}" class="btn btn-outline" style="text-decoration:none">SMS</a>`;
-  if(c.email) html+=`<a href="mailto:${c.email}?subject=${encodeURIComponent('Payment - Janetes Cleaners')}&body=${encodeURIComponent('Hi '+c.first+',\n\nPlease use this link to pay: '+venmoURL+'\n\nThank you!\nJanetes Cleaners')}" class="btn" style="background:var(--green-pale);color:var(--green);border:1px solid #a3d5bb;text-decoration:none">Email</a>`;
+  const vURL='https://venmo.com/'+VENMO+(amt?'?txn=pay&amount='+amt.toFixed(2)+'&note='+encodeURIComponent(note):'');
+  let html=`<a href="${vURL}" target="_blank" class="btn" style="background:#008CFF;color:#fff;text-decoration:none">Open Venmo</a>`;
+  if(phone)html+=`<a href="https://wa.me/1${phone}?text=${encodeURIComponent('Hi '+c.first+', please pay via Venmo: '+vURL)}" target="_blank" class="btn" style="background:#25d366;color:#fff;text-decoration:none">WhatsApp</a>`;
+  if(phone)html+=`<a href="sms:+1${phone}?body=${encodeURIComponent('Hi '+c.first+', pay via Venmo: '+vURL)}" class="btn btn-outline" style="text-decoration:none">SMS</a>`;
+  if(c.email)html+=`<a href="mailto:${c.email}?subject=${encodeURIComponent('Payment - Janetes Cleaners')}&body=${encodeURIComponent('Hi '+c.first+',\n\nPlease pay here: '+vURL+'\n\nThank you!\nJanetes Cleaners')}" class="btn" style="background:var(--green-pale);color:var(--green);border:1px solid #a3d5bb;text-decoration:none">Email</a>`;
   div.innerHTML=html;
 }
-function buildVenmoPage() {
-  const w=window.open('','_blank');
-  w.document.open();
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pay Janetes Cleaners<\/title>');
-  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Segoe UI,sans-serif;background:#f0f6f6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.card{background:#fff;border-radius:16px;max-width:380px;width:100%;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.1)}.head{background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:28px;text-align:center}.brand{font-size:22px;font-weight:700}.sub{font-size:12px;opacity:.8;margin-top:4px}.body{padding:24px}label{display:block;font-size:11px;font-weight:600;color:#4a6a6a;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}input{width:100%;padding:11px 14px;border:1.5px solid #cce0e0;border-radius:8px;font-size:14px;outline:none;background:#f7fbfb;margin-bottom:14px}input:focus{border-color:#0d7377}.pay-btn{display:block;width:100%;padding:14px;background:#008CFF;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;text-align:center;margin-bottom:12px}.handle{text-align:center;font-size:12px;color:#7a9a9a;margin-top:12px;line-height:1.6}<\/style><\/head><body>');
-  w.document.write('<div class="card"><div class="head"><div class="brand">Janetes Cleaners Inc.<\/div><div class="sub">Secure Payment via Venmo<\/div><\/div>');
-  w.document.write('<div class="body"><label>Amount ($)<\/label><input type="number" id="vamt" placeholder="0.00" min="0" step="0.01" oninput="updateBtn()"><label>Note (optional)<\/label><input type="text" id="vnote" placeholder="e.g. March cleaning" oninput="updateBtn()"><a class="pay-btn" id="vpay" href="https://venmo.com/janete-pereira-1" target="_blank">Pay with Venmo<\/a><div class="handle">Venmo: <strong>@janete-pereira-1<\/strong><br>Or search in the Venmo app<br><a href="tel:+17819645682" style="color:#0d7377">(781) 964-5682<\/a><\/div><\/div><\/div>');
-  w.document.write('<scr'+'ipt>function updateBtn(){var a=parseFloat(document.getElementById("vamt").value)||0;var n=document.getElementById("vnote").value||"Cleaning Service";var b=document.getElementById("vpay");if(a>0){b.href="https://venmo.com/janete-pereira-1?txn=pay&amount="+a.toFixed(2)+"&note="+encodeURIComponent(n);b.textContent="Pay $"+a.toFixed(2)+" with Venmo";}else{b.href="https://venmo.com/janete-pereira-1";b.textContent="Pay with Venmo";}}<\/scr'+'ipt>');
-  w.document.write('<\/body><\/html>');
-  w.document.close();
-}
 
-// ══════════════════════════════════════
-//  HANDLE URL HASH (client schedule page + invoice + venmo)
-// ══════════════════════════════════════
-(function(){
-  const hash=window.location.hash;
-  if(!hash)return;
-
-  // Client schedule page: #schedule=encoded
-  if(hash.startsWith('#schedule=')){
-    const raw=hash.slice(10);
-    let clientId=null, clientName=null;
-    // Try decoding as base64 encoded "First Last|id"
-    try {
-      const decoded=decodeURIComponent(escape(atob(raw)));
-      const parts=decoded.split('|');
-      clientName=parts[0];
-      clientId=parseInt(parts[1])||null;
-    } catch(e) {
-      // Fall back to plain numeric ID
-      clientId=parseInt(raw)||null;
-    }
-    // Find client by ID first, then by name
-    let c=clients.find(c=>c.id===clientId);
-    if(!c&&clientName) c=clients.find(c=>(c.first+' '+c.last)===clientName);
-    if(!clientId&&c) clientId=c.id;
-    // Hide login and app — show client page only
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('app').classList.add('hidden');
-    document.body.style.background='#f0f6f6';
-    if(!c){document.body.innerHTML='<div style="text-align:center;padding:60px;font-family:Segoe UI,sans-serif;color:#7a9a9a">Schedule not found. Contact Janetes Cleaners at (781) 964-5682.</div>';return;}
-    // Render inline instead of new window
-    const myBook=bookings.filter(b=>b.clientId===clientId).sort((a,b)=>a.date.localeCompare(b.date));
-    const apptRows=myBook.length?myBook.map(b=>{
-      const dt=new Date(b.date+'T12:00:00');
-      return `<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #eef4f4">
-        <div style="text-align:center;min-width:48px;background:#e6f4f4;border-radius:8px;padding:7px 4px">
-          <div style="font-size:22px;font-weight:700;color:#095c60;line-height:1">${dt.getDate()}</div>
-          <div style="font-size:10px;text-transform:uppercase;color:#0d7377">${dt.toLocaleDateString('en-US',{month:'short'})}</div>
-        </div>
-        <div>
-          <div style="font-weight:600;font-size:14px">${b.time} — ${b.service}</div>
-          <div style="font-size:12px;color:#7a9a9a;margin-top:2px">${b.address||c.address||''}</div>
-        </div>
-      </div>`;
-    }).join(''):`<div style="text-align:center;padding:24px;color:#7a9a9a">No upcoming appointments scheduled.</div>`;
-
-    document.body.innerHTML=`
-      <div style="font-family:Segoe UI,sans-serif;background:#f0f6f6;min-height:100vh;padding-bottom:40px">
-        <div style="background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:20px;text-align:center;border-radius:0 0 12px 12px">
-          <div style="font-size:20px;font-weight:700">Janetes Cleaners Inc.</div>
-          <div style="font-size:13px;opacity:.8;margin-top:3px">Schedule for ${esc(c.first+' '+c.last)}</div>
-        </div>
-        <div style="max-width:480px;margin:0 auto;padding:16px">
-          <div style="background:#fefce8;border:1px solid #f0d060;border-radius:8px;padding:11px 14px;font-size:12px;color:#7a6010;margin-bottom:14px">
-            ⚠ <strong>Skip Policy:</strong> A $50 fee applies to cancellations with less than 24 hours notice.
-          </div>
-          <div style="background:#fff;border-radius:12px;border:1px solid #cce0e0;overflow:hidden;margin-bottom:14px">
-            <div style="padding:12px 16px;border-bottom:1px solid #eef4f4;font-weight:700;font-size:14px;color:#095c60;text-transform:uppercase;letter-spacing:.5px">Your Upcoming Appointments</div>
-            <div style="padding:0 16px">${apptRows}</div>
-          </div>
-          <div style="background:#fff;border-radius:12px;border:1px solid #cce0e0;overflow:hidden">
-            <div style="padding:12px 16px;border-bottom:1px solid #eef4f4;font-weight:700;font-size:14px;color:#095c60;text-transform:uppercase;letter-spacing:.5px">Send Us a Message</div>
-            <div style="padding:14px 16px">
-              <p style="font-size:12px;color:#7a9a9a;margin-bottom:10px">Your message goes straight to our dashboard — no app needed.</p>
-              <textarea id="replyText" style="width:100%;border:1.5px solid #cce0e0;border-radius:8px;padding:10px 12px;font-size:13px;resize:vertical;min-height:70px;outline:none;background:#f7fbfb;margin-bottom:10px;font-family:Segoe UI,sans-serif;box-sizing:border-box" placeholder="Type your message..."></textarea>
-              <button id="replyBtn" onclick="doReply(${clientId},'${esc(c.first+' '+c.last)}')" style="width:100%;padding:12px;background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">Send Message</button>
-              <div id="sentOK" style="display:none;background:#eaf5f0;border:1px solid #a3d5bb;border-radius:8px;padding:12px;font-size:13px;color:#1a7a5a;margin-top:8px">✅ Message sent! We will get back to you shortly.</div>
-            </div>
-          </div>
-          <div style="text-align:center;margin-top:18px;font-size:11px;color:#7a9a9a">Janetes Cleaners · Lynn, MA · (781) 964-5682</div>
-        </div>
-      </div>`;
-    // Reply saves to localStorage key picked up by dashboard poll
-    window.doReply=function(cId,cName){
-      const text=document.getElementById('replyText').value.trim();
-      if(!text){alert('Please type a message.');return;}
-      const btn=document.getElementById('replyBtn');
-      btn.disabled=true;btn.textContent='Sending...';
-      const key='jc_msg_'+cId;
-      try{
-        const existing=localStorage.getItem(key);
-        const thread=existing?JSON.parse(existing):[];
-        thread.push({dir:'in',text,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),unread:true,from:cName});
-        localStorage.setItem(key,JSON.stringify(thread));
-      }catch(e){}
-      setTimeout(()=>{
-        document.getElementById('replyText').style.display='none';
-        btn.style.display='none';
-        document.getElementById('sentOK').style.display='block';
-      },400);
-    };
-    return;
-  }
-
-  // Venmo page: #venmo=1
-  if(hash.startsWith('#venmo=')){
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('app').classList.add('hidden');
-    document.body.style.cssText='margin:0;padding:0;background:#f0f6f6;font-family:Segoe UI,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center';
-    document.body.innerHTML=`
-      <div style="background:#fff;border-radius:16px;max-width:380px;width:100%;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.1);margin:20px">
-        <div style="background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:28px;text-align:center">
-          <div style="font-size:32px;margin-bottom:8px">💙</div>
-          <div style="font-size:22px;font-weight:700">Janetes Cleaners Inc.</div>
-          <div style="font-size:12px;opacity:.8;margin-top:4px">Secure Payment via Venmo</div>
-        </div>
-        <div style="padding:24px">
-          <label style="display:block;font-size:11px;font-weight:600;color:#4a6a6a;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Amount ($)</label>
-          <input type="number" id="vamt" placeholder="0.00" min="0" step="0.01" oninput="updateVBtn()"
-            style="width:100%;padding:11px 14px;border:1.5px solid #cce0e0;border-radius:8px;font-size:14px;outline:none;background:#f7fbfb;margin-bottom:14px;box-sizing:border-box">
-          <label style="display:block;font-size:11px;font-weight:600;color:#4a6a6a;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Note (optional)</label>
-          <input type="text" id="vnote" placeholder="e.g. March cleaning" oninput="updateVBtn()"
-            style="width:100%;padding:11px 14px;border:1.5px solid #cce0e0;border-radius:8px;font-size:14px;outline:none;background:#f7fbfb;margin-bottom:18px;box-sizing:border-box">
-          <a id="vpay" href="https://venmo.com/janete-pereira-1" target="_blank"
-            style="display:block;text-align:center;padding:14px;background:#008CFF;color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;margin-bottom:14px">
-            Pay with Venmo
-          </a>
-          <div style="text-align:center;font-size:12px;color:#7a9a9a;line-height:1.6">
-            Venmo: <strong style="color:#1a2e2e">@janete-pereira-1</strong><br>
-            Or search in the Venmo app<br>
-            <a href="tel:+17819645682" style="color:#0d7377">(781) 964-5682</a>
-          </div>
-        </div>
-      </div>`;
-    window.updateVBtn=function(){
-      const a=parseFloat(document.getElementById('vamt').value)||0;
-      const n=document.getElementById('vnote').value||'Cleaning Service';
-      const b=document.getElementById('vpay');
-      if(a>0){b.href='https://venmo.com/janete-pereira-1?txn=pay&amount='+a.toFixed(2)+'&note='+encodeURIComponent(n);b.textContent='Pay $'+a.toFixed(2)+' with Venmo';}
-      else{b.href='https://venmo.com/janete-pereira-1';b.textContent='Pay with Venmo';}
-    };
-    return;
-  }
-
-  // Invoice link: #inv=payload
-  if(hash.startsWith('#inv=')){
-    try{
-      const data=JSON.parse(decodeURIComponent(escape(atob(hash.slice(5)))));
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('app').classList.add('hidden');
-      document.body.style.cssText='margin:0;padding:0;background:#f0f6f6;font-family:Segoe UI,sans-serif;min-height:100vh;padding:24px 16px';
-      const venmoURL='https://venmo.com/janete-pereira-1?txn=pay&amount='+data.amount+'&note='+encodeURIComponent('Janetes Cleaners Invoice #'+data.invId);
-      document.body.innerHTML=`
-        <div style="max-width:520px;margin:0 auto">
-          <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);margin-bottom:16px">
-            <div style="background:linear-gradient(135deg,#095c60,#0d7377);color:#fff;padding:22px 26px;display:flex;justify-content:space-between;align-items:flex-end">
-              <div><div style="font-size:20px;font-weight:700">Janetes Cleaners Inc.</div><div style="font-size:11px;opacity:.75;margin-top:2px">${esc(data.clientName)} · ${esc(data.date)}</div></div>
-              <div style="font-size:16px;opacity:.85;font-weight:600">INV #${data.invId}</div>
-            </div>
-            <div style="padding:22px 26px">
-              <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
-                <thead><tr><th style="background:#e6f4f4;color:#095c60;font-size:11px;padding:8px 10px;text-align:left;text-transform:uppercase;letter-spacing:.5px">Description</th><th style="background:#e6f4f4;color:#095c60;font-size:11px;padding:8px 10px;text-align:right;text-transform:uppercase;letter-spacing:.5px">Amount</th></tr></thead>
-                <tbody><tr><td style="padding:12px 10px;font-size:14px;color:#1a2e2e">${esc(data.desc||'Cleaning Service')}</td><td style="padding:12px 10px;text-align:right;font-weight:600;font-size:14px">$${Number(data.amount).toFixed(2)}</td></tr></tbody>
-              </table>
-              <div style="display:flex;justify-content:space-between;padding-top:14px;border-top:2px solid #cce0e0;font-weight:700;font-size:18px;color:#095c60">
-                <span>Total Due</span><span>$${Number(data.amount).toFixed(2)}</span>
-              </div>
-            </div>
-            <div style="padding:12px 26px 16px;font-size:11px;color:#7a9a9a;text-align:center;border-top:1px solid #eef4f4">Thank you for choosing Janetes Cleaners! · (781) 964-5682</div>
-          </div>
-          <a href="${venmoURL}" target="_blank" style="display:block;text-align:center;padding:16px;background:#008CFF;color:#fff;border-radius:12px;font-weight:700;font-size:16px;text-decoration:none;margin-bottom:12px">
-            Pay $${Number(data.amount).toFixed(2)} with Venmo
-          </a>
-          <div style="text-align:center;font-size:12px;color:#7a9a9a">Questions? Call or text <a href="tel:+17819645682" style="color:#0d7377">(781) 964-5682</a></div>
-        </div>`;
-    }catch(e){
-      document.body.innerHTML='<div style="text-align:center;padding:60px;font-family:Segoe UI,sans-serif;color:#c0392b">Invalid invoice link.</div>';
-    }
-    return;
-  }
-})();
-
-// ══════════════════════════════════════
-//  MESSAGES TEMPLATES
-// ══════════════════════════════════════
-const TEMPLATES = [
-  {label:'Appointment Reminder', text:"Hi {name}! This is a reminder that your cleaning is scheduled for {date}. Please make sure the team has access. Thank you! — Janete's Cleaners"},
-  {label:'Payment Due',          text:"Hi {name}, your balance is currently due. You can pay via Venmo @janete-pereira-1 or cash. Thank you! — Janete's Cleaners"},
-  {label:'Skip Policy Notice',   text:"Hi {name}, as per our Skip Policy, a $50 fee applies for cancellations under 24 hours. Please contact us with any questions. — Janete's Cleaners"},
-  {label:'Welcome New Client',   text:"Welcome to Janete's Cleaners, {name}! We're excited to serve you. Please reach out anytime. — Janete's Cleaners 📞 781-964-5682"},
+// ══ TEMPLATES ══
+const TEMPLATES=[
+  {label:'Appointment Reminder',text:"Hi {name}! This is a reminder that your cleaning is scheduled soon. Please make sure the team has access. Thank you! — Janete's Cleaners"},
+  {label:'Payment Due',text:"Hi {name}, your balance is currently due. You can pay via Venmo @janete-pereira-1. Thank you! — Janete's Cleaners"},
+  {label:'Skip Policy Notice',text:"Hi {name}, a $50 fee applies for cancellations under 24 hours. Please contact us with any questions. — Janete's Cleaners"},
+  {label:'Welcome',text:"Welcome to Janete's Cleaners, {name}! We're excited to serve you. — Janete's Cleaners 📞 781-964-5682"},
 ];
-function renderTemplates() {
-  document.getElementById('templatesBox').innerHTML=TEMPLATES.map((t,i)=>`<div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#f7fbfb'" onmouseout="this.style.background=''" onclick="useTemplate(${i})"><div style="font-weight:600;color:var(--teal);font-size:13px">${t.label}</div><div style="color:var(--text3);font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.text.substring(0,60)}...</div></div>`).join('');
+function renderTemplates(){
+  document.getElementById('templatesBox').innerHTML=TEMPLATES.map((t,i)=>`<div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer" onclick="useTemplate(${i})" onmouseover="this.style.background='#f7fbfb'" onmouseout="this.style.background=''">
+    <div style="font-weight:600;color:var(--teal);font-size:13px">${t.label}</div>
+    <div style="color:var(--text3);font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.text.substring(0,60)}...</div>
+  </div>`).join('');
 }
-function renderMsgLog() {
-  const logEl=document.getElementById('msgLog');
-  if(!logEl)return;
-  // msgLog is gone from this layout — skip
-}
-function useTemplate(i){const cId=document.getElementById('msgClient').value;const c=clients.find(c=>c.id==cId);let text=TEMPLATES[i].text;if(c)text=text.replace(/{name}/g,c.first);document.getElementById('msgText').value=text;}
-function generateMsg(){const cId=document.getElementById('msgClient').value;const type=document.getElementById('msgType').value;const c=clients.find(c=>c.id==cId);if(!c){showToast('Select a client first.');return;}const tmpl=TEMPLATES.find(t=>t.label.toLowerCase().includes(type))||TEMPLATES[0];let text=tmpl.text.replace(/{name}/g,c.first);document.getElementById('msgText').value=text;}
-function copyMsg(){const txt=document.getElementById('msgText').value;if(!txt){showToast('Nothing to copy.');return;}navigator.clipboard.writeText(txt).then(()=>showToast('Copied to clipboard!'));const cId=document.getElementById('msgClient').value;const c=clients.find(c=>c.id==cId);msgLog.push({client:c?c.first+' '+c.last:'Unknown',text:txt,date:new Date().toLocaleDateString()});save('msgLog',msgLog);}
+function useTemplate(i){const key=document.getElementById('msgClient').value;const c=clients[key];let text=TEMPLATES[i].text;if(c)text=text.replace(/{name}/g,c.first);document.getElementById('msgText').value=text;}
+function generateMsg(){const key=document.getElementById('msgClient').value;const type=document.getElementById('msgType')?.value||'appointment';const c=clients[key];if(!c){showToast('Select a client.');return;}const tmpl=TEMPLATES.find(t=>t.label.toLowerCase().includes(type))||TEMPLATES[0];document.getElementById('msgText').value=tmpl.text.replace(/{name}/g,c.first);}
+function copyMsg(){const txt=document.getElementById('msgText').value;if(!txt){showToast('Nothing to copy.');return;}navigator.clipboard.writeText(txt).then(()=>showToast('Copied!'));}
 
-// ══════════════════════════════════════
-//  UTILS
-// ══════════════════════════════════════
-function populateSelect(id,items,mapper){const el=document.getElementById(id);if(!el)return;const cur=el.value;el.innerHTML=items.map(i=>{const m=mapper(i);return`<option value="${m.val}">${m.lbl}</option>`;}).join('');if(cur)el.value=cur;}
+// ══ UTILS ══
+function populateSelect(id,items,mapper){const el=document.getElementById(id);if(!el)return;const cur=el.value;el.innerHTML=items.map(i=>{const m=mapper(i);return`<option value="${m.val}">${esc(m.lbl)}</option>`;}).join('');if(cur)el.value=cur;}
+function populateAllDropdowns(){
+  populateSelect('bkClient',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
+  populateSelect('bkService',Object.values(services),s=>({val:s.name,lbl:s.name+' ($'+s.price+')'}));
+  populateSelect('skipClient',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
+  populateSelect('invClient',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
+  populateSelect('chatClientSel',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last+(unreadCount(c.key)?' ('+unreadCount(c.key)+' new)':'')}));
+  populateSelect('msgClient',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
+  populateSelect('venmoClientSel',clientsArr(),c=>({val:c.key,lbl:c.first+' '+c.last}));
+}
 function openModal(id){
-  if(id==='serviceModal')document.getElementById('serviceId').value='';
-  if(id==='clientModal'){document.getElementById('clientId').value='';['cFirst','cLast','cPhone','cEmail','cAddress','cNotes'].forEach(f=>document.getElementById(f).value='');}
+  if(id==='serviceModal')document.getElementById('serviceKey').value='';
+  if(id==='clientModal'){document.getElementById('clientKey').value='';['cFirst','cLast','cPhone','cEmail','cAddress','cNotes'].forEach(f=>document.getElementById(f).value='');}
   document.getElementById(id).classList.remove('hidden');
-  populateSelect('bkClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  populateSelect('bkService',services,s=>({val:s.name,lbl:s.name+' ($'+s.price+')'}));
-  populateSelect('skipClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
-  populateSelect('invClient',clients,c=>({val:c.id,lbl:c.first+' '+c.last}));
+  populateAllDropdowns();
 }
 function closeModal(id){document.getElementById(id).classList.add('hidden');}
 document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.add('hidden');});});
 
-// ══════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════
-function initApp(){
-  renderDashboard();
-  const d=today();
-  const el=document.getElementById('bkDate');if(el)el.value=d;
-  const sd=document.getElementById('skipDate');if(sd)sd.value=d;
-  updateMsgBadge();
-  pollClientReplies();
-}
-if(sessionStorage.getItem('jc_auth')){
-  const h=window.location.hash;
-  const isClientPage=h.startsWith('#schedule=')||h.startsWith('#venmo=')||h.startsWith('#inv=');
-  if(!isClientPage){
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-    initApp();
-  }
+// ══ SEED CLIENTS ══
+function seedClients(){
+  const seed=[
+    {first:'Karen',last:'Webster',phone:'',email:'julie@findsbyjulie.com',address:'95 Pinckney St, Boston, MA 02114',notes:''},
+    {first:'Ann',last:'West',phone:'',email:'',address:'31 Lee St., Marblehead, MA 01945',notes:''},
+    {first:'Bill',last:'Fuller',phone:'',email:'',address:'Marblehead, MA 01906',notes:''},
+    {first:'Bob',last:'Hansen',phone:'',email:'',address:'119 Water St. Unit 64, Salem, MA 01906',notes:''},
+    {first:'Corman Bags',last:'Co.',phone:'',email:'',address:'36 Arlington Street, Chelsea, MA 02150',notes:'Commercial'},
+    {first:'Crest',last:'Pizzeria',phone:'',email:'',address:'35 Crest Ave, Winthrop, MA 02152',notes:'Contact: Peter'},
+    {first:'Dan',last:'Deven',phone:'',email:'',address:'Marblehead, MA',notes:''},
+    {first:'Deborah',last:'Wetmore',phone:'',email:'',address:'886 West Hill Road, Warren, VT 05674',notes:''},
+    {first:'Eric',last:'Appel',phone:'',email:'',address:'8 George Street, Cambridge, MA 02140',notes:''},
+    {first:'Erica',last:'Pelaccia',phone:'',email:'',address:'81 Prindle Ave, Ansonia, CT 06401',notes:''},
+    {first:'Fay',last:'Ginsberg',phone:'',email:'',address:'65 East India Row #20G, Boston, MA 02110',notes:''},
+    {first:'Faye',last:'Hinsley',phone:'',email:'',address:'65 East India Row #20G, Boston, MA 02110',notes:''},
+    {first:'Fiorys',last:'Variatie',phone:'',email:'',address:'',notes:''},
+    {first:'Gordon',last:'College',phone:'',email:'',address:'Grapevine Rd., Wenham, MA',notes:'Commercial'},
+    {first:'Hansen',last:'Marine',phone:'7816313282',email:'',address:'32 Tioga Way, Marblehead, MA 01945',notes:'Contact: Robert Hansen'},
+    {first:'Jacquelyn',last:'Hawkson',phone:'',email:'',address:'91 Grant St., Lexington, MA 02420',notes:''},
+    {first:'Jim',last:'Lavelle',phone:'',email:'',address:'211 Mason Terrace, Brookline, MA 02446',notes:''},
+    {first:'Joanne',last:'Ferris',phone:'',email:'jferris@eliotchs.org',address:'95 Pleasant St., Lynn, MA 01901',notes:''},
+    {first:'Jode',last:'Livingston',phone:'',email:'mlivingston0012@gmail.com',address:'28 Myrtle St. Unit 1, Boston, MA 02114',notes:''},
+    {first:'Josmar',last:'Pereira',phone:'7819645682',email:'',address:'Lynn, MA 01904',notes:''},
+    {first:'Kenn',last:'Mark',phone:'',email:'',address:'26 Washington Sq., Marblehead, MA 01906',notes:''},
+    {first:'Kenneth',last:'Martin',phone:'',email:'',address:'24 Harbor Ave., Marblehead, MA 01945',notes:''},
+    {first:'Lee',last:'Oestreicher',phone:'',email:'',address:'45 Longwood Ave. #103, Brookline, MA 02446',notes:''},
+    {first:'Lion River',last:'Properties',phone:'',email:'',address:'45 Longwood Ave. #103, Brookline, MA 02446',notes:'Commercial'},
+    {first:'Lisa',last:'Dyacme Prop. Mgmt.',phone:'',email:'',address:'Goodwins Court, Marblehead, MA',notes:''},
+    {first:'Nicholas',last:'Erpelding',phone:'',email:'',address:'Attn: Lisa Gallager',notes:''},
+    {first:'Pauline',last:'Donnelly',phone:'',email:'Pauline@donnellyandco.com',address:'12 Darling St. #3, Marblehead, MA 01945',notes:''},
+    {first:'Peter',last:'Calakoutis',phone:'',email:'',address:'LynnFells Pkwy, Saugus, MA 01907',notes:''},
+    {first:'Phil Fuller',last:'Londonderry',phone:'',email:'',address:'17 S Parrish Drive, Londonderry, NH 03053',notes:''},
+    {first:'Phil Fuller',last:'The Villages',phone:'',email:'',address:'1325 Gaston Loop, The Villages, FL 32162',notes:''},
+    {first:'Robert',last:'Mattson',phone:'8184147513',email:'valleyspaservices@yahoo.com',address:'13825 Victory Blvd #1, Valley Glen, CA 91401',notes:''},
+    {first:'Scott',last:'Stilianos',phone:'',email:'sstili@icloud.com',address:'1 Bengal Lane, Salem, MA 01906',notes:''},
+    {first:'Socs',last:'Ice Cream',phone:'',email:'',address:'67 Lynnfells Pkwy, Saugus, MA 01906',notes:'Commercial'},
+    {first:'Trevor',last:'Parsons',phone:'',email:'',address:'106 Galloupes Road, Swampscott, MA 01907',notes:''},
+    {first:'Victoria',last:'Fitzgerald',phone:'',email:'ilsognoinchianti@gmail.com',address:'',notes:''},
+    {first:'Nadir',last:'Vieira',phone:'',email:'',address:'58 Atkins Ave. Basement, Lynn, MA 01904',notes:''},
+  ];
+  const updates={};
+  seed.forEach(c=>{const k=db.ref('clients').push().key;updates[k]=c;});
+  db.ref('clients').update(updates);
 }
 </script>
 </body>
