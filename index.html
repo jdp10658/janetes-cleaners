@@ -479,8 +479,12 @@ function doLogout(){auth.signOut();}
       db.ref('clients/'+clientKey).once('value'),
       db.ref('bookings').once('value')
     ]).then(([cSnap,bSnap])=>{
-      const c=cSnap.val();
-      if(!c){wrap.innerHTML='<div style="text-align:center;padding:60px;font-family:Inter,sans-serif;color:#7a9a9a">Schedule not found. Contact us at (781) 964-5682.</div>';return;}
+      const raw=cSnap.val();
+      if(!raw){wrap.innerHTML='<div style="text-align:center;padding:60px;font-family:Inter,sans-serif;color:#7a9a9a">Schedule not found. Contact us at (781) 964-5682.</div>';return;}
+      // Normalize name format
+      const c={...raw};
+      if(!c.first && c.name){const p=(c.name||'').trim().split(' ');c.first=p[0]||'';c.last=p.slice(1).join(' ')||'';}
+      if(!c.first) c.first='Client';
       const allBooks=bSnap.val()||{};
       const myBooks=Object.values(allBooks).filter(b=>b.clientKey===clientKey||b.clientName===(c.first+' '+c.last)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
       const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -663,7 +667,18 @@ function fmt(d){if(!d)return'';const dt=new Date(d+'T12:00:00');return dt.toLoca
 function today(){return new Date().toISOString().split('T')[0];}
 function nowStr(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
-function clientsArr(){return Object.entries(clients).map(([k,v])=>({key:k,...v})).sort((a,b)=>(a.first||'').localeCompare(b.first||''));}
+function clientsArr(){
+  return Object.entries(clients).map(([k,v])=>{
+    // Handle both old format (single 'name') and new format ('first'+'last')
+    if(!v.first && v.name){
+      const parts=(v.name||'').trim().split(' ');
+      v.first=parts[0]||'';
+      v.last=parts.slice(1).join(' ')||'';
+    }
+    if(!v.first && !v.name) v.first='(no name)';
+    return {key:k,...v};
+  }).sort((a,b)=>(a.first||'').localeCompare(b.first||''));
+}
 function unreadCount(key){const t=messages[key]||{};return Object.values(t).filter(m=>m.dir==='in'&&m.unread).length;}
 function totalUnread(){return Object.keys(clients).reduce((s,k)=>s+unreadCount(k),0);}
 function updateMsgBadge(){const n=totalUnread();document.getElementById('msgNavBtn').textContent='💬 Messages'+(n>0?' ('+n+')':'');}
